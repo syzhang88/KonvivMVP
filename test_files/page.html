@@ -1,0 +1,62 @@
+<html>
+
+<title> Plaid and Ionic </title>
+
+<body>
+    <script src="https://cdn.plaid.com/link/stable/link-initialize.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
+
+    <div>
+        <button id="link-button" onclick="Authentication()">Open Link</button>
+    </div>
+
+    <script type="text/javascript">
+        // Initialize Firebase
+        var config = {
+          apiKey: "AIzaSyDknYjy-WW7SH7aLJ2D3p94r4a1s3TU_W8",
+          authDomain: "konviv-demo.firebaseapp.com",
+          databaseURL: "https://konviv-demo.firebaseio.com",
+          projectId: "konviv-demo",
+          storageBucket: "konviv-demo.appspot.com",
+          messagingSenderId: "183629541006",
+          serviceAccount: "konviv-demo-firebase-adminsdk-ee5ad-bd8a1edd7c.json"
+        };
+        firebase.initializeApp(config);
+
+        var linkHandler = Plaid.create({
+            env: 'sandbox',
+            clientName: 'Plaid Sandbox',
+            key: '9f4ef21fdb37b5c0e3f80290db7716',
+            product: ['auth'],
+            onSuccess: function(public_token, metadata) {
+                // Send the public_token to your app server here.
+                // The metadata object contains info about the
+                // institution the user selected and the
+                // account_id, if selectAccount is enabled.
+           },
+           onExit: function(err, metadata) {
+               // The user exited the Link flow.
+               if (err != null) {
+                   // The user encountered a Plaid API error
+                   // prior to exiting.
+               }
+               // metadata contains information about the
+               // institution that the user selected and the
+               // most recent API request IDs. Storing this
+               // information can be helpful for support.
+           }
+       });
+
+    //    document.getElementbyID('link-button').onclick =
+       function Authentication() {
+           document.getElementById("link-button").innerHTML = "Not Done!"
+           linkHandler.open();
+           document.getElementById("link-button").innerHTML = "Done!"
+       };
+
+    </script>
+
+</body>
+
+
+</html>
