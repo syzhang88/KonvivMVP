@@ -133,11 +133,25 @@
         } else {
           $('#get-transactions-data').slideUp(function() {
             var html = '';
+
             data.transactions.forEach(function(txn, idx) {
+                //code for displaying category for each transaction
+                var category = '';
+                if (txn.category) {
+                    category = txn.category[0]
+                    for (var i = 1; i < txn.category.length; i++) {
+                        category = category + ", " + txn.category[i]
+                    }
+                }
+                else {
+                    category = 'Uncategorized'
+                }
+
               html += '<div class="inner">';
               html += '<strong>' + txn.name + '</strong><br>';
-              html += '$' + txn.amount;
-              html += '<br><em>' + txn.date + '</em>';
+              html += '<em>' + category + '</em><br>';
+              html += '$' + txn.amount + '<br>';
+              html += '<em>' + txn.date + '</em>';
               html += '</div>';
             });
 
