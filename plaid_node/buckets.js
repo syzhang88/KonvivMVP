@@ -55,34 +55,33 @@ exports.selectBucket = function selectBucket (transaction) {
     return bucket
 }
 
-exports.sizeBuckets = function sizeBuckets (transactions) {
-    var buckets = {
-        'Groceries': 0,
-        'Eating Out': 0,
-        'Transportation': 0,
-        'Transportation': 0,
-        'Transportation': 0,
-        'Entertainment': 0,
-        'Entertainment': 0,
-        'Shopping': 0,
-        'Bills': 0,
-        'Subscriptions': 0
-    };
+exports.sizeBuckets = function sizeBuckets (transactions, bucketAmounts) {
+    // var bucketAmounts = {
+    //     'Groceries': 0,
+    //     'Eating Out': 0,
+    //     'Transportation': 0,
+    //     'Transportation': 0,
+    //     'Transportation': 0,
+    //     'Entertainment': 0,
+    //     'Entertainment': 0,
+    //     'Shopping': 0,
+    //     'Bills': 0,
+    //     'Subscriptions': 0
+    // };
 
-    // var userId = firebase.auth().currentUser.uid;
-    // for
-    // firebase.database().ref('/users/' + userId).once('value').then(function(snapshot) {
-    //     var username = snapshot.val().username;
-    //     // ...
-    // });
-    //
-    // for (bucket in predefinedBuckets) {
-    //     for transactions
-    //
-    // }
-    // for (var key in snapshot.val()) {
-    //     for (var item of snapshot.val()[key]['latest_receipt_info']) {
-    //         console.log(item.expires_date);
-    //     }
-    // }
+    var userId = firebase.auth().currentUser.uid;
+
+    for (bucket in predefinedBuckets) {
+        firebase.database().ref('/users/' + userId + '/' + bucket).then(function(snapshot) {
+            var totalAmount = 0;
+            for (var key in snapshot.val()) {
+                for (var amount of snapshot.val()[key]['amount']) {
+                    totalAmount += amount;
+                }
+            }
+            var monthlyAmount = totalAmount/180 * 31;
+            bucketAmounts[bucket] = monthlyAmount;
+        });
+    }
+    return bucketAmounts
 }
