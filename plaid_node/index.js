@@ -82,8 +82,8 @@ app.post('/get_access_token', function(request, response, next) {
         error: msg
       });
     }
-    // ACCESS_TOKEN = 'access-sandbox-bda31429-1f95-42c8-974f-fc6d34937da9'
-    ACCESS_TOKEN = tokenResponse.access_token;
+    ACCESS_TOKEN = 'access-sandbox-bda31429-1f95-42c8-974f-fc6d34937da9'
+    // ACCESS_TOKEN = tokenResponse.access_token;
     ITEM_ID = tokenResponse.item_id;
     console.log('Access Token: ' + ACCESS_TOKEN);
     console.log('Item ID: ' + ITEM_ID);
@@ -175,13 +175,13 @@ app.post('/transactions', function(request, response, next) {
     //
     // firebase.database().ref('items/' + USER_ID).update(postData);
 
-    transactionsResponse.transactions.forEach(function(txn) {
-        var bucket = buckets.selectBucket(txn);
+    transactionsResponse.transactions.forEach(function(transaction) {
+        var bucket = buckets.selectBucket(transaction);
         var newPostKey = txn.transaction_id;
         // var newPostKey = txn.name + txn.date + txn.amount + txn.transaction_type + txn.pending;
         var postData = {}
 
-        postData[newPostKey] = txn;
+        postData[newPostKey] = transaction;
         firebase.database().ref('items/' + USER_ID + "/" + bucket).update(postData);
     });
 
