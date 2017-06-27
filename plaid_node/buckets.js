@@ -1,6 +1,8 @@
 var firebase = require("firebase");
 
-const ESTIMATION_PERIOD = 180;
+// const ESTIMATION_PERIOD = 180;
+const MONTH_PERIOD = 31;
+
 
 var userBuckets = {}
 // Maps transaction names to user-selected buckets
@@ -55,7 +57,7 @@ exports.selectBucket = function selectBucket (transaction) {
     return bucket
 }
 
-exports.sizeBuckets = function sizeBuckets (transactions, bucketAmounts) {
+exports.sizeBuckets = function sizeBuckets (transactions, bucketsList, estimationPeriod) {
     // var bucketAmounts = {
     //     'Groceries': 0,
     //     'Eating Out': 0,
@@ -71,7 +73,7 @@ exports.sizeBuckets = function sizeBuckets (transactions, bucketAmounts) {
 
     var userId = firebase.auth().currentUser.uid;
 
-    for (bucket in predefinedBuckets) {
+    for (bucket in bucketsList) {
         firebase.database().ref('/users/' + userId + '/' + bucket).then(function(snapshot) {
             var totalAmount = 0;
             for (var key in snapshot.val()) {
@@ -79,9 +81,9 @@ exports.sizeBuckets = function sizeBuckets (transactions, bucketAmounts) {
                     totalAmount += amount;
                 }
             }
-            var monthlyAmount = totalAmount/180 * 31;
-            bucketAmounts[bucket] = monthlyAmount;
+            var monthlyAmount = totalAmount/estimationPeriod * MONTH_PERIOD;
+            bucketsList[bucket] = monthlyAmount;
         });
     }
-    return bucketAmounts
+    return bucketsList
 }
