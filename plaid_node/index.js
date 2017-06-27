@@ -177,7 +177,7 @@ app.post('/transactions', function(request, response, next) {
 
     transactionsResponse.transactions.forEach(function(transaction) {
         var bucket = buckets.selectBucket(transaction);
-        var newPostKey = txn.transaction_id;
+        var newPostKey = transaction.transaction_id;
         // var newPostKey = txn.name + txn.date + txn.amount + txn.transaction_type + txn.pending;
         var postData = {}
 
