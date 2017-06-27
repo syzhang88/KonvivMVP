@@ -5,6 +5,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var moment = require('moment');
 var plaid = require('plaid');
+var buckets = require('./buckets');
 
 // Begin Firebase code for configuration, initialization, and authentication
 var firebase = require("firebase");
@@ -81,6 +82,7 @@ app.post('/get_access_token', function(request, response, next) {
         error: msg
       });
     }
+    // ACCESS_TOKEN = 'access-sandbox-bda31429-1f95-42c8-974f-fc6d34937da9'
     ACCESS_TOKEN = tokenResponse.access_token;
     ITEM_ID = tokenResponse.item_id;
     console.log('Access Token: ' + ACCESS_TOKEN);
@@ -153,7 +155,7 @@ app.post('/item', function(request, response, next) {
 
 app.post('/transactions', function(request, response, next) {
   // Pull transactions for the Item for the last 30 days
-  var startDate = moment().subtract(180, 'days').format('YYYY-MM-DD');
+  var startDate = moment().subtract(30, 'days').format('YYYY-MM-DD');
   var endDate = moment().format('YYYY-MM-DD');
   client.getTransactions(ACCESS_TOKEN, startDate, endDate, {
     count: 250,
@@ -167,14 +169,27 @@ app.post('/transactions', function(request, response, next) {
     }
 
     // Begin Firebase code for updating transaction data
-    var postData = {
-        'transactions': transactionsResponse.transactions
-    };
-    firebase.database().ref('items/' + USER_ID).update(postData);
+    // var postData = {
+    //     'transactions': transactionsResponse.transactions
+    // };
+    //
+    // firebase.database().ref('items/' + USER_ID).update(postData);
+
+    transactionsResponse.transactions.forEach(function(txn) {
+        var bucket = buckets.selectBucket(txn);
+        var newPostKey = txn.transaction_id;
+        // var newPostKey = txn.name + txn.date + txn.amount + txn.transaction_type + txn.pending;
+        var postData = {}
+
+        postData[newPostKey] = txn;
+        firebase.database().ref('items/' + USER_ID + "/" + bucket).update(postData);
+    });
+
     console.log('saved transactions under: ' + USER_ID);
     // End Firebase code
 
     console.log('pulled ' + transactionsResponse.transactions.length + ' transactions');
+
     response.json(transactionsResponse);
   });
 });
