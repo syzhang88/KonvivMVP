@@ -5,11 +5,10 @@ const MONTH_PERIOD = 31;
 
 
 var userBuckets = {}
-// Maps transaction names to user-selected buckets
+// Maps transaction name to the
 
 var mostRecentBucket = {}
-//Maps transaction names to the bucket the user most recently selected
-
+//Maps transaction name to the bucket the user most recently selected for it
 
 var predefinedBuckets = {
     'Supermarkets and Groceries': 'Groceries',
@@ -24,15 +23,28 @@ var predefinedBuckets = {
     'Subscription': 'Subscriptions'
 };
 
-exports.editBucket = function editBucket (transaction, newBucket) {
-    if (selectBucket(transaction) != newBuckets) {
-        if (mostRecentBucket[transaction.name] == newBucket) {
-            userBuckets[transaction.name] = newBucket;
-        } else {
-            mostRecentBucket[transaction.name] = newBucket;
-        }
-    }
-};
+// var bucketAmounts = {
+//     'Groceries': 0,
+//     'Eating Out': 0,
+//     'Transportation': 0,
+//     'Transportation': 0,
+//     'Transportation': 0,
+//     'Entertainment': 0,
+//     'Entertainment': 0,
+//     'Shopping': 0,
+//     'Bills': 0,
+//     'Subscriptions': 0
+// };
+
+// exports.editBucket = function editBucket (transaction, newBucket) {
+//     if (selectBucket(transaction) != newBuckets) {
+//         if (mostRecentBucket[transaction.name] == newBucket) {
+//             userBuckets[transaction.name] = newBucket;
+//         } else {
+//             mostRecentBucket[transaction.name] = newBucket;
+//         }
+//     }
+// };
 
 
 exports.selectBucket = function selectBucket (transaction) {
@@ -57,20 +69,7 @@ exports.selectBucket = function selectBucket (transaction) {
     return bucket
 }
 
-exports.sizeBuckets = function sizeBuckets (transactions, bucketsList, estimationPeriod) {
-    // var bucketAmounts = {
-    //     'Groceries': 0,
-    //     'Eating Out': 0,
-    //     'Transportation': 0,
-    //     'Transportation': 0,
-    //     'Transportation': 0,
-    //     'Entertainment': 0,
-    //     'Entertainment': 0,
-    //     'Shopping': 0,
-    //     'Bills': 0,
-    //     'Subscriptions': 0
-    // };
-
+exports.estimateSize = function estimateSize (transactions, bucketsList, estimationPeriod) {
     var userId = firebase.auth().currentUser.uid;
 
     for (bucket in bucketsList) {
@@ -86,4 +85,24 @@ exports.sizeBuckets = function sizeBuckets (transactions, bucketsList, estimatio
         });
     }
     return bucketsList
+}
+
+exports.moveTransaction = function moveTransaction () {
+
+}
+
+exports.moveMoney = function moveMoney () {
+
+}
+
+exports.moneyRemaining = function moneyRemaining () {
+
+}
+
+exports.deleteBucket = function moveBucket () {
+
+}
+
+exports.newBucket = function moveBucket () {
+
 }
