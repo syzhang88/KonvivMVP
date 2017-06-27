@@ -4,11 +4,10 @@ var firebase = require("firebase");
 const MONTH_PERIOD = 31;
 
 
-var userBuckets = {}
-// Maps transaction name to the
-
-var mostRecentBucket = {}
 //Maps transaction name to the bucket the user most recently selected for it
+var mostRecentBucket = {}
+
+var userdefinedBuckets = {}
 
 var predefinedBuckets = {
     'Supermarkets and Groceries': 'Groceries',
@@ -36,16 +35,6 @@ var predefinedBuckets = {
 //     'Subscriptions': 0
 // };
 
-// exports.editBucket = function editBucket (transaction, newBucket) {
-//     if (selectBucket(transaction) != newBuckets) {
-//         if (mostRecentBucket[transaction.name] == newBucket) {
-//             userBuckets[transaction.name] = newBucket;
-//         } else {
-//             mostRecentBucket[transaction.name] = newBucket;
-//         }
-//     }
-// };
-
 
 exports.selectBucket = function selectBucket (transaction) {
     // console.log('New Selection:');
@@ -69,8 +58,7 @@ exports.selectBucket = function selectBucket (transaction) {
     return bucket
 }
 
-exports.estimateSize = function estimateSize (transactions, bucketsList, estimationPeriod) {
-    var userId = firebase.auth().currentUser.uid;
+exports.estimateSize = function estimateSize (transactions, userId, bucketsList, estimationPeriod) {
 
     for (bucket in bucketsList) {
         firebase.database().ref('/users/' + userId + '/' + bucket).then(function(snapshot) {
@@ -87,8 +75,36 @@ exports.estimateSize = function estimateSize (transactions, bucketsList, estimat
     return bucketsList
 }
 
-exports.moveTransaction = function moveTransaction () {
+// If the bucket the user is moving this transaction to matches the last
+// bucket the user moved a transaction with this name to (i.e., the user
+// moves transactions with the same name to the same bucket twice in a row),
+// automatically store that bucket in userdefinedBuckets to categorize all
+// transactions sharing this name to that bucket in the future.
+function reclassification (transaction, oldBucket, newBucket) {
+    if (oldBucket != newBuckets) {
+        if (mostRecentBucket[transaction.name] == newBucket) {
+            userBuckets[transaction.name] = newBucket;
+        } else {
+            mostRecentBucket[transaction.name] = newBucket;
+        }
+    }
 
+
+
+};
+
+exports.moveTransaction = function moveTransaction (transaction, userId, oldBucket, newBucket) {
+    reclassification(transaction, oldBucket, newBucket);
+    var newPostKey = transaction.transaction_id;
+    var postData = {}
+
+    postData[newPostKey] = transaction;
+
+    //add transaction to new bucket
+    firebase.database().ref('users/' + userId + "/" + newBucket).update(postData);
+
+    //delete transaction from old bucket
+    firebase.database().ref('users/' + userId + "/" + oldBucket).remove(postData);
 }
 
 exports.moveMoney = function moveMoney () {
@@ -99,10 +115,10 @@ exports.moneyRemaining = function moneyRemaining () {
 
 }
 
-exports.deleteBucket = function moveBucket () {
-
-}
-
-exports.newBucket = function moveBucket () {
-
-}
+// exports.deleteBucket = function moveBucket () {
+//
+// }
+//
+// exports.newBucket = function moveBucket () {
+//
+// }
