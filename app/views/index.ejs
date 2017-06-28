@@ -195,6 +195,15 @@
        $(this).slideDown(function() {
           $.post('/transactions', function(data) {
              data.transactions.forEach(function(txn, idx) {
+                // var per = 0;
+                // setInterval(function(){
+                // per++;
+                // if(per <= 100){
+                //     $('#load-bar').css({background: "linear-gradient(to right, #000000 "+per+"%,#feffff "+per+"%,#feffff 100%)"});
+                //
+                // }
+                //
+                // }, 100);
                var per = txn.amount;
                console.log('loading per: ' + per);
                 $('#load-bar-frame').css({background: "linear-gradient(to right, #000000 "

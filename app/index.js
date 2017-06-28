@@ -206,3 +206,6 @@ app.post('/transactions', function(request, response, next) {
 var server = app.listen(APP_PORT, function() {
   console.log('plaid-walkthrough server listening on port ' + APP_PORT);
 });
+
+
+// SAVE ACCESS TOKEN !!!

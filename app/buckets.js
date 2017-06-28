@@ -3,7 +3,6 @@ var firebase = require("firebase");
 // const ESTIMATION_PERIOD = 180;
 const MONTH_PERIOD = 30;
 
-
 //Maps transaction name to the bucket the user most recently selected for it
 var mostRecentBucket = {}
 
@@ -21,6 +20,18 @@ var predefinedBuckets = {
     'Utilities': 'Bills',
     'Subscription': 'Subscriptions'
 };
+
+var nameBuckets = {
+    'Groceries': 'Groceries',
+    'Eating Out': 'Eating Out',
+    'Transportation': 'Transportation',
+    'Entertainment': 'Entertainment',
+    'Shopping': 'Shopping',
+    'Bills': 'Bills',
+    'Subscriptions': 'Subscriptions',
+    'Income': 'Income',
+    'General Spending': 'General Spending'
+}
 
 exports.selectBucket = function selectBucket (transaction) {
     // console.log('New Selection:');
@@ -56,12 +67,9 @@ exports.estimateSize = function estimateSize (transactions, userId, estimationPe
         'Subscriptions': 0,
         'Income': 0
     };
-
     // console.log('running bucket estimations...');
-
     firebase.database().ref(pathTransaction).once('value').then(function(snapshot) {
-        var allBucketAmounts = 0;
-
+        var monthlyBucketSum = 0;
         for (var bucket in bucketAmounts) {
             var totalBucketAmount = 0;
             for (var key in snapshot.val()[bucket]) {
@@ -70,16 +78,19 @@ exports.estimateSize = function estimateSize (transactions, userId, estimationPe
                     totalBucketAmount += amount;
                 }
             }
-
             var monthlyBucketAmount = totalBucketAmount/estimationPeriod * MONTH_PERIOD;
-            bucketAmounts[bucket] = monthlyBucketAmount;
 
-            allBucketAmounts += monthlyBucketAmount;
+            bucketAmounts[bucket] = {'Total': monthlyBucketAmount,
+                'Remainings': monthlyBucketAmount, 'Name': nameBuckets[bucket]};
+
+            monthlyBucketSum += monthlyBucketAmount;
         }
-
-        bucketAmounts['General Spending '] = -Math.max(bucketAmounts['Income'] - allBucketAmounts, 0);
-
+        var generalBucket = -Math.max(bucketAmounts['Income']['Total'] - monthlyBucketSum, 0);
+        bucketAmounts['General Spending'] = {'Total': generalBucket,
+            'Total': generalBucket, 'Name': nameBuckets['General Spending']};
+            generalBucket;
         firebase.database().ref(pathMoney).update(bucketAmounts);
+
         console.log('uploaded bucket estimations');
     });
 }
@@ -102,7 +113,10 @@ function reclassification (transaction, oldBucket, newBucket) {
 // oldDbPath and newDbPath each are firebase.database().ref('...')
 // oldDbPath and newDbPath are manually entered because of abstraction, to
 // simplify modifying firebase structure
-exports.moveTransaction = function moveTransaction (transaction, oldBucket, newBucket, oldPath, newPath) {
+exports.moveTransaction = function moveTransaction (transaction, oldBucket, newBucket, path) {
+    // var names = Object.keys(nameBuckets);
+    // if (names.indexOf(oldBucket) < 0 || names.indexOf(newBucket) < 0 ) throw "not a bucket";
+
     reclassification(transaction, oldBucket, newBucket);
     var newPostKey = transaction.transaction_id;
     var postData = {}
@@ -110,10 +124,21 @@ exports.moveTransaction = function moveTransaction (transaction, oldBucket, newB
     postData[newPostKey] = transaction;
 
     //add transaction to new bucket
-    newPath.update(postData);
+    firebase.database().ref(path + newBucket).update(postData);
 
     //delete transaction from old bucket
-    oldPath.remove(postData);
+    firebase.database().ref(path + oldBucket).remove(postData);
+}
+
+// SAVE ACCESS TOKEN !!!
+
+exports.renameBucket = function renameBucket (newName, oldName) {
+    for (var key in nameBuckets) {
+        if (nameBuckets[key] == oldName) {
+            nameBuckets[key] = newName;
+            console.log('bucket ' + oldName + ' has been named ' + newName);
+        }
+    }
 }
 
 // exports.moveMoney = function moveMoney () {
