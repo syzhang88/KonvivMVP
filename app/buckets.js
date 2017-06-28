@@ -100,7 +100,9 @@ function reclassification (transaction, oldBucket, newBucket) {
 };
 
 // oldDbPath and newDbPath each are firebase.database().ref('...')
-exports.moveTransaction = function moveTransaction (transaction, oldPath, newPath) {
+// oldDbPath and newDbPath are manually entered because of abstraction, to
+// simplify modifying firebase structure
+exports.moveTransaction = function moveTransaction (transaction, oldBucket, newBucket, oldPath, newPath) {
     reclassification(transaction, oldBucket, newBucket);
     var newPostKey = transaction.transaction_id;
     var postData = {}
