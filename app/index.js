@@ -194,7 +194,7 @@ app.post('/transactions', function(request, response, next) {
     buckets.estimateSize(transactionsResponse.transactions, USER_ID, NUMBER_DAYS,
         pathTransaction, pathMoney);
 
-    console.log('saved transactions under: ' + USER_ID);
+    console.log('saved transactions under ' + USER_ID);
     // End Firebase code
 
     console.log('pulled ' + transactionsResponse.transactions.length + ' transactions');
@@ -206,6 +206,3 @@ app.post('/transactions', function(request, response, next) {
 var server = app.listen(APP_PORT, function() {
   console.log('plaid-walkthrough server listening on port ' + APP_PORT);
 });
-
-
-// SAVE ACCESS TOKEN !!!

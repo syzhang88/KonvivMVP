@@ -113,6 +113,7 @@
     // });
 
 /*** POTENTIAL TO PUT BUCKETS BUTTON ******/
+    const USER_ID = 'samUnwise';
 
 
     $('#get-item-btn').on('click', function(e) {
@@ -193,26 +194,46 @@
     $('#get-buckets-btn').click(function(e){
 
        $(this).slideDown(function() {
-          $.post('/transactions', function(data) {
-             data.transactions.forEach(function(txn, idx) {
-                // var per = 0;
-                // setInterval(function(){
-                // per++;
-                // if(per <= 100){
-                //     $('#load-bar').css({background: "linear-gradient(to right, #000000 "+per+"%,#feffff "+per+"%,#feffff 100%)"});
-                //
-                // }
-                //
-                // }, 100);
-               var per = txn.amount;
-               console.log('loading per: ' + per);
-                $('#load-bar-frame').css({background: "linear-gradient(to right, #000000 "
-                  +per+"%,#feffff "+per+"%,#feffff 100%)"});
 
+        //    var bucketRef = firebase.database().ref('users/' + USER_ID + '/bucketMoney');
+           //
+        //    bucketRef.on('value', function(snapshot) {
+        //        for (var bucket in snapshot.val()) {
+        //            if (dictionary.hasOwnProperty(bucket)) {
+        //                var per = bucket['Remaining'];
+        //                setInterval(function(){
+        //                    per++;
+        //                    if(per <= bucket['Total']){
+        //                        $('#load-bar').css({background: "linear-gradient(to right, #000000 "
+        //                             + per+"%,#feffff "+per+"%,#feffff 100%)"});
+           //
+        //                    }
+        //                }, 100);
+        //            }
+        //        }
+        //    });
 
-             });
+        //    var per = 0;
+        //    setInterval(function(){
+        //    per++;
+        //    if(per <= 100){
+        //        $('#load-bar').css({background: "linear-gradient(to right, #000000 "+per+"%,#feffff "+per+"%,#feffff 100%)"});
+           //
+        //    }
+           //
+        //    }, 100);
 
-     });
+    //       $.post('/transactions', function(data) {
+    //          data.transactions.forEach(function(txn, idx) {
+    //            var per = txn.amount;
+    //            console.log('loading per: ' + per);
+    //             $('#load-bar-frame').css({background: "linear-gradient(to right, #000000 "
+    //               +per+"%,#feffff "+per+"%,#feffff 100%)"});
+    //
+    //
+    //          });
+    //
+    //  });
     });
     });
 

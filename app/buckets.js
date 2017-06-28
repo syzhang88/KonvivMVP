@@ -87,7 +87,7 @@ exports.estimateSize = function estimateSize (transactions, userId, estimationPe
         }
         var generalBucket = -Math.max(bucketAmounts['Income']['Total'] - monthlyBucketSum, 0);
         bucketAmounts['General Spending'] = {'Total': generalBucket,
-            'Total': generalBucket, 'Name': nameBuckets['General Spending']};
+            'Remaining': generalBucket, 'Name': nameBuckets['General Spending']};
             generalBucket;
         firebase.database().ref(pathMoney).update(bucketAmounts);
 
