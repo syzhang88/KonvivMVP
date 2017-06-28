@@ -168,3 +168,21 @@ button:hover {
   background: #3ab683;
   color: #fff;
 }
+#load-bar-frame {
+  height: 100px;
+  width: 100px;
+  border-radius: 100%;
+  padding: 3px;
+  border: 1px solid #000;
+  margin: 20px auto 0 auto;
+  display: block;
+  position: absolute;
+  top 20px;
+  left: 20px;
+}
+
+#load-bar {
+  width: 100%; /* in this case 20% would be the current progress */
+  height: 100%;
+  border-radius: 100%;
+}

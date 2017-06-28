@@ -182,7 +182,7 @@ app.post('/transactions', function(request, response, next) {
         var postData = {}
 
         postData[newPostKey] = transaction;
-        firebase.database().ref('items/' + USER_ID + "/" + bucket).update(postData);
+        firebase.database().ref('users/' + USER_ID + "/" + bucket).update(postData);
     });
 
     console.log('saved transactions under: ' + USER_ID);

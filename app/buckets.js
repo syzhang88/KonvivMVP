@@ -42,8 +42,8 @@ exports.selectBucket = function selectBucket (transaction) {
     if (transaction.amount < 0) {
         return 'Income';
     }
-    if (userBuckets[transaction.name]) {
-        return userBuckets[transaction.name];
+    if (userdefinedBuckets[transaction.name]) {
+        return userdefinedBuckets[transaction.name];
     }
     if (transaction.category ==  null) {
         return 'General Spending';
@@ -83,14 +83,11 @@ exports.estimateSize = function estimateSize (transactions, userId, bucketsList,
 function reclassification (transaction, oldBucket, newBucket) {
     if (oldBucket != newBuckets) {
         if (mostRecentBucket[transaction.name] == newBucket) {
-            userBuckets[transaction.name] = newBucket;
+            userdefinedBuckets[transaction.name] = newBucket;
         } else {
             mostRecentBucket[transaction.name] = newBucket;
         }
     }
-
-
-
 };
 
 exports.moveTransaction = function moveTransaction (transaction, userId, oldBucket, newBucket) {
@@ -107,13 +104,15 @@ exports.moveTransaction = function moveTransaction (transaction, userId, oldBuck
     firebase.database().ref('users/' + userId + "/" + oldBucket).remove(postData);
 }
 
-exports.moveMoney = function moveMoney () {
+// exports.moveMoney = function moveMoney () {
+//     //subtract from this bucket
+//     //add to that bucket
+// }
 
-}
-
-exports.moneyRemaining = function moneyRemaining () {
-
-}
+// exports.moneyRemaining = function moneyRemaining () {
+//     //sum up transaction
+//     //subtract from bucket total
+// }
 
 // exports.deleteBucket = function moveBucket () {
 //
