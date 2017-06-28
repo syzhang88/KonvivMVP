@@ -99,7 +99,8 @@ function reclassification (transaction, oldBucket, newBucket) {
     }
 };
 
-exports.moveTransaction = function moveTransaction (transaction, userId, oldBucket, newBucket) {
+// oldDbPath and newDbPath each are firebase.database().ref('...')
+exports.moveTransaction = function moveTransaction (transaction, oldPath, newPath) {
     reclassification(transaction, oldBucket, newBucket);
     var newPostKey = transaction.transaction_id;
     var postData = {}
@@ -107,10 +108,10 @@ exports.moveTransaction = function moveTransaction (transaction, userId, oldBuck
     postData[newPostKey] = transaction;
 
     //add transaction to new bucket
-    firebase.database().ref('users/' + userId + "/" + newBucket).update(postData);
+    newPath.update(postData);
 
     //delete transaction from old bucket
-    firebase.database().ref('users/' + userId + "/" + oldBucket).remove(postData);
+    oldPath.remove(postData);
 }
 
 // exports.moveMoney = function moveMoney () {

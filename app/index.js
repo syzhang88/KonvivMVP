@@ -113,7 +113,7 @@ app.get('/accounts', function(request, response, next) {
     var postData = {
         'accounts': authResponse.accounts
     };
-    firebase.database().ref('items/' + USER_ID).update(postData);
+    firebase.database().ref('users/' + USER_ID).update(postData);
     console.log('posted item for: ' + USER_ID);
     // End Firebase code
 
@@ -175,7 +175,7 @@ app.post('/transactions', function(request, response, next) {
     //     'transactions': transactionsResponse.transactions
     // };
     //
-    // firebase.database().ref('items/' + USER_ID).update(postData);
+    // firebase.database().ref('users/' + USER_ID).update(postData);
 
     transactionsResponse.transactions.forEach(function(transaction) {
         var bucket = buckets.selectBucket(transaction);
@@ -193,7 +193,7 @@ app.post('/transactions', function(request, response, next) {
     var pathMoney = 'users/' + USER_ID + "/bucketMoney";
     buckets.estimateSize(transactionsResponse.transactions, USER_ID, NUMBER_DAYS,
         pathTransaction, pathMoney);
-        
+
     console.log('saved transactions under: ' + USER_ID);
     // End Firebase code
 
