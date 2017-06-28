@@ -22,20 +22,6 @@ var predefinedBuckets = {
     'Subscription': 'Subscriptions'
 };
 
-// var bucketAmounts = {
-//     'Groceries': 0,
-//     'Eating Out': 0,
-//     'Transportation': 0,
-//     'Transportation': 0,
-//     'Transportation': 0,
-//     'Entertainment': 0,
-//     'Entertainment': 0,
-//     'Shopping': 0,
-//     'Bills': 0,
-//     'Subscriptions': 0
-// };
-
-
 exports.selectBucket = function selectBucket (transaction) {
     // console.log('New Selection:');
     var bucket = 'General Spending';
@@ -58,21 +44,49 @@ exports.selectBucket = function selectBucket (transaction) {
     return bucket
 }
 
-exports.estimateSize = function estimateSize (transactions, userId, bucketsList, estimationPeriod) {
+exports.estimateSize = function estimateSize (transactions, userId, estimationPeriod) {
+    var bucketAmounts = {
+        'Groceries': 0,
+        'Eating Out': 0,
+        'Transportation': 0,
+        'Entertainment': 0,
+        'Shopping': 0,
+        'Bills': 0,
+        'Subscriptions': 0,
+        'Income': 0
+    };
+    var allBucketAmounts = 0;
 
-    for (bucket in bucketsList) {
-        firebase.database().ref('/users/' + userId + '/' + bucket).then(function(snapshot) {
-            var totalAmount = 0;
-            for (var key in snapshot.val()) {
-                for (var amount of snapshot.val()[key]['amount']) {
-                    totalAmount += amount;
+    firebase.database().ref('/users/' + userId).once('value').then(function(snapshot) {
+        for (var bucket in bucketAmounts) {
+            console.log('running bucket estimations...');
+
+            var totalBucketAmount = 0;
+            for (var key in snapshot.val()[bucket]) {
+                if (snapshot.val()[key]) {
+                    var amount = snapshot.val()[key]['amount'];
+                    if (bucket === "Income") {
+                        amount = -amount;
+                    }
+                    totalBucketAmount += amount;
                 }
             }
-            var monthlyAmount = totalAmount/estimationPeriod * MONTH_PERIOD;
-            bucketsList[bucket] = monthlyAmount;
-        });
-    }
-    return bucketsList
+
+            var monthlyBucketAmount = totalBucketAmount/estimationPeriod * MONTH_PERIOD;
+
+            bucketAmounts[bucket] = monthlyBucketAmount;
+            console.log(bucket + ': ' + bucketAmounts[bucket]);
+            allBucketAmounts += monthlyBucketAmount;
+        }
+    });
+
+    bucketAmounts['General Spending '] = Math.max(bucketAmounts['Income'] - allBucketAmounts, 0);
+
+    // console.log('running bucket estimations...');
+    // for (var key in bucketAmounts) {
+    //     console.log(key + ': ' + bucketAmounts[key]);
+    // }
+    return bucketAmounts
 }
 
 // If the bucket the user is moving this transaction to matches the last

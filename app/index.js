@@ -8,6 +8,8 @@ var plaid = require('plaid');
 var buckets = require('./buckets');
 
 // Begin Firebase code for configuration, initialization, and authentication
+var NUMBER_DAYS = 30;
+
 var firebase = require("firebase");
 
 var config = {
@@ -155,7 +157,7 @@ app.post('/item', function(request, response, next) {
 
 app.post('/transactions', function(request, response, next) {
   // Pull transactions for the Item for the last 30 days
-  var startDate = moment().subtract(30, 'days').format('YYYY-MM-DD');
+  var startDate = moment().subtract(NUMBER_DAYS, 'days').format('YYYY-MM-DD');
   var endDate = moment().format('YYYY-MM-DD');
   client.getTransactions(ACCESS_TOKEN, startDate, endDate, {
     count: 250,
@@ -183,7 +185,17 @@ app.post('/transactions', function(request, response, next) {
 
         postData[newPostKey] = transaction;
         firebase.database().ref('users/' + USER_ID + "/" + bucket).update(postData);
+
+
     });
+
+    var bucketAmounts = buckets.estimateSize(transactionsResponse.transactions, USER_ID, NUMBER_DAYS);
+
+    console.log('finishing bucket estimations...');
+    for (var key in bucketAmounts) {
+        console.log(key + ': ' + bucketAmounts[key]);
+
+    }
 
     console.log('saved transactions under: ' + USER_ID);
     // End Firebase code
