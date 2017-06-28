@@ -1,7 +1,7 @@
 var firebase = require("firebase");
 
 // const ESTIMATION_PERIOD = 180;
-const MONTH_PERIOD = 31;
+const MONTH_PERIOD = 30;
 
 
 //Maps transaction name to the bucket the user most recently selected for it
@@ -44,7 +44,8 @@ exports.selectBucket = function selectBucket (transaction) {
     return bucket
 }
 
-exports.estimateSize = function estimateSize (transactions, userId, estimationPeriod) {
+exports.estimateSize = function estimateSize (transactions, userId, estimationPeriod, pathTransaction,
+    pathMoney) {
     var bucketAmounts = {
         'Groceries': 0,
         'Eating Out': 0,
@@ -55,38 +56,32 @@ exports.estimateSize = function estimateSize (transactions, userId, estimationPe
         'Subscriptions': 0,
         'Income': 0
     };
-    var allBucketAmounts = 0;
 
-    firebase.database().ref('/users/' + userId).once('value').then(function(snapshot) {
+    // console.log('running bucket estimations...');
+
+    firebase.database().ref(pathTransaction).once('value').then(function(snapshot) {
+        var allBucketAmounts = 0;
+
         for (var bucket in bucketAmounts) {
-            console.log('running bucket estimations...');
-
             var totalBucketAmount = 0;
             for (var key in snapshot.val()[bucket]) {
-                if (snapshot.val()[key]) {
-                    var amount = snapshot.val()[key]['amount'];
-                    if (bucket === "Income") {
-                        amount = -amount;
-                    }
+                if (snapshot.val()[bucket][key]) {
+                    var amount = snapshot.val()[bucket][key]['amount'];
                     totalBucketAmount += amount;
                 }
             }
 
             var monthlyBucketAmount = totalBucketAmount/estimationPeriod * MONTH_PERIOD;
-
             bucketAmounts[bucket] = monthlyBucketAmount;
-            console.log(bucket + ': ' + bucketAmounts[bucket]);
+
             allBucketAmounts += monthlyBucketAmount;
         }
+
+        bucketAmounts['General Spending '] = -Math.max(bucketAmounts['Income'] - allBucketAmounts, 0);
+
+        firebase.database().ref(pathMoney).update(bucketAmounts);
+        console.log('uploaded bucket estimations');
     });
-
-    bucketAmounts['General Spending '] = Math.max(bucketAmounts['Income'] - allBucketAmounts, 0);
-
-    // console.log('running bucket estimations...');
-    // for (var key in bucketAmounts) {
-    //     console.log(key + ': ' + bucketAmounts[key]);
-    // }
-    return bucketAmounts
 }
 
 // If the bucket the user is moving this transaction to matches the last

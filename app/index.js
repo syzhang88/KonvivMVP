@@ -184,19 +184,16 @@ app.post('/transactions', function(request, response, next) {
         var postData = {}
 
         postData[newPostKey] = transaction;
-        firebase.database().ref('users/' + USER_ID + "/" + bucket).update(postData);
+        firebase.database().ref('users/' + USER_ID + "/bucketTransactions/" + bucket).update(postData);
 
 
     });
 
-    var bucketAmounts = buckets.estimateSize(transactionsResponse.transactions, USER_ID, NUMBER_DAYS);
-
-    console.log('finishing bucket estimations...');
-    for (var key in bucketAmounts) {
-        console.log(key + ': ' + bucketAmounts[key]);
-
-    }
-
+    var pathTransaction = 'users/' + USER_ID + "/bucketTransactions/";
+    var pathMoney = 'users/' + USER_ID + "/bucketMoney";
+    buckets.estimateSize(transactionsResponse.transactions, USER_ID, NUMBER_DAYS,
+        pathTransaction, pathMoney);
+        
     console.log('saved transactions under: ' + USER_ID);
     // End Firebase code
 
