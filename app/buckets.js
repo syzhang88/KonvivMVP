@@ -1,9 +1,8 @@
 var firebase = require("firebase");
 
-// const ESTIMATION_PERIOD = 180;
 const MONTH_PERIOD = 30;
 
-//Maps transaction name to the bucket the user most recently selected for it
+// Maps transaction name to the bucket the user most recently selected for it
 var mostRecentBucket = {}
 
 var userdefinedBuckets = {}
