@@ -186,3 +186,11 @@ button:hover {
   height: 100%;
   border-radius: 100%;
 }
+
+.bucketclass {
+    display:block;
+    float:left;
+    position:relative;
+    width:120px;
+    border:1px solid #777;
+}

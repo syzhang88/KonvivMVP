@@ -48,7 +48,7 @@
 
    <div class = "box">
       <button id="get-buckets-btn">Buckets</button>
-      <div id="load-bar-frame">
+      <div id="load-bar-frame" class="bucketclass">
           <div id="load-bar"></div>
       </div>
    </div>
@@ -59,8 +59,6 @@
   <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
   <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
   <script>
-  const USER_ID = 'samUnwise';
-
   (function($) {
     var handler = Plaid.create({
       apiVersion: 'v2',
@@ -143,7 +141,7 @@
             });
           });
         } else {
-          $('#get-transactions-data').slideUp(function() {
+            $('#get-transactions-data').slideUp(function() {
             var html = '';
             data.transactions.forEach(function(txn, idx) {
                 //code for displaying category for each transaction
@@ -157,35 +155,54 @@
                 else {
                     category = 'Uncategorized'
                 }
-              html += '<div class="inner">';
-              html += '<strong>' + txn.name + '</strong><br>';
-              html += '<em>' + category + '</em><br>';
-              html += '$' + txn.amount + '<br>';
-              html += '<em>' + txn.date + '</em>';
-              html += '</div>';
+                html += '<div class="inner">';
+                html += '<strong>' + txn.name + '</strong><br>';
+                html += '<em>' + category + '</em><br>';
+                html += '$' + txn.amount + '<br>';
+                html += '<em>' + txn.date + '</em>';
+                html += '</div>';
             });
 
             $(this).slideUp(function() {
-              $(this).html(html).slideDown();
+                $(this).html(html).slideDown();
             });
           });
         }
       });
     });
 
-    /*** POTENTIAL TO PUT BUCKETS BUTTON ******/
+    // Buckets Button
     $('#get-buckets-btn').click(function(e){
-       $(this).slideDown(function() {
+        $(this).slideDown(function() {
             $.get('/buckets', function(data) {
-                for (var key in data) {
-                    console.log("key: " + key + ", remaining: " + data[key]['Remaining']);
-                    var per = 0;
-                    setInterval(function(){
-                        per++;
-                        if(per <= data[key]['Remaining']/data[key]['total']*100){
-                           $('#load-bar').css({background: "linear-gradient(to right, #000000 "+per+"%,#feffff "+per+"%,#feffff 100%)"});
+                if (data.error != null) {
+                    // Format the error
+                    var errorHtml = '<div class="inner"><p>' +
+                    '<strong>' + data.error.error_code + ':</strong> ' +
+                    ata.error.error_message + '</p></div>';
+                    // Render the error
+                    $('#get-transactions-data').slideUp(function() {
+                        $(this).slideUp(function() {
+                            $(this).html(errorHtml).slideDown();
+                        });
+                    });
+                } else {
+                    for (var key in data) {
+                        var per = 0;
+                        var fillPercent = 0;
+                        if (data[key]['Total'] > 0) {
+                            fillPercent = data[key]['Remaining']/data[key]['Total']*100
                         }
-                    }, 100);
+                        console.log("Bucket: " + key + ", Remaining amount: " + data[key]['Remaining']
+                        + "/" + data[key]['Remaining']  + " = " + fillPercent);
+                        setInterval(function() {
+                            per++;
+                            if(per <= fillPercent) {
+                               $('#load-bar').css({background: "linear-gradient(to right, #000000 "+per+"%,#feffff "
+                               +per+"%,#feffff 100%)"});
+                            }
+                        }, 100);
+                    }
                 }
             });
         });

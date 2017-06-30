@@ -33,6 +33,8 @@ var nameBuckets = {
     'General Spending': 'General Spending'
 }
 
+
+// Chooses which bucket a transaction belongs to
 exports.selectBucket = function selectBucket (transaction) {
     // console.log('New Selection:');
     var bucket = 'General Spending';
@@ -55,6 +57,8 @@ exports.selectBucket = function selectBucket (transaction) {
     return bucket
 }
 
+// Estimates the size of a bucket given transactions from a given interval of
+// days, which is passed in as estimationPeriod
 exports.estimateSize = function estimateSize (transactions, userId, estimationPeriod, pathTransaction,
     pathMoney) {
     var bucketAmounts = {
@@ -67,7 +71,6 @@ exports.estimateSize = function estimateSize (transactions, userId, estimationPe
         'Subscriptions': 0,
         'Income': 0
     };
-    // console.log('running bucket estimations...');
     firebase.database().ref(pathTransaction).once('value').then(function(snapshot) {
         var monthlyBucketSum = 0;
         for (var bucket in bucketAmounts) {
@@ -113,7 +116,7 @@ function reclassification (transaction, oldBucket, newBucket) {
 // oldDbPath and newDbPath each are firebase.database().ref('...')
 // oldDbPath and newDbPath are manually entered because of abstraction, to
 // simplify modifying firebase structure
-exports.moveTransaction = function moveTransaction (transaction, oldBucket, newBucket, path) {
+exports.moveTransaction = function moveTransaction (transaction, oldBucketPath, newBucketPath, path) {
     // var names = Object.keys(nameBuckets);
     // if (names.indexOf(oldBucket) < 0 || names.indexOf(newBucket) < 0 ) throw "not a bucket";
 
@@ -130,8 +133,36 @@ exports.moveTransaction = function moveTransaction (transaction, oldBucket, newB
     firebase.database().ref(path + oldBucket).remove(postData);
 }
 
-// SAVE ACCESS TOKEN !!!
+// moveMoney returns false IF you subtract more money from a bucket than you
+// have remaining in it
+exports.moveMoney = function moveMoney (amount, oldBucketPath, newBucketPath) {
+    var newPostKey = transaction.transaction_id;
+    var oldBucket = {}
+    var newBucket = {}
 
+    //subtract from this bucket
+    firebase.database().ref(oldBucketPath).once('value').then(function(snapshot) {
+        if (snapshot.val()['Remaining'] - amount) > 0) {
+            oldBucket['Remaining'] = snapshot.val()['Remaining'] - amount;
+            oldBucket['Total'] = snapshot.val()['Total'] - amount;
+        } else {
+            return false;
+        }
+    }
+    firebase.database().ref(oldBucketPath).remove(oldBucket);
+
+    //add to that bucket
+    firebase.database().ref(newBucketPath).once('value').then(function(snapshot) {
+        newBucket['Remaining'] = snapshot.val()['Remaining'] + amount;
+        newBucket['Total'] = snapshot.val()['Total'] + amount;
+    }
+    firebase.database().ref(newBucketPath).update(newBucket);
+
+    return true;
+}
+
+// Each bucket has a key named 'Name' in its hashtable (dictionary) underneath
+// the branch /bucketMoney on Firebase. You can change this name here
 exports.renameBucket = function renameBucket (newName, oldName) {
     for (var key in nameBuckets) {
         if (nameBuckets[key] == oldName) {
@@ -141,20 +172,10 @@ exports.renameBucket = function renameBucket (newName, oldName) {
     }
 }
 
-// exports.moveMoney = function moveMoney () {
-//     //subtract from this bucket
-//     //add to that bucket
-// }
-
-// exports.moneyRemaining = function moneyRemaining () {
-//     //sum up transaction
-//     //subtract from bucket total
-// }
-
-// exports.deleteBucket = function moveBucket () {
+// exports.deleteBucket = function deleteBucket () {
 //
 // }
 //
-// exports.newBucket = function moveBucket () {
+// exports.addBucket = function addBucket () {
 //
 // }
