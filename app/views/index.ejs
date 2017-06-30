@@ -30,41 +30,37 @@
   </div>
 
   <div id="app">
-  <!--   <div class="box">
-      <button id="get-accounts-btn">Accounts Information</button>
+    <div class="box">
+      <button id="get-accounts-btn">Get Accounts</button>
       <div id="get-accounts-data"></div>
-    </div> -->
+    </div>
 
-<!--     <div class="box">
+    <div class="box">
       <button id="get-item-btn">Get Item</button>
       <div id="get-item-data"></div>
     </div>
- -->
-
-
 
     <div class="box">
-      <button id="get-transactions-btn">Transactions</button>
+      <button id="get-transactions-btn">Get Transactions</button>
       <div id="get-transactions-data"></div>
     </div>
 
 
-       <div class = "box">
-          <button id="get-buckets-btn">Buckets</button>
-          <div class="hidden">This is the content</div>
-
-          <div id="load-bar-frame">
-            <div id="load-bar"></div>
-          </div>
+   <div class = "box">
+      <button id="get-buckets-btn">Buckets</button>
+      <div id="load-bar-frame">
+          <div id="load-bar"></div>
       </div>
+   </div>
 
   </div>
 
-
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
   <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
   <script>
+  const USER_ID = 'samUnwise';
+
   (function($) {
     var handler = Plaid.create({
       apiVersion: 'v2',
@@ -104,17 +100,6 @@
         });
       });
     });
-
-    // $("get-buckets-btn").click(function(){
-
-    //     console.log('inside function');
-
-    //     $('#content').load( '../buckets_page.html' );
-    // });
-
-/*** POTENTIAL TO PUT BUCKETS BUTTON ******/
-    const USER_ID = 'samUnwise';
-
 
     $('#get-item-btn').on('click', function(e) {
       $.post('/item', function(data) {
@@ -160,9 +145,7 @@
         } else {
           $('#get-transactions-data').slideUp(function() {
             var html = '';
-
             data.transactions.forEach(function(txn, idx) {
-
                 //code for displaying category for each transaction
                 var category = '';
                 if (txn.category) {
@@ -174,7 +157,6 @@
                 else {
                     category = 'Uncategorized'
                 }
-
               html += '<div class="inner">';
               html += '<strong>' + txn.name + '</strong><br>';
               html += '<em>' + category + '</em><br>';
@@ -191,53 +173,24 @@
       });
     });
 
+    /*** POTENTIAL TO PUT BUCKETS BUTTON ******/
     $('#get-buckets-btn').click(function(e){
-
        $(this).slideDown(function() {
+            $.get('/buckets', function(data) {
+                for (var key in data) {
+                    console.log("key: " + key + ", remaining: " + data[key]['Remaining']);
+                    var per = 0;
+                    setInterval(function(){
+                        per++;
+                        if(per <= data[key]['Remaining']/data[key]['total']*100){
+                           $('#load-bar').css({background: "linear-gradient(to right, #000000 "+per+"%,#feffff "+per+"%,#feffff 100%)"});
+                        }
+                    }, 100);
+                }
+            });
+        });
 
-        //    var bucketRef = firebase.database().ref('users/' + USER_ID + '/bucketMoney');
-           //
-        //    bucketRef.on('value', function(snapshot) {
-        //        for (var bucket in snapshot.val()) {
-        //            if (dictionary.hasOwnProperty(bucket)) {
-        //                var per = bucket['Remaining'];
-        //                setInterval(function(){
-        //                    per++;
-        //                    if(per <= bucket['Total']){
-        //                        $('#load-bar').css({background: "linear-gradient(to right, #000000 "
-        //                             + per+"%,#feffff "+per+"%,#feffff 100%)"});
-           //
-        //                    }
-        //                }, 100);
-        //            }
-        //        }
-        //    });
-
-        //    var per = 0;
-        //    setInterval(function(){
-        //    per++;
-        //    if(per <= 100){
-        //        $('#load-bar').css({background: "linear-gradient(to right, #000000 "+per+"%,#feffff "+per+"%,#feffff 100%)"});
-           //
-        //    }
-           //
-        //    }, 100);
-
-    //       $.post('/transactions', function(data) {
-    //          data.transactions.forEach(function(txn, idx) {
-    //            var per = txn.amount;
-    //            console.log('loading per: ' + per);
-    //             $('#load-bar-frame').css({background: "linear-gradient(to right, #000000 "
-    //               +per+"%,#feffff "+per+"%,#feffff 100%)"});
-    //
-    //
-    //          });
-    //
-    //  });
     });
-    });
-
-
   })(jQuery);
   </script>
 </body>

@@ -81,7 +81,7 @@ exports.estimateSize = function estimateSize (transactions, userId, estimationPe
             var monthlyBucketAmount = totalBucketAmount/estimationPeriod * MONTH_PERIOD;
 
             bucketAmounts[bucket] = {'Total': monthlyBucketAmount,
-                'Remainings': monthlyBucketAmount, 'Name': nameBuckets[bucket]};
+                'Remaining': monthlyBucketAmount, 'Name': nameBuckets[bucket]};
 
             monthlyBucketSum += monthlyBucketAmount;
         }

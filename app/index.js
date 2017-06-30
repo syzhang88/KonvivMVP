@@ -171,22 +171,12 @@ app.post('/transactions', function(request, response, next) {
     }
 
     // Begin Firebase code for updating transaction data
-    // var postData = {
-    //     'transactions': transactionsResponse.transactions
-    // };
-    //
-    // firebase.database().ref('users/' + USER_ID).update(postData);
-
     transactionsResponse.transactions.forEach(function(transaction) {
         var bucket = buckets.selectBucket(transaction);
         var newPostKey = transaction.transaction_id;
-        // var newPostKey = txn.name + txn.date + txn.amount + txn.transaction_type + txn.pending;
         var postData = {}
-
         postData[newPostKey] = transaction;
         firebase.database().ref('users/' + USER_ID + "/bucketTransactions/" + bucket).update(postData);
-
-
     });
 
     var pathTransaction = 'users/' + USER_ID + "/bucketTransactions/";
@@ -202,6 +192,41 @@ app.post('/transactions', function(request, response, next) {
     response.json(transactionsResponse);
   });
 });
+
+
+app.get('/buckets', function(request, response, next) {
+    console.log("/buckets has been opened");
+
+    var bucketRef = firebase.database().ref('users/' + USER_ID + '/bucketMoney');
+
+    console.log("data pull starting");
+
+    bucketRef.on('value', function(snapshot) {
+        var bucketsList = {}
+
+        console.log("snapshot taken ");
+        var bucket = snapshot.val()['Transportation'];
+        console.log(bucket['Remaining'] + " remaining out of " + bucket['Total']);
+
+
+        for (var key in snapshot.val()) {
+            console.log("data is being pulled...");
+            if (snapshot.val().hasOwnProperty(key)) {
+                var bucket = snapshot.val()[key];
+                bucketsList[bucket['Name']] = {'Remaining': bucket['Remaining'], 'Total': bucket['Total']};
+                console.log(bucket['Name'] + ' bucket: ' + bucketsList[bucket['Name']]['Remaining'] + " remaining out of " + bucketsList[bucket['Name']]['Total']);
+            }
+        }
+
+        console.log("bucketsList sample: " + bucketsList['Transportation']);
+        response.json(bucketsList);
+    });
+});
+
+
+
+
+
 
 var server = app.listen(APP_PORT, function() {
   console.log('plaid-walkthrough server listening on port ' + APP_PORT);
