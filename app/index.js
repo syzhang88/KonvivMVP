@@ -10,11 +10,16 @@ var moment = require('moment');
 var plaid = require('plaid');
 var buckets = require('./buckets');
 
-var NUMBER_DAYS = 30;
+const NUMBER_DAYS = 30;
+
+// Sam: @ARCHAN, you need to find a way to securely store this when users log in
+// after they have made their accounts
 var USER_NAME = 'szhang@gmail.com';
 var PASS_WORD = 'password';
 var USER_ID = 'samUnwise';
-var SAVED_ACCESS_TOKEN = 'access-sandbox-bda31429-1f95-42c8-974f-fc6d34937da9'
+var SAVED_ACCESS_TOKEN = 'access-sandbox-bda31429-1f95-42c8-974f-fc6d34937da9';
+
+/*** SETTING UP FIREBASE, PLAID, AND EXPRESS ***/
 
 // Sam: Begin Firebase code for configuration, initialization, and authentication.
 // Currently, we are linking to DEEP's Firebase database (KonvivAndroid), no
@@ -75,6 +80,7 @@ app.use(bodyParser.json());
 
 /*** Sam: Here is where we define actual RESTful calls (Using Express I believe;
     check on this) ***/
+
 app.get('/', function(request, response, next) {
   response.render('index.ejs', {
     PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
@@ -214,6 +220,7 @@ app.post('/transactions', function(request, response, next) {
 });
 
 //
+
 app.get('/buckets', function(request, response, next) {
     console.log("/buckets has been called");
     var bucketRef = firebase.database().ref('users/' + USER_ID + '/bucketMoney');

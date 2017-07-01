@@ -33,7 +33,7 @@ var nameBuckets = {
 }
 
 
-// Chooses which bucket a certain transaction belongs to
+// Classifies which bucket a certain transaction belongs to
 exports.selectBucket = function selectBucket (transaction) {
     // console.log('New Selection:');
     var bucket = 'General Spending';
@@ -172,11 +172,3 @@ exports.renameBucket = function renameBucket (newName, oldName) {
         }
     }
 }
-
-// exports.deleteBucket = function deleteBucket () {
-//
-// }
-//
-// exports.addBucket = function addBucket () {
-//
-// }
