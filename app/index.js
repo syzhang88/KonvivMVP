@@ -1,3 +1,6 @@
+/*** Any documentation here not labelled "Sam" is from Plaid's original
+    Quickstart code. ***/
+
 'use strict';
 
 var envvar = require('envvar');
@@ -7,38 +10,37 @@ var moment = require('moment');
 var plaid = require('plaid');
 var buckets = require('./buckets');
 
-// Begin Firebase code for configuration, initialization, and authentication
 var NUMBER_DAYS = 30;
-
-var firebase = require("firebase");
-
-var config = {
-  apiKey: "AIzaSyDknYjy-WW7SH7aLJ2D3p94r4a1s3TU_W8",
-  authDomain: "konviv-demo.firebaseapp.com",
-  databaseURL: "https://konviv-demo.firebaseio.com",
-  projectId: "konviv-demo",
-  storageBucket: "konviv-demo.appspot.com",
-  messagingSenderId: "183629541006",
-  serviceAccount: "konviv-demo-firebase-adminsdk-ee5ad-bd8a1edd7c.json"
-};
-
-firebase.initializeApp(config);
-
-var database = firebase.database();
-
 var USER_NAME = 'szhang@gmail.com';
 var PASS_WORD = 'password';
 var USER_ID = 'samUnwise';
+var SAVED_ACCESS_TOKEN = 'access-sandbox-bda31429-1f95-42c8-974f-fc6d34937da9'
 
+// Sam: Begin Firebase code for configuration, initialization, and authentication.
+// Currently, we are linking to DEEP's Firebase database (KonvivAndroid), no
+// longer my own.
+// Here is its link: https://console.firebase.google.com/project/konvivandroid/database/data
+var firebase = require("firebase");
+var config = {
+  apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
+  authDomain: "konvivandroid.firebaseapp.com",
+  databaseURL: "https://konvivandroid.firebaseio.com",
+  projectId: "konvivandroid",
+  storageBucket: "konvivandroid.appspot.com",
+  messagingSenderId: "41760220514",
+};
+
+firebase.initializeApp(config);
+var database = firebase.database();
 firebase.auth().signInWithEmailAndPassword(USER_NAME, PASS_WORD).catch(function(error) {
   // Handle Errors here.
   var errorCode = error.code;
   var errorMessage = error.message;
   console.log('failed to log into Firebase: ' + errorMessage);
-  // ...
 });
-// End Firebase code
+// Sam: End Firebase setup
 
+// Sam: Begin Plaid code for configuration, initialization, and authentication
 var APP_PORT = envvar.number('APP_PORT', 8000);
 var PLAID_CLIENT_ID = envvar.string('PLAID_CLIENT_ID', '593981e0bdc6a401d71d87b5');
 var PLAID_SECRET = envvar.string('PLAID_SECRET', '271426f90259600c6bf365d6b0f0aa');
@@ -58,7 +60,9 @@ var client = new plaid.Client(
   PLAID_PUBLIC_KEY,
   plaid.environments[PLAID_ENV]
 );
+// Sam: End Plaid setup
 
+// Sam: Express setup
 var app = express();
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
@@ -66,7 +70,11 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 app.use(bodyParser.json());
+// Sam: End Express setup
 
+
+/*** Sam: Here is where we define actual RESTful calls (Using Express I believe;
+    check on this) ***/
 app.get('/', function(request, response, next) {
   response.render('index.ejs', {
     PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
@@ -84,7 +92,17 @@ app.post('/get_access_token', function(request, response, next) {
         error: msg
       });
     }
-    ACCESS_TOKEN = 'access-sandbox-bda31429-1f95-42c8-974f-fc6d34937da9'
+    // Sam: We HAVE to store the access token, so that Plaid does not think the
+    // user is a new user logging in each time. Even if the same username and
+    // password is used, if we do not reuse the same ACCESS TOKEN, Plaid will
+    // assume it is drawing data for the first time and give all the transactions,
+    // accounts, etc. new IDs. This will create duplicate transactions, accounts,
+    // and data in general in our Firebase database unless we use the same access
+    // token to log in each time.
+    // tl;dr: Right now, we can see I'm just manually entering the same access
+    // token, but we need to find a way to store it somewhere, perhaps on Firebase.
+    // We need to ask around; ask Deep and Luz for engineering friends to help.
+    ACCESS_TOKEN = SAVED_ACCESS_TOKEN;
     // ACCESS_TOKEN = tokenResponse.access_token;
     ITEM_ID = tokenResponse.item_id;
     console.log('Access Token: ' + ACCESS_TOKEN);
@@ -109,13 +127,13 @@ app.get('/accounts', function(request, response, next) {
 
     console.log(authResponse.accounts);
 
-    // Begin Firebase code for updating account info
+    // Sam: Begin Firebase section for updating account info
     var postData = {
         'accounts': authResponse.accounts
     };
     firebase.database().ref('users/' + USER_ID).update(postData);
     console.log('posted item for: ' + USER_ID);
-    // End Firebase code
+    // Sam: End Firebase section
 
     response.json({
       error: false,
@@ -156,7 +174,9 @@ app.post('/item', function(request, response, next) {
 });
 
 app.post('/transactions', function(request, response, next) {
-  // Pull transactions for the Item for the last 30 days
+  // Pull transactions for the Item for the last 30 days to the front-end
+  // Sam: I added a Firebase section here so that the transactions for the Item
+  // are also added to the Firebase database
   var startDate = moment().subtract(NUMBER_DAYS, 'days').format('YYYY-MM-DD');
   var endDate = moment().format('YYYY-MM-DD');
   client.getTransactions(ACCESS_TOKEN, startDate, endDate, {
@@ -170,7 +190,7 @@ app.post('/transactions', function(request, response, next) {
       });
     }
 
-    // Begin Firebase code for updating transaction data
+    // Sam: Begin Firebase section for updating transaction data
     transactionsResponse.transactions.forEach(function(transaction) {
         var bucket = buckets.selectBucket(transaction);
         var newPostKey = transaction.transaction_id;
@@ -185,7 +205,7 @@ app.post('/transactions', function(request, response, next) {
         pathTransaction, pathMoney);
 
     console.log('saved transactions under ' + USER_ID);
-    // End Firebase code
+    // Sam: End Firebase section
 
     console.log('pulled ' + transactionsResponse.transactions.length + ' transactions');
 
@@ -193,40 +213,27 @@ app.post('/transactions', function(request, response, next) {
   });
 });
 
-
+//
 app.get('/buckets', function(request, response, next) {
-    console.log("/buckets has been opened");
-
+    console.log("/buckets has been called");
     var bucketRef = firebase.database().ref('users/' + USER_ID + '/bucketMoney');
-
-    console.log("data pull starting");
-
     bucketRef.on('value', function(snapshot) {
         var bucketsList = {}
-
         console.log("snapshot taken ");
-        var bucket = snapshot.val()['Transportation'];
-        console.log(bucket['Remaining'] + " remaining out of " + bucket['Total']);
-
-
         for (var key in snapshot.val()) {
             console.log("data is being pulled...");
+            // Sam: Checks that we're only looking at keys we made. Google
+            // 'HasOwnProperty' for more info
             if (snapshot.val().hasOwnProperty(key)) {
                 var bucket = snapshot.val()[key];
                 bucketsList[bucket['Name']] = {'Remaining': bucket['Remaining'], 'Total': bucket['Total']};
-                console.log(bucket['Name'] + ' bucket: ' + bucketsList[bucket['Name']]['Remaining'] + " remaining out of " + bucketsList[bucket['Name']]['Total']);
+                console.log(bucket['Name'] + ' bucket: ' + bucketsList[bucket['Name']]['Remaining']
+                    + " remaining out of " + bucketsList[bucket['Name']]['Total']);
             }
         }
-
-        console.log("bucketsList sample: " + bucketsList['Transportation']);
         response.json(bucketsList);
     });
 });
-
-
-
-
-
 
 var server = app.listen(APP_PORT, function() {
   console.log('plaid-walkthrough server listening on port ' + APP_PORT);

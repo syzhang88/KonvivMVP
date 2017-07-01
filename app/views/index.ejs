@@ -57,7 +57,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
   <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
   <script>
   (function($) {
     var handler = Plaid.create({
@@ -174,7 +173,9 @@
     // Buckets Button
     $('#get-buckets-btn').click(function(e){
         $(this).slideDown(function() {
+            // RESTful call to index.js server using get function
             $.get('/buckets', function(data) {
+                // Catching error
                 if (data.error != null) {
                     // Format the error
                     var errorHtml = '<div class="inner"><p>' +
@@ -186,15 +187,19 @@
                             $(this).html(errorHtml).slideDown();
                         });
                     });
+                // Using for loop to pull information for each bucket from data
                 } else {
                     for (var key in data) {
                         var per = 0;
                         var fillPercent = 0;
+                        // Accounting for divide-by-zero error
                         if (data[key]['Total'] > 0) {
                             fillPercent = data[key]['Remaining']/data[key]['Total']*100
                         }
+                        //Printing out bucket information to console
                         console.log("Bucket: " + key + ", Remaining amount: " + data[key]['Remaining']
                         + "/" + data[key]['Remaining']  + " = " + fillPercent);
+                        // Draws out bucket
                         setInterval(function() {
                             per++;
                             if(per <= fillPercent) {
@@ -206,7 +211,6 @@
                 }
             });
         });
-
     });
   })(jQuery);
   </script>

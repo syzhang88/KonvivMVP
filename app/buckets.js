@@ -2,7 +2,7 @@ var firebase = require("firebase");
 
 const MONTH_PERIOD = 30;
 
-// Maps transaction name to the bucket the user most recently selected for it
+// Hashtable that maps transaction name to the bucket the user most recently selected for it
 var mostRecentBucket = {}
 
 var userdefinedBuckets = {}
@@ -33,7 +33,7 @@ var nameBuckets = {
 }
 
 
-// Chooses which bucket a transaction belongs to
+// Chooses which bucket a certain transaction belongs to
 exports.selectBucket = function selectBucket (transaction) {
     // console.log('New Selection:');
     var bucket = 'General Spending';
@@ -97,6 +97,8 @@ exports.estimateSize = function estimateSize (transactions, userId, estimationPe
     });
 }
 
+/*** REMAINING FUNCTIONS HAVE NOT BEEN TESTED AND MAY BE BUGGY ***/
+
 // If the bucket the user is moving this transaction to matches the last
 // bucket the user moved a transaction with this name to (i.e., the user
 // moves transactions with the same name to the same bucket twice in a row),
@@ -141,20 +143,20 @@ exports.moveMoney = function moveMoney (amount, oldBucketPath, newBucketPath) {
 
     //subtract from this bucket
     firebase.database().ref(oldBucketPath).once('value').then(function(snapshot) {
-        if (snapshot.val()['Remaining'] - amount) > 0) {
+        if (snapshot.val()['Remaining'] - amount > 0) {
             oldBucket['Remaining'] = snapshot.val()['Remaining'] - amount;
             oldBucket['Total'] = snapshot.val()['Total'] - amount;
         } else {
             return false;
         }
-    }
-    firebase.database().ref(oldBucketPath).remove(oldBucket);
+    });
+    firebase.database().ref(oldBucketPath).update(oldBucket);
 
     //add to that bucket
     firebase.database().ref(newBucketPath).once('value').then(function(snapshot) {
         newBucket['Remaining'] = snapshot.val()['Remaining'] + amount;
         newBucket['Total'] = snapshot.val()['Total'] + amount;
-    }
+    });
     firebase.database().ref(newBucketPath).update(newBucket);
 
     return true;
