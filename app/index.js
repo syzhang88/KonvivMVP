@@ -92,6 +92,8 @@ app.use(bodyParser.json());
 
 /*AUTHENTICATION PAGE: just added the login.ejs page*/
 
+
+
 app.get('/', function(request, response, next) {
   response.render('login.ejs', {
     PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
@@ -99,8 +101,16 @@ app.get('/', function(request, response, next) {
   });
 });
 
-app.get('/views/login.ejs', function(request, response, next) {
-  response.render('login.ejs', {
+app.get('/login.ejs', function(request, response, next) {
+  response.render('/views/login.ejs', {
+    PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+    PLAID_ENV: PLAID_ENV,
+  });
+});
+
+
+app.get('/index.ejs', function(request, response, next) {
+  response.render('index.ejs', {
     PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
     PLAID_ENV: PLAID_ENV,
   });

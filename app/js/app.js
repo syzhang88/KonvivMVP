@@ -90,7 +90,7 @@
       else {
           console.log('NOT LOGGED IN');
           btnLogout.classList.add('hide');
-          location.href="index.html"
+       //   location.href="index.html"
 
           //location.href="index.html"
       }
