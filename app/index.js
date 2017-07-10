@@ -125,12 +125,35 @@ app.get('/index.ejs', function(request, response, next) {
 
 
 
-// app.get('/', function(request, response, next) {
-//   response.render('index.ejs', {
-//     PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
-//     PLAID_ENV: PLAID_ENV,
-//   });
-// });
+app.post('/get_user_info', function(request, response, next) {
+  
+  console.log("userId: " + userId);
+  console.log("email: " + email);
+
+  //   firebase.database().ref('users/' + USER_ID).set({
+  //    user_token: ACCESS_TOKEN
+
+  // });
+});
+  
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
