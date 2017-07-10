@@ -126,7 +126,7 @@ app.get('/index.ejs', function(request, response, next) {
 
 
 app.post('/get_user_info', function(request, response, next) {
-  
+
   console.log("userId: " + userId);
   console.log("email: " + email);
 
@@ -135,9 +135,6 @@ app.post('/get_user_info', function(request, response, next) {
 
   // });
 });
-  
-});
-
 
 
 
