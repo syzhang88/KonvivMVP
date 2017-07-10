@@ -9,15 +9,7 @@ var bodyParser = require('body-parser');
 var moment = require('moment');
 var plaid = require('plaid');
 var buckets = require('./buckets');
-//var data = require('./views/login.ejs');
 
-
-app.get("/", function(req, res){
-    res.locals.user = req.user
-    res.render("index")
-})
-
-//console.log(sendData);
 const NUMBER_DAYS = 30;
 
 // Sam: @ARCHAN, you need to find a way to securely store this when users log in
@@ -109,19 +101,19 @@ app.get('/', function(request, response, next) {
   });
 });
 
-app.get('/index.js', function(request, response, next) {
-  response.render('index.js', {
-    PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
-    PLAID_ENV: PLAID_ENV,
-  });
-});
+// app.get('/index.js', function(request, response, next) {
+//   response.render('index.js', {
+//     PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+//     PLAID_ENV: PLAID_ENV,
+//   });
+// });
 
-app.get('/login.ejs', function(request, response, next) {
-  response.render('/views/login.ejs', {
-    PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
-    PLAID_ENV: PLAID_ENV,
-  });
-});
+// app.get('/login.ejs', function(request, response, next) {
+//   response.render('login.ejs', {
+//     PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+//     PLAID_ENV: PLAID_ENV,
+//   });
+// });
 
 
 app.get('/index.ejs', function(request, response, next) {

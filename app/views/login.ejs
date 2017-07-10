@@ -217,30 +217,16 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     });
 
     // NEED TO GET PASSWORD AND 
-   sendData(userId,email);
+   // sendData(userId,email);
     console.log("DONE!!")
     return "Success"
-  }
-
-function sendData(userId,email){
-	  
-
-
- 		var account = {
-     		userId: userId,
-     		email: email
-   };
-
-   var sendData = <%- JSON.stringify(account) %>
-
   }
 
   function userExistsCallback(userId, email, exists) {
     if (exists) {
       alert('user ' + userId + ' exists!');
 
-          sendData(userId,email);
-
+          // sendData(userId,email);
 
     } 
 
