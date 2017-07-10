@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 
 
-  
+
       <style>
       /* NOTE: The styles were added inline because Prefixfree needs access to your styles and they must be inlined if they are on local disk! */
       @import url(https://fonts.googleapis.com/css?family=Open+Sans);
@@ -27,7 +27,7 @@
 
 html { width: 100%; height:100%; overflow:hidden; }
 
-body { 
+body {
 	width: 100%;
 	height:100%;
 	font-family: 'Open Sans', sans-serif;
@@ -39,7 +39,7 @@ body {
 	background: -webkit-radial-gradient(0% 100%, ellipse cover, rgba(104,128,138,.4) 10%,rgba(138,114,76,0) 40%), linear-gradient(to bottom,  rgba(57,173,219,.25) 0%,rgba(42,60,87,.4) 100%), linear-gradient(135deg,  #670d10 0%,#092756 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3E1D6D', endColorstr='#092756',GradientType=1 );
 }
-.login { 
+.login {
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -49,9 +49,9 @@ body {
 }
 .login h1 { color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3); letter-spacing:1px; text-align:center; }
 
-input { 
-	width: 100%; 
-	margin-bottom: 10px; 
+input {
+	width: 100%;
+	margin-bottom: 10px;
 	background: rgba(0,0,0,0.3);
 	border: none;
 	outline: none;
@@ -89,9 +89,9 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
         <button id="btnLogout" type="button" class="btn btn-action btn hide">Logout</button>
     <!--</form>-->
 </div>
-  
 
-<!--   	<script type="text/javascript"> 
+
+<!--   	<script type="text/javascript">
   	 	var myLink = document.getElementById('btnLogin');
 
   	 	myLink.onclick = function() {
@@ -108,158 +108,126 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 
 <script>
     $(document).ready(function() {
-    $("#btnLogin").on("click", function(){
-         console.log("Clicked");
+        $("#btnLogin").on("click", function(){
+             console.log("Clicked");
+        });
 
+        (function() {
+            console.log('does this get called even?');
+            // Initialize Firebase
+            const config = {
+            apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
+            authDomain: "konvivandroid.firebaseapp.com",
+            databaseURL: "https://konvivandroid.firebaseio.com",
+            projectId: "konvivandroid",
+            storageBucket: "konvivandroid.appspot.com",
+            messagingSenderId: "41760220514"
+
+            };
+
+            var app=firebase.initializeApp(config);
+            var ref = firebase.database().ref("users/");
+
+            //Get elements
+            const txtEmail=document.getElementById('txtEmail')
+            const txtPassword=document.getElementById('txtPassword')
+            const btnLogin=document.getElementById('btnLogin')
+            const btnSignup=document.getElementById('btnSignup')
+            const btnLogout=document.getElementById('btnLogout')
+
+            //Add login event
+            btnLogin.addEventListener('click', e => {
+                const email=txtEmail.value;
+                const pass=txtPassword.value;
+                const auth=firebase.auth();
+                //Sign in
+                const promise =auth.signInWithEmailAndPassword(email,pass);
+                promise.catch(e => console.log(e.message));
+            });
+
+            //Add signup event
+            btnSignup.addEventListener('click', e => {
+                const email=txtEmail.value; //EMAIL VALIDATION
+                const pass=txtPassword.value;
+                const auth=firebase.auth();
+                //Sign in
+                const promise =auth.createUserWithEmailAndPassword(email,pass);
+                promise.catch(e =>console.log(e.message));
+            });
+
+            //Add logout event
+            btnLogout.addEventListener('click', e=>{
+                firebase.auth().signOut();
+            });
+
+            //Add a listener for auth state changed
+            firebase.auth().onAuthStateChanged(firebaseUser => {
+                if(firebaseUser) {
+                    console.log(firebaseUser);
+                    btnLogout.classList.remove('hide');
+                    var user = firebase.auth().currentUser;
+                    var name, email, photoUrl, uid;
+
+                    if (user != null) {
+                        //name = user.displayName;
+                        email = user.email;
+                        //photoUrl = user.photoURL;
+                        uid = user.uid;
+                        //console.log(uid)
+                    }
+                    checkIfUserExists(uid,email)
+                } else {
+                    console.log('NOT LOGGED IN');
+                    btnLogout.classList.add('hide');
+                    // location.href="login.ejs"
+
+                    //location.href="index.html"
+                }
+            });
+
+            /* MAKING THIS GLOBAL*/
+            var data;
+
+            //FOR KIKI --- TO WRITE TO A FIREBASE, WE JUST NEED TO FORM A PATH AND THEN ITS EASY!!!
+            function writeUserData(userId, email) {
+                firebase.database().ref('users/' + userId).set({
+                    //username: name,
+                    email: email
+                    //profile_picture : imageUrl
+                });
+                // NEED TO GET PASSWORD AND
+                // sendData(userId,email);
+                console.log("DONE!!")
+                return "Success"
+            }
+
+            function userExistsCallback(userId, email, exists) {
+                if (exists) {
+                    alert('user ' + userId + ' exists!');
+                } else {
+                    alert('user ' + userId + ' does not exist!');
+                    var status=writeUserData(userId,email)
+                }
+
+                /*AD FUNCTION*/
+                location.href= "index.ejs"
+
+                $.post('/get_user_info', {
+                    userId: userId,
+                    email: email
+                });
+            }
+
+            function checkIfUserExists(userId,email) {
+                var usersRef = firebase.database().ref('users/');
+                usersRef.child(userId).once('value', function(snapshot) {
+                    var exists = (snapshot.val() !== null);
+                    userExistsCallback(userId, email, exists);
+                });
+            }
+        }());
     });
-
-
-(function() {
-
-    
-  console.log('does this get called even?');
-  // Initialize Firebase
-  const config = {
-    apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
-    authDomain: "konvivandroid.firebaseapp.com",
-    databaseURL: "https://konvivandroid.firebaseio.com",
-    projectId: "konvivandroid",
-    storageBucket: "konvivandroid.appspot.com",
-    messagingSenderId: "41760220514" 
-
-
-
-
-    // apiKey: "AIzaSyD10H6NAii6s3rGCBKUxMYUsMn7lIG-jkg",
-    // authDomain: "konviv-attempt.firebaseapp.com",
-    // databaseURL: "https://konviv-attempt.firebaseio.com",
-    // projectId: "konviv-attempt",
-    // storageBucket: "konviv-attempt.appspot.com",
-    // messagingSenderId: "129647908445"
-  };
-  var app=firebase.initializeApp(config);
-  var ref = firebase.database().ref("users/");
-  
-  //Get elements
-  const txtEmail=document.getElementById('txtEmail')
-  const txtPassword=document.getElementById('txtPassword')
-  const btnLogin=document.getElementById('btnLogin')
-  const btnSignup=document.getElementById('btnSignup')
-  const btnLogout=document.getElementById('btnLogout')
-  
-  
-  //Add login event
-  btnLogin.addEventListener('click', e => {
-      const email=txtEmail.value;
-      const pass=txtPassword.value;
-      const auth=firebase.auth();
-      //Sign in
-      const promise =auth.signInWithEmailAndPassword(email,pass);
-      promise.catch(e => console.log(e.message));
-      
-  });
-  //Add signup event
-  btnSignup.addEventListener('click', e => {
-      const email=txtEmail.value; //EMAIL VALIDATION
-      const pass=txtPassword.value;
-      const auth=firebase.auth();
-      //Sign in
-      const promise =auth.createUserWithEmailAndPassword(email,pass);
-      promise.catch(e =>console.log(e.message));
-  });
-  
-  //Add logout event
-  btnLogout.addEventListener('click', e=>{
-      firebase.auth().signOut();
-  });
-  
-  //Add a listener for auth state changed
-  firebase.auth().onAuthStateChanged(firebaseUser => {
-      if(firebaseUser){
-          console.log(firebaseUser);
-          btnLogout.classList.remove('hide');
-          
-          var user = firebase.auth().currentUser;
-          var name, email, photoUrl, uid;
-
-          if (user != null) {
-            //name = user.displayName;
-            email = user.email;
-            //photoUrl = user.photoURL;
-            uid = user.uid;
-            
-            //console.log(uid)
-          } 
-          checkIfUserExists(uid,email)
-          
-          if (firebaseUser){
-             
-          }
-      } 
-      else {
-          console.log('NOT LOGGED IN');
-          btnLogout.classList.add('hide');
-         // location.href="login.ejs"
-
-          //location.href="index.html"
-      }
-  });
-  
-  /* MAKING THIS GLOBAL*/
-  var data;
-
-  //FOR KIKI --- TO WRITE TO A FIREBASE, WE JUST NEED TO FORM A PATH AND THEN ITS EASY!!!
-  function writeUserData(userId, email) { 
-    firebase.database().ref('users/' + userId).set({
-    //username: name,
-    email: email
-    //profile_picture : imageUrl
-    });
-
-    // NEED TO GET PASSWORD AND 
-   // sendData(userId,email);
-    console.log("DONE!!")
-    return "Success"
-  }
-
-  function userExistsCallback(userId, email, exists) {
-    if (exists) {
-      alert('user ' + userId + ' exists!');
-    } 
-
-    else {
-      alert('user ' + userId + ' does not exist!');
-      var status=writeUserData(userId,email)
-    }
-
-    /*AD FUNCTION*/
-    location.href= "index.ejs"
-
-     $.post('/get_user_info', {
-          userId: userId,
-          email: email
-        }
-
-    // COMMENT THIS OUT 
-  }
-  function checkIfUserExists(userId,email) {
-    var usersRef = firebase.database().ref('users/');
-    usersRef.child(userId).once('value', function(snapshot) {
-      var exists = (snapshot.val() !== null);
-      userExistsCallback(userId, email, exists);
-    });
-  }
-  
-   
-}());
-
-
-
-    });
-
 
 </script>
-
-
 </body>
 </html>
