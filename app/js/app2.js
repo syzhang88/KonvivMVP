@@ -2,13 +2,13 @@
 
   // Initialize Firebase
   const config = {
-    apiKey: "AIzaSyD10H6NAii6s3rGCBKUxMYUsMn7lIG-jkg",
-    authDomain: "konviv-attempt.firebaseapp.com",
-    databaseURL: "https://konviv-attempt.firebaseio.com",
-    projectId: "konviv-attempt",
-    storageBucket: "konviv-attempt.appspot.com",
-    messagingSenderId: "129647908445"
-  };
+     apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
+    authDomain: "konvivandroid.firebaseapp.com",
+    databaseURL: "https://konvivandroid.firebaseio.com",
+    projectId: "konvivandroid",
+    storageBucket: "konvivandroid.appspot.com",
+    messagingSenderId: "41760220514" 
+      };
   var app=firebase.initializeApp(config);
   
   //Get elements
