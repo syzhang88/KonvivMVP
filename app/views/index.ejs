@@ -27,6 +27,9 @@
     </p>
 
     <button id="link-btn">Link Account</button>
+    <button id="logout">Logout</button>
+
+
   </div>
 
   <div id="app">
@@ -57,10 +60,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
   <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
-<<<<<<< HEAD
- <!--  source : https://stackoverflow.com/questions/35969699/ejs-html-not-finding-external-js-file-node-js -->
-=======
->>>>>>> d0f54fed18e100b46f2ecf337928c014aaa3c42a
 
   <script>
   (function($) {
@@ -84,6 +83,13 @@
 
     $('#link-btn').on('click', function(e) {
       handler.open();
+    });
+
+    $('#logout').on('click', function(e) {
+      console.log("logging out...");
+      $.get('/index.ejs', function(data) {
+          console.log("logged out successfully");
+      });
     });
 
     $('#get-accounts-btn').on('click', function(e) {

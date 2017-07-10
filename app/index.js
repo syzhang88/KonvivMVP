@@ -14,9 +14,8 @@ const NUMBER_DAYS = 30;
 
 // Sam: @ARCHAN, you need to find a way to securely store this when users log in
 // after they have made their accounts
-var USER_NAME = 'szhang@gmail.com'; // EMAIL
-var PASS_WORD = 'password';
-var USER_ID = 'samUnwise';
+var USER_ID = null;
+var USER_EMAIL = null;
 //var SAVED_ACCESS_TOKEN = 'access-sandbox-bda31429-1f95-42c8-974f-fc6d34937da9';
 
 
@@ -38,14 +37,6 @@ var config = {
 };
 
 firebase.initializeApp(config);
-// gets object to database service
-var database = firebase.database();
-firebase.auth().signInWithEmailAndPassword(USER_NAME, PASS_WORD).catch(function(error) {
-  // Handle Errors here.
-  var errorCode = error.code;
-  var errorMessage = error.message;
-  console.log('failed to log into Firebase: ' + errorMessage);
-});
 // Sam: End Firebase setup
 
 // Sam: Begin Plaid code for configuration, initialization, and authentication
@@ -115,44 +106,12 @@ app.get('/', function(request, response, next) {
 //   });
 // });
 
-
 app.get('/index.ejs', function(request, response, next) {
   response.render('index.ejs', {
     PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
     PLAID_ENV: PLAID_ENV,
   });
 });
-
-
-
-app.post('/get_user_info', function(request, response, next) {
-
-  console.log("userId: " + userId);
-  console.log("email: " + email);
-
-  //   firebase.database().ref('users/' + USER_ID).set({
-  //    user_token: ACCESS_TOKEN
-
-  // });
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 app.post('/get_access_token', function(request, response, next) {
 
@@ -183,8 +142,7 @@ app.post('/get_access_token', function(request, response, next) {
 
     firebase.database().ref('users/' + USER_ID).set({
      user_token: ACCESS_TOKEN
-
-  });
+    });
 
     console.log('Item ID: ' + ITEM_ID);
     response.json({
@@ -325,6 +283,24 @@ app.get('/buckets', function(request, response, next) {
         response.json(bucketsList);
     });
 });
+
+app.post('/get_user_info', function(request, response, next) {
+  console.log("USER_ID: " + request.body.userId);
+  console.log("email: " + request.body.email);
+  USER_ID = request.body.userId;
+  USER_EMAIL = request.body.email;
+
+  
+});
+
+// app.get('/logout', function(request, response, next) {
+//     console.log("logging out is working...");
+//     firebase.auth().signout();
+//     response.render('index.ejs', {
+//       PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+//       PLAID_ENV: PLAID_ENV,
+//     });
+// });
 
 var server = app.listen(APP_PORT, function() {
   console.log('plaid-walkthrough server listening on port ' + APP_PORT);
