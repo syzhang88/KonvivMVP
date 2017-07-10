@@ -126,7 +126,7 @@ app.get('/index.ejs', function(request, response, next) {
 // });
 
 app.post('/get_access_token', function(request, response, next) {
- 
+
   PUBLIC_TOKEN = request.body.public_token;
   client.exchangePublicToken(PUBLIC_TOKEN, function(error, tokenResponse) {
     if (error != null) {

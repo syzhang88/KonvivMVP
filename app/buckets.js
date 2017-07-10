@@ -2,10 +2,10 @@ var firebase = require("firebase");
 
 const MONTH_PERIOD = 30;
 
-// Hashtable that maps transaction name to the bucket the user most recently selected for it
-var mostRecentBucket = {}
+// Hashtable that maps transaction name to the bucket the user most recently reclassified for it
+var trackReclassifications = {}
 
-var userdefinedBuckets = {}
+var reclassifiedTransactions = {}
 
 var predefinedBuckets = {
     'Supermarkets and Groceries': 'Groceries',
@@ -40,8 +40,8 @@ exports.selectBucket = function selectBucket (transaction) {
     if (transaction.amount < 0) {
         return 'Income';
     }
-    if (userdefinedBuckets[transaction.name]) {
-        return userdefinedBuckets[transaction.name];
+    if (reclassifiedTransactions[transaction.name]) {
+        return reclassifiedTransactions[transaction.name];
     }
     if (transaction.category ==  null) {
         return 'General Spending';
@@ -102,14 +102,14 @@ exports.estimateSize = function estimateSize (transactions, userId, estimationPe
 // If the bucket the user is moving this transaction to matches the last
 // bucket the user moved a transaction with this name to (i.e., the user
 // moves transactions with the same name to the same bucket twice in a row),
-// automatically store that bucket in userdefinedBuckets to categorize all
+// automatically store that bucket in reclassifiedTransactions to categorize all
 // transactions sharing this name to that bucket in the future.
 function reclassification (transaction, oldBucket, newBucket) {
     if (oldBucket != newBuckets) {
-        if (mostRecentBucket[transaction.name] == newBucket) {
-            userdefinedBuckets[transaction.name] = newBucket;
+        if (trackReclassifications[transaction.name] == newBucket) {
+            reclassifiedTransactions[transaction.name] = newBucket;
         } else {
-            mostRecentBucket[transaction.name] = newBucket;
+            trackReclassifications[transaction.name] = newBucket;
         }
     }
 };
@@ -118,8 +118,8 @@ function reclassification (transaction, oldBucket, newBucket) {
 // oldDbPath and newDbPath are manually entered because of abstraction, to
 // simplify modifying firebase structure
 exports.moveTransaction = function moveTransaction (transaction, oldBucketPath, newBucketPath, path) {
-    // var names = Object.keys(nameBuckets);
-    // if (names.indexOf(oldBucket) < 0 || names.indexOf(newBucket) < 0 ) throw "not a bucket";
+    var names = Object.keys(nameBuckets);
+    if (names.indexOf(oldBucket) < 0 || names.indexOf(newBucket) < 0 ) throw "not a bucket";
 
     reclassification(transaction, oldBucket, newBucket);
     var newPostKey = transaction.transaction_id;
