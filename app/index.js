@@ -17,7 +17,9 @@ const NUMBER_DAYS = 30;
 var USER_NAME = 'szhang@gmail.com';
 var PASS_WORD = 'password';
 var USER_ID = 'samUnwise';
-var SAVED_ACCESS_TOKEN = 'access-sandbox-bda31429-1f95-42c8-974f-fc6d34937da9';
+//var SAVED_ACCESS_TOKEN = 'access-sandbox-bda31429-1f95-42c8-974f-fc6d34937da9';
+
+
 
 /*** SETTING UP FIREBASE, PLAID, AND EXPRESS ***/
 
@@ -36,6 +38,7 @@ var config = {
 };
 
 firebase.initializeApp(config);
+// gets object to database service
 var database = firebase.database();
 firebase.auth().signInWithEmailAndPassword(USER_NAME, PASS_WORD).catch(function(error) {
   // Handle Errors here.
@@ -81,14 +84,32 @@ app.use(bodyParser.json());
 /*** Sam: Here is where we define actual RESTful calls (Using Express I believe;
     check on this) ***/
 
+/* Call log in page */
+
+/* if no plaid account, direct to index.ejs */
+
+/* if have both konviv and plaid account, go to bucket page */
+
+/*AUTHENTICATION PAGE: just added the login.ejs page*/
+
 app.get('/', function(request, response, next) {
-  response.render('index.ejs', {
+  response.render('login.ejs', {
     PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
     PLAID_ENV: PLAID_ENV,
   });
 });
 
+
+
+// app.get('/', function(request, response, next) {
+//   response.render('index.ejs', {
+//     PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+//     PLAID_ENV: PLAID_ENV,
+//   });
+// });
+
 app.post('/get_access_token', function(request, response, next) {
+ 
   PUBLIC_TOKEN = request.body.public_token;
   client.exchangePublicToken(PUBLIC_TOKEN, function(error, tokenResponse) {
     if (error != null) {
@@ -102,16 +123,23 @@ app.post('/get_access_token', function(request, response, next) {
     // user is a new user logging in each time. Even if the same username and
     // password is used, if we do not reuse the same ACCESS TOKEN, Plaid will
     // assume it is drawing data for the first time and give all the transactions,
-    // accounts, etc. new IDs. This will create duplicate transactions, accounts,
+    // accounts, etc. new IDs. This will cre duplicate transactions, accounts,
     // and data in general in our Firebase database unless we use the same access
     // token to log in each time.
     // tl;dr: Right now, we can see I'm just manually entering the same access
     // token, but we need to find a way to store it somewhere, perhaps on Firebase.
     // We need to ask around; ask Deep and Luz for engineering friends to help.
-    ACCESS_TOKEN = SAVED_ACCESS_TOKEN;
-    // ACCESS_TOKEN = tokenResponse.access_token;
+    //ACCESS_TOKEN = SAVED_ACCESS_TOKEN;
+    ACCESS_TOKEN = tokenResponse.access_token;
     ITEM_ID = tokenResponse.item_id;
-    console.log('Access Token: ' + ACCESS_TOKEN);
+    console.log('LOADING Access Token: ' + ACCESS_TOKEN);
+
+
+    firebase.database().ref('users/' + USER_ID).set({
+     user_token: ACCESS_TOKEN
+
+  });
+
     console.log('Item ID: ' + ITEM_ID);
     response.json({
       'error': false
@@ -123,6 +151,7 @@ app.get('/accounts', function(request, response, next) {
   // Retrieve high-level account information and account and routing numbers
   // for each account associated with the Item.
   client.getAuth(ACCESS_TOKEN, function(error, authResponse) {
+
     if (error != null) {
       var msg = 'Unable to pull accounts from the Plaid API.';
       console.log(msg + '\n' + error);
@@ -131,12 +160,17 @@ app.get('/accounts', function(request, response, next) {
       });
     }
 
-    console.log(authResponse.accounts);
+    console.log("authResponse.accounts: " + authResponse.accounts);
+     // [object Object],[object Object],[object Object],[object Object]
+     // These are the different checking/cc banking accounts
 
     // Sam: Begin Firebase section for updating account info
+
+
     var postData = {
         'accounts': authResponse.accounts
     };
+
     firebase.database().ref('users/' + USER_ID).update(postData);
     console.log('posted item for: ' + USER_ID);
     // Sam: End Firebase section
@@ -229,8 +263,10 @@ app.get('/buckets', function(request, response, next) {
         console.log("snapshot taken ");
         for (var key in snapshot.val()) {
             console.log("data is being pulled...");
+
             // Sam: Checks that we're only looking at keys we made. Google
             // 'HasOwnProperty' for more info
+
             if (snapshot.val().hasOwnProperty(key)) {
                 var bucket = snapshot.val()[key];
                 bucketsList[bucket['Name']] = {'Remaining': bucket['Remaining'], 'Total': bucket['Total']};
@@ -238,6 +274,8 @@ app.get('/buckets', function(request, response, next) {
                     + " remaining out of " + bucketsList[bucket['Name']]['Total']);
             }
         }
+
+         console.log("printing bucketsList: " + bucketsList)
         response.json(bucketsList);
     });
 });

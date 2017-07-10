@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <title>Plaid Walkthrough Example</title>
-<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="style_second.css">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
+  <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
   <div id="banner">
     <h1>Welcome to Konviv!</h1>
     <p id="intro">
@@ -27,41 +28,48 @@
     </p>
 
     <button id="link-btn">Link Account</button>
+    
+    <button id="dashboard" type="button" class="btn btn-action btn hide">Go to Dashboard</button>
+    <button id="btnLogout" type="button" class="btn btn-action btn hide">Logout</button>
+    
   </div>
 
   <div id="app">
-    <div class="box">
-      <button id="get-accounts-btn">Get Accounts</button>
+  <!--   <div class="box">
+      <button id="get-accounts-btn">Accounts Information</button>
       <div id="get-accounts-data"></div>
-    </div>
+    </div> -->
 
-    <div class="box">
+<!--     <div class="box">
       <button id="get-item-btn">Get Item</button>
       <div id="get-item-data"></div>
     </div>
+ -->
+
+
 
     <div class="box">
-      <button id="get-transactions-btn">Get Transactions</button>
+      <button id="get-transactions-btn">Transactions</button>
       <div id="get-transactions-data"></div>
     </div>
 
 
-   <div class = "box">
-      <button id="get-buckets-btn">Buckets</button>
-      <div id="load-bar-frame" class="bucketclass">
-          <div id="load-bar"></div>
+       <div class = "box">
+          <button id="get-buckets-btn">Buckets</button>
+          <div class="hidden">This is the content</div>
+
+          <div id="load-bar-frame">
+            <div id="load-bar"></div>
+          </div>
       </div>
-   </div>
 
   </div>
 
 
-
+  <script src="js/app2.js"></script>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
   <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
-  <script type="text/javascript" src="../js/app.js"></script>
- <!--  source : https://stackoverflow.com/questions/35969699/ejs-html-not-finding-external-js-file-node-js -->
-
   <script>
   (function($) {
     var handler = Plaid.create({
@@ -102,6 +110,16 @@
         });
       });
     });
+
+    // $("get-buckets-btn").click(function(){
+
+    //     console.log('inside function');
+
+    //     $('#content').load( '../buckets_page.html' );
+    // });
+
+/*** POTENTIAL TO PUT BUCKETS BUTTON ******/
+
 
     $('#get-item-btn').on('click', function(e) {
       $.post('/item', function(data) {
@@ -145,9 +163,11 @@
             });
           });
         } else {
-            $('#get-transactions-data').slideUp(function() {
+          $('#get-transactions-data').slideUp(function() {
             var html = '';
+
             data.transactions.forEach(function(txn, idx) {
+
                 //code for displaying category for each transaction
                 var category = '';
                 if (txn.category) {
@@ -159,64 +179,41 @@
                 else {
                     category = 'Uncategorized'
                 }
-                html += '<div class="inner">';
-                html += '<strong>' + txn.name + '</strong><br>';
-                html += '<em>' + category + '</em><br>';
-                html += '$' + txn.amount + '<br>';
-                html += '<em>' + txn.date + '</em>';
-                html += '</div>';
+
+              html += '<div class="inner">';
+              html += '<strong>' + txn.name + '</strong><br>';
+              html += '<em>' + category + '</em><br>';
+              html += '$' + txn.amount + '<br>';
+              html += '<em>' + txn.date + '</em>';
+              html += '</div>';
             });
 
             $(this).slideUp(function() {
-                $(this).html(html).slideDown();
+              $(this).html(html).slideDown();
             });
           });
         }
       });
     });
 
-    // Buckets Button
     $('#get-buckets-btn').click(function(e){
-        $(this).slideDown(function() {
-            // RESTful call to index.js server using get function
-            $.get('/buckets', function(data) {
-                // Catching error
-                if (data.error != null) {
-                    // Format the error
-                    var errorHtml = '<div class="inner"><p>' +
-                    '<strong>' + data.error.error_code + ':</strong> ' +
-                    ata.error.error_message + '</p></div>';
-                    // Render the error
-                    $('#get-transactions-data').slideUp(function() {
-                        $(this).slideUp(function() {
-                            $(this).html(errorHtml).slideDown();
-                        });
-                    });
-                // Using for loop to pull information for each bucket from data
-                } else {
-                    for (var key in data) {
-                        var per = 0;
-                        var fillPercent = 0;
-                        // Accounting for divide-by-zero error
-                        if (data[key]['Total'] > 0) {
-                            fillPercent = data[key]['Remaining']/data[key]['Total']*100
-                        }
-                        //Printing out bucket information to console
-                        console.log("Bucket: " + key + ", Remaining amount: " + data[key]['Remaining']
-                        + "/" + data[key]['Remaining']  + " = " + fillPercent);
-                        // Draws out bucket
-                        setInterval(function() {
-                            per++;
-                            if(per <= fillPercent) {
-                               $('#load-bar').css({background: "linear-gradient(to right, #000000 "+per+"%,#feffff "
-                               +per+"%,#feffff 100%)"});
-                            }
-                        }, 100);
-                    }
-                }
-            });
-        });
+
+       $(this).slideDown(function() {
+          $.post('/transactions', function(data) {
+             data.transactions.forEach(function(txn, idx) {
+               var per = txn.amount;
+               console.log('loading per: ' + per);
+                $('#load-bar-frame').css({background: "linear-gradient(to right, #000000 "
+                  +per+"%,#feffff "+per+"%,#feffff 100%)"});
+
+
+             });
+
+     });
     });
+    });
+
+
   })(jQuery);
   </script>
 </body>
