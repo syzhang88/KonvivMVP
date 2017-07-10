@@ -1,3 +1,10 @@
+
+    $(document).ready(function() {
+    $("#btnLogin").on("click", function(){
+         console.log("Clicked");
+    });
+});
+
 (function() {
 
     
@@ -10,7 +17,6 @@
     projectId: "konvivandroid",
     storageBucket: "konvivandroid.appspot.com",
     messagingSenderId: "41760220514" 
-
 
 
 
