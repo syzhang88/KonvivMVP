@@ -205,6 +205,9 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
       }
   });
   
+  /* MAKING THIS GLOBAL*/
+  var data;
+
   //FOR KIKI --- TO WRITE TO A FIREBASE, WE JUST NEED TO FORM A PATH AND THEN ITS EASY!!!
   function writeUserData(userId, email) { 
     firebase.database().ref('users/' + userId).set({
@@ -212,13 +215,35 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     email: email
     //profile_picture : imageUrl
     });
+
+    // NEED TO GET PASSWORD AND 
+   sendData(userId,email);
     console.log("DONE!!")
     return "Success"
   }
+
+function sendData(userId,email){
+	  
+
+
+ 		var account = {
+     		userId: userId,
+     		email: email
+   };
+
+   var sendData = <%- JSON.stringify(account) %>
+
+  }
+
   function userExistsCallback(userId, email, exists) {
     if (exists) {
       alert('user ' + userId + ' exists!');
+
+          sendData(userId,email);
+
+
     } 
+
     else {
       alert('user ' + userId + ' does not exist!');
       var status=writeUserData(userId,email)

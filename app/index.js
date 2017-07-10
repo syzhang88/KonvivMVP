@@ -9,12 +9,20 @@ var bodyParser = require('body-parser');
 var moment = require('moment');
 var plaid = require('plaid');
 var buckets = require('./buckets');
+//var data = require('./views/login.ejs');
 
+
+app.get("/", function(req, res){
+    res.locals.user = req.user
+    res.render("index")
+})
+
+//console.log(sendData);
 const NUMBER_DAYS = 30;
 
 // Sam: @ARCHAN, you need to find a way to securely store this when users log in
 // after they have made their accounts
-var USER_NAME = 'szhang@gmail.com';
+var USER_NAME = 'szhang@gmail.com'; // EMAIL
 var PASS_WORD = 'password';
 var USER_ID = 'samUnwise';
 //var SAVED_ACCESS_TOKEN = 'access-sandbox-bda31429-1f95-42c8-974f-fc6d34937da9';
@@ -101,6 +109,13 @@ app.get('/', function(request, response, next) {
   });
 });
 
+app.get('/index.js', function(request, response, next) {
+  response.render('index.js', {
+    PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+    PLAID_ENV: PLAID_ENV,
+  });
+});
+
 app.get('/login.ejs', function(request, response, next) {
   response.render('/views/login.ejs', {
     PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
@@ -124,6 +139,8 @@ app.get('/index.ejs', function(request, response, next) {
 //     PLAID_ENV: PLAID_ENV,
 //   });
 // });
+
+
 
 app.post('/get_access_token', function(request, response, next) {
 
