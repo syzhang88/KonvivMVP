@@ -92,20 +92,6 @@ app.get('/', function(request, response, next) {
   });
 });
 
-// app.get('/index.js', function(request, response, next) {
-//   response.render('index.js', {
-//     PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
-//     PLAID_ENV: PLAID_ENV,
-//   });
-// });
-
-// app.get('/login.ejs', function(request, response, next) {
-//   response.render('login.ejs', {
-//     PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
-//     PLAID_ENV: PLAID_ENV,
-//   });
-// });
-
 app.get('/index.ejs', function(request, response, next) {
   response.render('index.ejs', {
     PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
@@ -289,18 +275,59 @@ app.post('/get_user_info', function(request, response, next) {
   console.log("email: " + request.body.email);
   USER_ID = request.body.userId;
   USER_EMAIL = request.body.email;
-
-  
 });
 
-// app.get('/logout', function(request, response, next) {
-//     console.log("logging out is working...");
-//     firebase.auth().signout();
-//     response.render('index.ejs', {
-//       PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
-//       PLAID_ENV: PLAID_ENV,
-//     });
-// });
+app.post('/log_in', function(request, response, next) {
+    console.log('Attempting log in...');
+
+    // gets object to database service
+    var database = firebase.database();
+    var username = request.body.username;
+    var password = request.body.password;
+    var promise = firebase.auth().signInWithEmailAndPassword(username, password).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log('failed to log into Firebase: ' + errorMessage);
+        response.json({login: false});
+    }, response.json({login: true}));
+    promise.catch(e => console.log(e.message));
+});
+
+app.post('/sign_up', function(request, response, next) {
+    console.log('Attempting sign up...');
+
+    // gets object to database service
+    var database = firebase.database();
+    var username = request.body.username;
+    var password = request.body.password;
+    var promise = firebase.auth().createUserWithEmailAndPassword(username, password).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log('failed to log into Firebase: ' + errorMessage);
+        response.json({login: false});
+    }, response.json({login: true}));
+    promise.catch(e => console.log(e.message));
+});
+
+app.get('/log_out', function(request, response, next) {
+    firebase.auth().signOut().catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log('failed to log into Firebase: ' + errorMessage);
+        response.json({logout: false});
+    }, response.json({logout: true}));
+    console.log('successfully logged out');
+});
+
+app.get('/user_exists', function(request, response, next) {
+    var usersRef = firebase.database().ref('users/');
+    usersRef.child(request.body.userId).once('value', function(snapshot) {
+        response.json({exists: (snapshot.val() !== null)});
+    });
+});
 
 var server = app.listen(APP_PORT, function() {
   console.log('plaid-walkthrough server listening on port ' + APP_PORT);

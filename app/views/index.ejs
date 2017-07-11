@@ -27,7 +27,7 @@
     </p>
 
     <button id="link-btn">Link Account</button>
-    <button id="logout">Logout</button>
+    <button id="logout-btn">Logout</button>
 
 
   </div>
@@ -53,6 +53,11 @@
       <button id="get-buckets-btn">Buckets</button>
       <div id="load-bar-frame" class="bucketclass">
           <div id="load-bar"></div>
+      </div>
+   </div>
+
+   <div class = "box">
+      <button id="logout-btn">Log Out</button>
       </div>
    </div>
 
@@ -85,12 +90,21 @@
       handler.open();
     });
 
-    $('#logout').on('click', function(e) {
+    $('#logout-btn').on('click', function(e) {
       console.log("logging out...");
-      $.get('/index.ejs', function(data) {
-          console.log("logged out successfully");
+      $.get('/log_out', function(data) {
+          logOutSuccess(data.logout)
       });
     });
+
+    function logOutSuccess(success) {
+        if (success == true) {
+              location.href="login.ejs";
+              alert("successfully logged out");
+        } else {
+            alert('log out failed or you are not logged in');
+        }
+    };
 
     $('#get-accounts-btn').on('click', function(e) {
       $.get('/accounts', function(data) {
