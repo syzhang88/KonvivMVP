@@ -27,12 +27,52 @@
     </p>
 
     <button id="link-btn">Link Account</button>
+    <button id="buckets-btn">Buckets</button>
     <button id="logout-btn">Logout</button>
-
 
   </div>
 
-  <div id="app">
+  <div id="buckets">
+      <div class = "box">
+         <button id="get-buckets-btn">Buckets</button>
+     </div>
+         <div>
+             <div class="load-bar-frame">
+                 <div id="Income" class="load-bar">Income</div>
+             </div>
+        </div>
+         <div>
+             <div class="load-bar-frame">
+                 <div id="Bills" class="load-bar">Bills</div>
+             </div>
+             <div class="load-bar-frame">
+
+                 <div id="Eating Out" class="load-bar">Eating Out</div>
+             </div>
+             <div class="load-bar-frame">
+                 <div id="Entertainment" class="load-bar">Entertainment</div>
+             </div>
+             <div class="load-bar-frame">
+                 <div id="Subscriptions" class="load-bar">Subscriptions</div>
+             </div>
+        </div>
+        <div>
+            <div class="load-bar-frame">
+                <div id="Groceries" class="load-bar">Groceries</div>
+            </div>
+            <div class="load-bar-frame">
+                <div id="Shopping" class="load-bar">Shopping</div>
+            </div>
+            <div class="load-bar-frame">
+                <div id="Transportation" class="load-bar">Transportation</div>
+            </div>
+            <div class="load-bar-frame">
+                <div id="General Spending" class="load-bar">General Spending</div>
+            </div>
+       </div>
+  </div>
+
+  <div id="menu">
     <div class="box">
       <button id="get-accounts-btn">Get Accounts</button>
       <div id="get-accounts-data"></div>
@@ -47,14 +87,6 @@
       <button id="get-transactions-btn">Get Transactions</button>
       <div id="get-transactions-data"></div>
     </div>
-
-
-   <div class = "box">
-      <button id="get-buckets-btn">Buckets</button>
-      <div id="load-bar-frame" class="bucketclass">
-          <div id="load-bar"></div>
-      </div>
-   </div>
 
    <div class = "box">
       <button id="logout-btn">Log Out</button>
@@ -80,7 +112,7 @@
         }, function() {
           $('#container').fadeOut('fast', function() {
             $('#intro').hide();
-            $('#app, #steps').fadeIn('slow');
+            $('#menu').fadeIn('slow');
           });
         });
       },
@@ -88,6 +120,13 @@
 
     $('#link-btn').on('click', function(e) {
       handler.open();
+    });
+
+    $('#buckets-btn').on('click', function(e) {
+        $('#container').fadeOut('fast', function() {
+          $('#intro').hide();
+          $('#buckets').fadeIn('slow');
+        });
     });
 
     $('#logout-btn').on('click', function(e) {
@@ -99,8 +138,8 @@
 
     function logOutSuccess(success) {
         if (success == true) {
-              location.href="login.ejs";
-              alert("successfully logged out");
+            location.href="/";
+            alert("successfully logged out");
         } else {
             alert('log out failed or you are not logged in');
         }
@@ -228,7 +267,7 @@
                         setInterval(function() {
                             per++;
                             if(per <= fillPercent) {
-                               $('#load-bar').css({background: "linear-gradient(to right, #000000 "+per+"%,#feffff "
+                               $('#' + key).css({background: "linear-gradient(to right, #000000 "+per+"%,#feffff "
                                +per+"%,#feffff 100%)"});
                             }
                         }, 100);

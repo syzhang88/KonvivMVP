@@ -18,8 +18,6 @@ var USER_ID = null;
 var USER_EMAIL = null;
 //var SAVED_ACCESS_TOKEN = 'access-sandbox-bda31429-1f95-42c8-974f-fc6d34937da9';
 
-
-
 /*** SETTING UP FIREBASE, PLAID, AND EXPRESS ***/
 
 // Sam: Begin Firebase code for configuration, initialization, and authentication.
@@ -270,12 +268,12 @@ app.get('/buckets', function(request, response, next) {
     });
 });
 
-app.post('/get_user_info', function(request, response, next) {
-  console.log("USER_ID: " + request.body.userId);
-  console.log("email: " + request.body.email);
-  USER_ID = request.body.userId;
-  USER_EMAIL = request.body.email;
-});
+// app.post('/get_user_info', function(request, response, next) {
+//   console.log("USER_ID: " + request.body.userId);
+//   console.log("email: " + request.body.email);
+//   USER_ID = request.body.userId;
+//   USER_EMAIL = request.body.email;
+// });
 
 app.post('/log_in', function(request, response, next) {
     console.log('Attempting log in...');
@@ -290,8 +288,15 @@ app.post('/log_in', function(request, response, next) {
         var errorMessage = error.message;
         console.log('failed to log into Firebase: ' + errorMessage);
         response.json({login: false});
-    }, response.json({login: true}));
+    }).then(function() {
+        console.log('successfully logged into Firebase');
+        response.json({login: true});
+        USER_ID = firebase.auth().currentUser.uid;
+        USER_EMAIL = username;
+    });
     promise.catch(e => console.log(e.message));
+    USER_ID = request.body.userId;
+    USER_EMAIL = request.body.email;
 });
 
 app.post('/sign_up', function(request, response, next) {
@@ -305,9 +310,14 @@ app.post('/sign_up', function(request, response, next) {
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
-        console.log('failed to log into Firebase: ' + errorMessage);
+        console.log('failed to create user: ' + errorMessage);
         response.json({login: false});
-    }, response.json({login: true}));
+    }).then(function() {
+        console.log('successfully created user in Firebase');
+        response.json({login: true});
+        USER_ID = firebase.auth().currentUser.uid;
+        USER_EMAIL = username;
+    });
     promise.catch(e => console.log(e.message));
 });
 
@@ -316,10 +326,14 @@ app.get('/log_out', function(request, response, next) {
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
-        console.log('failed to log into Firebase: ' + errorMessage);
+        console.log('failed to log out of Firebase: ' + errorMessage);
         response.json({logout: false});
-    }, response.json({logout: true}));
-    console.log('successfully logged out');
+    }).then(function() {
+        console.log('successfully logged out of Firebase');
+        response.json({login: true});
+        USER_ID = null;
+        USER_EMAIL = null;
+    });    console.log('successfully logged out');
 });
 
 app.get('/user_exists', function(request, response, next) {
@@ -327,6 +341,14 @@ app.get('/user_exists', function(request, response, next) {
     usersRef.child(request.body.userId).once('value', function(snapshot) {
         response.json({exists: (snapshot.val() !== null)});
     });
+});
+
+app.get('/log_in_status', function(request, response, next) {
+    if (USER_ID || USER_EMAIL) {
+        response.json({login: true});
+    } else {
+        response.json({login: false});
+    }
 });
 
 var server = app.listen(APP_PORT, function() {
