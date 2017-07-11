@@ -60,6 +60,8 @@ exports.selectBucket = function selectBucket (transaction) {
 // days, which is passed in as estimationPeriod
 exports.estimateSize = function estimateSize (transactions, userId, estimationPeriod, pathTransaction,
     pathMoney) {
+    console.log("creating buckets now...");
+
     var bucketAmounts = {
         'Groceries': 0,
         'Eating Out': 0,

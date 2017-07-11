@@ -7,54 +7,55 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-  <div id="banner">
-    <h1>Welcome to Konviv!</h1>
-    <p id="intro">
-      Test Application for KONVIV
-    </p>
+    <div id="banner">
+        <h1>Welcome to Konviv!</h1>
+        <p id="intro">
+          Test Application for KONVIV
+        </p>
 <!--     <p id="steps">
       Great - you just created an Item! The server was successfully able to exchange the public_token for an access_token.
       Below are a few options - you can get account data, retrieve information about the Item itself, or pull transaction data.
     </p> -->
-  </div>
+    </div>
 
-  <div id="container">
-    <p>
-      Click the button below to open a list of Institutions - after you select one,
-      you'll be guided through an authentication process. The public_token will be passed
-      back to the example server, which will then exchange it for an access token and log it
-      to your console.
-    </p>
+    <div id="container">
+        <p>
+          Click the button below to open a list of Institutions - after you select one,
+          you'll be guided through an authentication process. The public_token will be passed
+          back to the example server, which will then exchange it for an access token and log it
+          to your console.
+        </p>
+        <button id="link-btn">Link Account</button>
+        <button id="buckets-btn">Buckets</button>
+        <button id="menu-btn">Menu</button>
+        <button class="logout-btn">Log Out</button>
+    </div>
 
-    <button id="link-btn">Link Account</button>
-    <button id="buckets-btn">Buckets</button>
-    <button id="logout-btn">Logout</button>
-
-  </div>
-
-  <div id="buckets">
-      <div class = "box">
-         <button id="get-buckets-btn">Buckets</button>
-     </div>
-         <div>
-             <div class="load-bar-frame">
-                 <div id="Income" class="load-bar">Income</div>
-             </div>
+    <div id="buckets">
+        <div class = "box">
+            <button id="get-buckets-btn">Buckets</button>
         </div>
-         <div>
-             <div class="load-bar-frame">
-                 <div id="Bills" class="load-bar">Bills</div>
-             </div>
-             <div class="load-bar-frame">
-
-                 <div id="Eating Out" class="load-bar">Eating Out</div>
-             </div>
-             <div class="load-bar-frame">
-                 <div id="Entertainment" class="load-bar">Entertainment</div>
-             </div>
-             <div class="load-bar-frame">
-                 <div id="Subscriptions" class="load-bar">Subscriptions</div>
-             </div>
+        <div class = "box">
+            <button class="logout-btn">Log Out</button>
+        </div>
+        <div>
+            <div class="load-bar-frame">
+                <div id="Income" class="load-bar">Income</div>
+            </div>
+        </div>
+        <div>
+            <div class="load-bar-frame">
+                <div id="Bills" class="load-bar">Bills</div>
+            </div>
+            <div class="load-bar-frame">
+                <div id="Eating Out" class="load-bar">Eating Out</div>
+            </div>
+            <div class="load-bar-frame">
+                <div id="Entertainment" class="load-bar">Entertainment</div>
+            </div>
+            <div class="load-bar-frame">
+                <div id="Subscriptions" class="load-bar">Subscriptions</div>
+            </div>
         </div>
         <div>
             <div class="load-bar-frame">
@@ -69,214 +70,219 @@
             <div class="load-bar-frame">
                 <div id="General Spending" class="load-bar">General Spending</div>
             </div>
-       </div>
-  </div>
-
-  <div id="menu">
-    <div class="box">
-      <button id="get-accounts-btn">Get Accounts</button>
-      <div id="get-accounts-data"></div>
+        </div>
     </div>
 
-    <div class="box">
-      <button id="get-item-btn">Get Item</button>
-      <div id="get-item-data"></div>
+    <div id="menu">
+        <div class="box">
+            <button id="get-accounts-btn">Get Accounts</button>
+            <div id="get-accounts-data"></div>
+        </div>
+        <div class="box">
+            <button id="get-item-btn">Get Item</button>
+            <div id="get-item-data"></div>
+        </div>
+        <div class="box">
+            <button id="get-transactions-btn">Get Transactions</button>
+            <div id="get-transactions-data"></div>
+        </div>
+        <div class = "box">
+            <button class="logout-btn">Log Out</button>
+        </div>
     </div>
 
-    <div class="box">
-      <button id="get-transactions-btn">Get Transactions</button>
-      <div id="get-transactions-data"></div>
-    </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
 
-   <div class = "box">
-      <button id="logout-btn">Log Out</button>
-      </div>
-   </div>
-
-  </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
-  <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
-
-  <script>
-  (function($) {
-    var handler = Plaid.create({
-      apiVersion: 'v2',
-      clientName: 'Plaid Walkthrough Demo',
-      env: 'sandbox',
-      product: ['transactions'],
-      key: '9f4ef21fdb37b5c0e3f80290db7716',
-      onSuccess: function(public_token) {
-        $.post('/get_access_token', {
-          public_token: public_token
-        }, function() {
-          $('#container').fadeOut('fast', function() {
-            $('#intro').hide();
-            $('#menu').fadeIn('slow');
-          });
-        });
-      },
+<script>
+    $.get('/log_in_status', function(data) {
+        logOutSuccess(!data.login);
     });
-
-    $('#link-btn').on('click', function(e) {
-      handler.open();
-    });
-
-    $('#buckets-btn').on('click', function(e) {
-        $('#container').fadeOut('fast', function() {
-          $('#intro').hide();
-          $('#buckets').fadeIn('slow');
-        });
-    });
-
-    $('#logout-btn').on('click', function(e) {
-      console.log("logging out...");
-      $.get('/log_out', function(data) {
-          logOutSuccess(data.logout)
-      });
-    });
-
-    function logOutSuccess(success) {
-        if (success == true) {
+    function logOutSuccess(logout) {
+        if (logout == true) {
             location.href="/";
-            alert("successfully logged out");
+            console.log("currently logged out");
+            alert("currently logged out");
         } else {
-            alert('log out failed or you are not logged in');
+            console.log('unable to log out');
         }
     };
 
-    $('#get-accounts-btn').on('click', function(e) {
-      $.get('/accounts', function(data) {
-        $('#get-accounts-data').slideUp(function() {
-          var html = '';
-          data.accounts.forEach(function(account, idx) {
-            html += '<div class="inner">';
-            html += '<strong>' + account.name +
-              ' $' + (account.balances.available != null ? account.balances.available : account.balances.current) + '</strong><br>';
-            html += account.subtype + ' ' + account.mask;
-            html += '</div>';
-          });
-
-          $(this).html(html).slideDown();
+    (function($) {
+        var handler = Plaid.create({
+            apiVersion: 'v2',
+            clientName: 'Konviv Android Demo',
+            env: 'development',
+            product: ['transactions'],
+            key: '9f4ef21fdb37b5c0e3f80290db7716',
+            onSuccess: function(public_token) {
+                $.post('/get_access_token', {
+                    public_token: public_token
+                }, function() {
+                    $('#container').fadeOut('fast', function() {
+                        $('#intro').hide();
+                        $('#menu').fadeIn('slow');
+                    });
+                });
+            },
         });
-      });
-    });
 
-    $('#get-item-btn').on('click', function(e) {
-      $.post('/item', function(data) {
-        $('#get-item-data').slideUp(function() {
-          if (data.error)
-            $(this).html('<p>' + data.error + '</p>').slideDown();
-          else {
-            var html = '<div class="inner">';
-            html += '<p>Here\'s some basic information about your Item:</p>';
-            html += '<p>Institution name:' + data.institution.name + '</p>';
-            html += '<p>Billed products: ' + data.item.billed_products.join(', ') + '</p>';
-            html += '<p>Available products: ' + data.item.available_products.join(', ') + '</p>';
-            html += '</div>';
-
-            $(this).html(html).slideDown();
-          }
+        $('#link-btn').on('click', function(e) {
+            handler.open();
         });
-      });
-    });
 
-    $('#get-transactions-btn').on('click', function(e) {
-      $.post('/transactions', function(data) {
-        if (data.error != null) {
-          // Format the error
-          var errorHtml = '<div class="inner"><p>' +
-           '<strong>' + data.error.error_code + ':</strong> ' +
-           data.error.error_message + '</p></div>';
-
-          if (data.error.error_code === 'PRODUCT_NOT_READY') {
-            // Add additional context for `PRODUCT_NOT_READY` errors
-            errorHtml += '<div class="inner"><p>The PRODUCT_NOT_READY ' +
-             'error is returned when a request to retrieve Transaction data ' +
-             'is made before Plaid finishes the <a href="https://plaid.com/' +
-             'docs/quickstart/#transaction-data-with-webhooks">initial ' +
-             'transaction pull.</a></p></div>';
-          }
-          // Render the error
-          $('#get-transactions-data').slideUp(function() {
-            $(this).slideUp(function() {
-              $(this).html(errorHtml).slideDown();
+        $('#buckets-btn').on('click', function(e) {
+            $('#container').fadeOut('fast', function() {
+                $('#intro').hide();
+                $('#buckets').fadeIn('slow');
             });
-          });
-        } else {
-            $('#get-transactions-data').slideUp(function() {
-            var html = '';
-            data.transactions.forEach(function(txn, idx) {
-                //code for displaying category for each transaction
-                var category = '';
-                if (txn.category) {
-                    category = txn.category[0]
-                    for (var i = 1; i < txn.category.length; i++) {
-                        category = category + ", " + txn.category[i]
+        });
+
+        $('#menu-btn').on('click', function(e) {
+            $('#container').fadeOut('fast', function() {
+                $('#intro').hide();
+                $('#menu').fadeIn('slow');
+            });
+        });
+
+        $('.logout-btn').on('click', function(e) {
+            console.log("logging out...");
+            $.get('/log_out', function(data) {
+                logOutSuccess(data.logout)
+            });
+        });
+
+        $('#get-accounts-btn').on('click', function(e) {
+            $.get('/accounts', function(data) {
+                $('#get-accounts-data').slideUp(function() {
+                    var html = '';
+                    data.accounts.forEach(function(account, idx) {
+                        html += '<div class="inner">';
+                        html += '<strong>' + account.name +
+                        ' $' + (account.balances.available != null ? account.balances.available : account.balances.current) + '</strong><br>';
+                        html += account.subtype + ' ' + account.mask;
+                        html += '</div>';
+                    });
+
+                    $(this).html(html).slideDown();
+                });
+            });
+        });
+
+        $('#get-item-btn').on('click', function(e) {
+            $.post('/item', function(data) {
+                $('#get-item-data').slideUp(function() {
+                    if (data.error)
+                    $(this).html('<p>' + data.error + '</p>').slideDown();
+                    else {
+                        var html = '<div class="inner">';
+                        html += '<p>Here\'s some basic information about your Item:</p>';
+                        html += '<p>Institution name:' + data.institution.name + '</p>';
+                        html += '<p>Billed products: ' + data.item.billed_products.join(', ') + '</p>';
+                        html += '<p>Available products: ' + data.item.available_products.join(', ') + '</p>';
+                        html += '</div>';
+                        $(this).html(html).slideDown();
                     }
-                }
-                else {
-                    category = 'Uncategorized'
-                }
-                html += '<div class="inner">';
-                html += '<strong>' + txn.name + '</strong><br>';
-                html += '<em>' + category + '</em><br>';
-                html += '$' + txn.amount + '<br>';
-                html += '<em>' + txn.date + '</em>';
-                html += '</div>';
+                });
             });
+        });
 
-            $(this).slideUp(function() {
-                $(this).html(html).slideDown();
-            });
-          });
-        }
-      });
-    });
-
-    // Buckets Button
-    $('#get-buckets-btn').click(function(e){
-        $(this).slideDown(function() {
-            // RESTful call to index.js server using get function
-            $.get('/buckets', function(data) {
-                // Catching error
+        $('#get-transactions-btn').on('click', function(e) {
+            $.post('/transactions', function(data) {
                 if (data.error != null) {
                     // Format the error
                     var errorHtml = '<div class="inner"><p>' +
                     '<strong>' + data.error.error_code + ':</strong> ' +
-                    ata.error.error_message + '</p></div>';
+                    data.error.error_message + '</p></div>';
+
+                    if (data.error.error_code === 'PRODUCT_NOT_READY') {
+                        // Add additional context for `PRODUCT_NOT_READY` errors
+                        errorHtml += '<div class="inner"><p>The PRODUCT_NOT_READY ' +
+                        'error is returned when a request to retrieve Transaction data ' +
+                        'is made before Plaid finishes the <a href="https://plaid.com/' +
+                        'docs/quickstart/#transaction-data-with-webhooks">initial ' +
+                        'transaction pull.</a></p></div>';
+                    }
                     // Render the error
                     $('#get-transactions-data').slideUp(function() {
                         $(this).slideUp(function() {
                             $(this).html(errorHtml).slideDown();
                         });
                     });
-                // Using for loop to pull information for each bucket from data
                 } else {
-                    for (var key in data) {
-                        var per = 0;
-                        var fillPercent = 0;
-                        // Accounting for divide-by-zero error
-                        if (data[key]['Total'] > 0) {
-                            fillPercent = data[key]['Remaining']/data[key]['Total']*100
-                        }
-                        //Printing out bucket information to console
-                        console.log("Bucket: " + key + ", Remaining amount: " + data[key]['Remaining']
-                        + "/" + data[key]['Remaining']  + " = " + fillPercent);
-                        // Draws out bucket
-                        setInterval(function() {
-                            per++;
-                            if(per <= fillPercent) {
-                               $('#' + key).css({background: "linear-gradient(to right, #000000 "+per+"%,#feffff "
-                               +per+"%,#feffff 100%)"});
+                    $('#get-transactions-data').slideUp(function() {
+                        var html = '';
+                        data.transactions.forEach(function(txn, idx) {
+                            //code for displaying category for each transaction
+                            var category = '';
+                            if (txn.category) {
+                                category = txn.category[0]
+                                for (var i = 1; i < txn.category.length; i++) {
+                                    category = category + ", " + txn.category[i]
+                                }
                             }
-                        }, 100);
-                    }
+                            else {
+                                category = 'Uncategorized'
+                            }
+                            html += '<div class="inner">';
+                            html += '<strong>' + txn.name + '</strong><br>';
+                            html += '<em>' + category + '</em><br>';
+                            html += '$' + txn.amount + '<br>';
+                            html += '<em>' + txn.date + '</em>';
+                            html += '</div>';
+                        });
+
+                        $(this).slideUp(function() {
+                            $(this).html(html).slideDown();
+                        });
+                    });
                 }
             });
         });
-    });
-  })(jQuery);
-  </script>
+
+        // Buckets Button
+        $('#get-buckets-btn').click(function(e){
+            $(this).slideDown(function() {
+                // RESTful call to index.js server using get function
+                $.get('/buckets', function(data) {
+                    // Catching error
+                    if (data.error != null) {
+                        // Format the error
+                        var errorHtml = '<div class="inner"><p>' +
+                        '<strong>' + data.error.error_code + ':</strong> ' +
+                        data.error.error_message + '</p></div>';
+                        // Render the error
+                        $('#get-transactions-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(errorHtml).slideDown();
+                            });
+                        });
+                        // Using for loop to pull information for each bucket from data
+                    } else {
+                        for (var key in data) {
+                            var per = 0;
+                            var fillPercent = 0;
+                            // Accounting for divide-by-zero error
+                            if (data[key]['Total'] > 0) {
+                                fillPercent = data[key]['Remaining']/data[key]['Total']*100
+                            }
+                            //Printing out bucket information to console
+                            console.log("Bucket: " + key + ", Remaining amount: " + data[key]['Remaining']
+                            + "/" + data[key]['Remaining'] + " = " + fillPercent);
+                            // Draws out bucket
+                            setInterval(function() {
+                                per++;
+                                if(per <= fillPercent) {
+                                    $('#' + key).css({background: "linear-gradient(to right, #000000 "+per+"%,#feffff "
+                                    +per+"%,#feffff 100%)"});
+                                }
+                            }, 100);
+                        }
+                    }
+                });
+            });
+        });
+    })(jQuery);
+</script>
 </body>
 </html>

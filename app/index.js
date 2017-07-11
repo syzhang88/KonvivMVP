@@ -16,7 +16,6 @@ const NUMBER_DAYS = 30;
 // after they have made their accounts
 var USER_ID = null;
 var USER_EMAIL = null;
-//var SAVED_ACCESS_TOKEN = 'access-sandbox-bda31429-1f95-42c8-974f-fc6d34937da9';
 
 /*** SETTING UP FIREBASE, PLAID, AND EXPRESS ***/
 
@@ -42,7 +41,7 @@ var APP_PORT = envvar.number('APP_PORT', 8000);
 var PLAID_CLIENT_ID = envvar.string('PLAID_CLIENT_ID', '593981e0bdc6a401d71d87b5');
 var PLAID_SECRET = envvar.string('PLAID_SECRET', '271426f90259600c6bf365d6b0f0aa');
 var PLAID_PUBLIC_KEY = envvar.string('PLAID_PUBLIC_KEY', '9f4ef21fdb37b5c0e3f80290db7716');
-var PLAID_ENV = envvar.string('PLAID_ENV', 'sandbox');
+var PLAID_ENV = envvar.string('PLAID_ENV', 'development');
 
 // We store the access_token in memory - in production, store it in a secure
 // persistent data store
@@ -118,11 +117,9 @@ app.post('/get_access_token', function(request, response, next) {
     // tl;dr: Right now, we can see I'm just manually entering the same access
     // token, but we need to find a way to store it somewhere, perhaps on Firebase.
     // We need to ask around; ask Deep and Luz for engineering friends to help.
-    //ACCESS_TOKEN = SAVED_ACCESS_TOKEN;
     ACCESS_TOKEN = tokenResponse.access_token;
     ITEM_ID = tokenResponse.item_id;
     console.log('LOADING Access Token: ' + ACCESS_TOKEN);
-
 
     firebase.database().ref('users/' + USER_ID).set({
      user_token: ACCESS_TOKEN
@@ -245,7 +242,14 @@ app.post('/transactions', function(request, response, next) {
 
 app.get('/buckets', function(request, response, next) {
     console.log("/buckets has been called");
-    var bucketRef = firebase.database().ref('users/' + USER_ID + '/bucketMoney');
+    var bucketRef = firebase.database().ref('users/' + USER_ID + '/bucketMoney').catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log('failed to pull bucket references: ' + errorMessage);
+        response.json({login: false});
+    });
+
     bucketRef.on('value', function(snapshot) {
         var bucketsList = {}
         console.log("snapshot taken ");
@@ -330,7 +334,7 @@ app.get('/log_out', function(request, response, next) {
         response.json({logout: false});
     }).then(function() {
         console.log('successfully logged out of Firebase');
-        response.json({login: true});
+        response.json({logout: true});
         USER_ID = null;
         USER_EMAIL = null;
     });    console.log('successfully logged out');
