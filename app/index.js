@@ -246,13 +246,14 @@ app.post('/transactions', function(request, response, next) {
 });
 
 app.get('/buckets', function(request, response, next) {
-    console.log("/buckets has been called");
+   //  console.log("/buckets has been called");
     firebase.database().ref('users/' + USER_ID + '/bucketMoney').on('value', function(snapshot) {
         var bucketsList = {}
-        console.log("snapshot taken ");
+        // console.log("snapshot taken ");
         for (var key in snapshot.val()) {
-            console.log("data is being pulled...");
 
+            //console.log("data is being pulled...");
+              
             // Sam: Checks that we're only looking at keys we made. Google
             // 'HasOwnProperty' for more info
 
@@ -264,7 +265,6 @@ app.get('/buckets', function(request, response, next) {
             }
         }
 
-         console.log("printing bucketsList: " + bucketsList)
         response.json(bucketsList);
     });
 });
