@@ -59,7 +59,7 @@ exports.selectBucket = function selectBucket (transaction) {
 // Estimates the size of a bucket given transactions from a given interval of
 // days, which is passed in as estimationPeriod
 exports.estimateSize = function estimateSize (transactions, estimationPeriod) {
-    console.log("creating buckets now...");
+    console.log("calculating buckets sizes now...");
 
     var bucketAmounts = {
         'Groceries': 0,
@@ -74,9 +74,9 @@ exports.estimateSize = function estimateSize (transactions, estimationPeriod) {
     var monthlyBucketSum = 0;
     for (var bucket in bucketAmounts) {
         var totalBucketAmount = 0;
-        for (var key in snapshot.val()[bucket]) {
-            if (snapshot.val()[bucket][key]) {
-                var amount = snapshot.val()[bucket][key]['amount'];
+        for (var key in transactions[bucket]) {
+            if (transactions[bucket][key]) {
+                var amount = transactions[bucket][key]['amount'];
                 totalBucketAmount += amount;
             }
         }
@@ -92,7 +92,7 @@ exports.estimateSize = function estimateSize (transactions, estimationPeriod) {
         'Remaining': generalBucket, 'Name': nameBuckets['General Spending']};
         generalBucket;
 
-    console.log('uploaded bucket estimations');
+    console.log('finished calculating bucket estimations... ' + bucketAmounts);
     return bucketAmounts;
 }
 

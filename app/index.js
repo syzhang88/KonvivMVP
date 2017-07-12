@@ -228,18 +228,13 @@ app.post('/transactions', function(request, response, next) {
     var pathMoney = 'users/' + USER_ID + "/bucketMoney";
     var bucketAmounts = {};
 
-    firebase.database().ref(pathTransaction).once('value').catch(function(error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        console.log('failed to find access token: ' + errorMessage);
-        response.json({login: false});
-    }).then(function(snapshot) {
+    firebase.database().ref(pathTransaction).once('value', function(snapshot) {
         console.log('estimating bucket sizes...');
         bucketAmounts = buckets.estimateSize(snapshot.val(), NUMBER_DAYS);
+    }).then(function () {
+        console.log('uploading bucket sizes...');
+        firebase.database().ref(pathMoney).update(bucketAmounts);
     });
-
-    firebase.database().ref(pathMoney).update(bucketAmounts);
 
     console.log('saved transactions under ' + USER_ID);
     // Sam: End Firebase section
@@ -252,15 +247,7 @@ app.post('/transactions', function(request, response, next) {
 
 app.get('/buckets', function(request, response, next) {
     console.log("/buckets has been called");
-    var bucketRef = firebase.database().ref('users/' + USER_ID + '/bucketMoney').catch(function(error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        console.log('failed to pull bucket references: ' + errorMessage);
-        response.json({login: false});
-    });
-
-    bucketRef.on('value', function(snapshot) {
+    firebase.database().ref('users/' + USER_ID + '/bucketMoney').on('value', function(snapshot) {
         var bucketsList = {}
         console.log("snapshot taken ");
         for (var key in snapshot.val()) {
