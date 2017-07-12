@@ -228,9 +228,15 @@ app.post('/transactions', function(request, response, next) {
     var pathMoney = 'users/' + USER_ID + "/bucketMoney";
     var bucketAmounts = {};
 
-    firebase.database().ref(pathTransaction).once('value').then(function(snapshot) {
+    firebase.database().ref(pathTransaction).once('value').catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log('failed to find access token: ' + errorMessage);
+        response.json({login: false});
+    }).then(function(snapshot) {
         console.log('estimating bucket sizes...');
-        bucketAmounts = buckets.estimateSize(transactionsResponse.transactions, NUMBER_DAYS);
+        bucketAmounts = buckets.estimateSize(snapshot.val(), NUMBER_DAYS);
     });
 
     firebase.database().ref(pathMoney).update(bucketAmounts);
@@ -301,14 +307,22 @@ app.post('/log_in', function(request, response, next) {
         response.json({login: true});
         USER_ID = firebase.auth().currentUser.uid;
         USER_EMAIL = username;
-
-        firebase.database().ref('users/' + USER_ID + "/user_token").once('value').then(function(snapshot) {
+    }).then(function() {
+        console.log('looking for existing access token for ' + USER_ID);
+        firebase.database().ref('/users/' + USER_ID).once('value').catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log('failed to find access token: ' + errorMessage);
+            response.json({login: false});
+        }).then(function(snapshot) {
             if (ACCESS_TOKEN == null) {
-                ACCESS_TOKEN = snapshot.val()
+                ACCESS_TOKEN = snapshot.val()['user_token'];
+                console.log('found existing access token: ' + ACCESS_TOKEN);
             }
         });
+        promise.catch(e => console.log(e.message));
     });
-    promise.catch(e => console.log(e.message));
     // USER_ID = request.body.userId;
     // USER_EMAIL = request.body.email;
 });
