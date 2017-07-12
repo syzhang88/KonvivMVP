@@ -31,7 +31,7 @@
         <button class="logout-btn">Log Out</button>
     </div>
 
-<!-- KI KI ATTEMPT TO MAKE SURE BUCKETS IS NOT HARD CODED. LOAD EACH TIME BUCKET KEY IS CALLED --> 
+<!-- KI KI ATTEMPT TO MAKE SURE BUCKETS IS NOT HARD CODED. LOAD EACH TIME BUCKET KEY IS CALLED -->
 <div id="buckets">
         <div class = "box">
             <button id="get-buckets-btn">Buckets</button>
@@ -41,7 +41,7 @@
         </div>
         <div>
 <!--         START HERE -->
-<!-- begun to change the id to 'p' so i can change the name each time -->                       
+<!-- begun to change the id to 'p' so i can change the name each time -->
                      <!-- income -->
               <div class="load-bar-frame">
                 <p class="buckets-key" class="load-bar"></p>
@@ -313,7 +313,7 @@
                 // RESTful call to index.js server using get function
                 $.get('/buckets', function(data) {
                     // Catching error
-                    
+
                     if (data.error != null) {
                         // Format the error
                         var errorHtml = '<div class="inner"><p>' +
@@ -338,8 +338,8 @@
 
                             //Printing out bucket information to console
                             console.log("Bucket: " + key + ", Remaining amount: " + data[key]['Remaining']
-                            + "/" + data[key]['Remaining'] + " = " + fillPercent);
-                           
+                            + "/" + data[key]['Total'] + " = " + fillPercent);
+
                             // Draws out bucket
                             setInterval(function() {
                                 per++;
