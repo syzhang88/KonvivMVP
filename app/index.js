@@ -10,7 +10,8 @@ var moment = require('moment');
 var plaid = require('plaid');
 var buckets = require('./buckets');
 
-const NUMBER_DAYS = 30;
+const SIX_MONTHS = 180;
+const ONE_MONTH = 30;
 
 // Sam: @ARCHAN, you need to find a way to securely store this when users log in
 // after they have made their accounts
@@ -80,8 +81,6 @@ app.use(bodyParser.json());
 
 /*AUTHENTICATION PAGE: just added the login.ejs page*/
 
-
-
 app.get('/', function(request, response, next) {
   response.render('login.ejs', {
     PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
@@ -97,7 +96,6 @@ app.get('/index.ejs', function(request, response, next) {
 });
 
 app.post('/get_access_token', function(request, response, next) {
-
   PUBLIC_TOKEN = request.body.public_token;
   client.exchangePublicToken(PUBLIC_TOKEN, function(error, tokenResponse) {
     if (error != null) {
@@ -111,19 +109,19 @@ app.post('/get_access_token', function(request, response, next) {
     // user is a new user logging in each time. Even if the same username and
     // password is used, if we do not reuse the same ACCESS TOKEN, Plaid will
     // assume it is drawing data for the first time and give all the transactions,
-    // accounts, etc. new IDs. This will cre duplicate transactions, accounts,
+    // accounts, etc. new IDs. This will create duplicate transactions, accounts,
     // and data in general in our Firebase database unless we use the same access
     // token to log in each time.
-    // tl;dr: Right now, we can see I'm just manually entering the same access
-    // token, but we need to find a way to store it somewhere, perhaps on Firebase.
-    // We need to ask around; ask Deep and Luz for engineering friends to help.
     ACCESS_TOKEN = tokenResponse.access_token;
     ITEM_ID = tokenResponse.item_id;
     console.log('LOADING Access Token: ' + ACCESS_TOKEN);
 
     firebase.database().ref('users/' + USER_ID).set({
-     user_token: ACCESS_TOKEN
+        user_token: ACCESS_TOKEN
     });
+
+    updateTransactions(SIX_MONTHS);
+    estimateBuckets();
 
     console.log('Item ID: ' + ITEM_ID);
     response.json({
@@ -150,8 +148,6 @@ app.get('/accounts', function(request, response, next) {
      // These are the different checking/cc banking accounts
 
     // Sam: Begin Firebase section for updating account info
-
-
     var postData = {
         'accounts': authResponse.accounts
     };
@@ -202,61 +198,22 @@ app.post('/transactions', function(request, response, next) {
   // Pull transactions for the Item for the last 30 days to the front-end
   // Sam: I added a Firebase section here so that the transactions for the Item
   // are also added to the Firebase database
-  var startDate = moment().subtract(NUMBER_DAYS, 'days').format('YYYY-MM-DD');
-  var endDate = moment().format('YYYY-MM-DD');
-  client.getTransactions(ACCESS_TOKEN, startDate, endDate, {
-    count: 250,
-    offset: 0,
-  }, function(error, transactionsResponse) {
-    if (error != null) {
-      console.log(JSON.stringify(error));
-      return response.json({
-        error: error
-      });
-    }
-
-    // Sam: Begin Firebase section for updating transaction data
-    transactionsResponse.transactions.forEach(function(transaction) {
-        var bucket = buckets.selectBucket(transaction);
-        var newPostKey = transaction.transaction_id;
-        var postData = {}
-        postData[newPostKey] = transaction;
-        firebase.database().ref('users/' + USER_ID + "/bucketTransactions/" + bucket).update(postData);
-    });
-
-    var pathTransaction = 'users/' + USER_ID + "/bucketTransactions/";
-    var pathMoney = 'users/' + USER_ID + "/bucketMoney";
-    var bucketAmounts = {};
-
-    firebase.database().ref(pathTransaction).once('value', function(snapshot) {
-        console.log('estimating bucket sizes...');
-        bucketAmounts = buckets.estimateSize(snapshot.val(), NUMBER_DAYS);
-    }).then(function () {
-        console.log('uploading bucket sizes...');
-        firebase.database().ref(pathMoney).update(bucketAmounts);
-    });
-
-    console.log('saved transactions under ' + USER_ID);
-    // Sam: End Firebase section
-
-    console.log('pulled ' + transactionsResponse.transactions.length + ' transactions');
-
-    response.json(transactionsResponse);
-  });
+  response.json(updateTransactions(SIX_MONTHS));
 });
 
 app.get('/buckets', function(request, response, next) {
-   //  console.log("/buckets has been called");
+    console.log("/buckets has been called");
+
+    updateRemaining();
+
     firebase.database().ref('users/' + USER_ID + '/bucketMoney').on('value', function(snapshot) {
         var bucketsList = {}
-        // console.log("snapshot taken ");
+        console.log("snapshot taken ");
         for (var key in snapshot.val()) {
+            console.log("data is being pulled...");
 
-            //console.log("data is being pulled...");
-              
-            // Sam: Checks that we're only looking at keys we made. Google
+            // Sam: hasOwnProperty(key) checks that we're only looking at keys we made. Google
             // 'HasOwnProperty' for more info
-
             if (snapshot.val().hasOwnProperty(key)) {
                 var bucket = snapshot.val()[key];
                 bucketsList[bucket['Name']] = {'Remaining': bucket['Remaining'], 'Total': bucket['Total']};
@@ -264,17 +221,10 @@ app.get('/buckets', function(request, response, next) {
                     + " remaining out of " + bucketsList[bucket['Name']]['Total']);
             }
         }
-
+        console.log("printing bucketsList: " + bucketsList)
         response.json(bucketsList);
     });
 });
-
-// app.post('/get_user_info', function(request, response, next) {
-//   console.log("USER_ID: " + request.body.userId);
-//   console.log("email: " + request.body.email);
-//   USER_ID = request.body.userId;
-//   USER_EMAIL = request.body.email;
-// });
 
 app.post('/log_in', function(request, response, next) {
     console.log('Attempting log in...');
@@ -348,7 +298,7 @@ app.get('/log_out', function(request, response, next) {
         response.json({logout: true});
         USER_ID = null;
         USER_EMAIL = null;
-    });    console.log('successfully logged out');
+    });
 });
 
 app.get('/user_exists', function(request, response, next) {
@@ -365,6 +315,90 @@ app.get('/log_in_status', function(request, response, next) {
         response.json({login: false});
     }
 });
+
+function estimateBuckets() {
+    var pathTransaction = 'users/' + USER_ID + "/bucketTransactions/";
+    var pathMoney = 'users/' + USER_ID + "/bucketMoney";
+    var bucketAmounts = {};
+
+    firebase.database().ref(pathTransaction).once('value', function(snapshot) {
+        console.log('estimating bucket sizes...');
+        bucketAmounts = buckets.estimateSize(snapshot.val(), SIX_MONTHS);
+    }).then(function () {
+        firebase.database().ref(pathMoney).update(bucketAmounts);
+        console.log('uploaded bucket size estimations');
+    });
+}
+
+function updateTransactions(time_period) {
+    var startDate = moment().subtract(time_period, 'days').format('YYYY-MM-DD');
+    var endDate = moment().format('YYYY-MM-DD');
+
+    client.getTransactions(ACCESS_TOKEN, startDate, endDate, {
+      count: 500,
+      offset: 0,
+    }, function(error, transactionsResponse) {
+        if (error != null) {
+            console.log(JSON.stringify(error));
+            return {
+              error: error
+            };
+        }
+
+        // Sam: Begin Firebase section for updating transaction data
+        transactionsResponse.transactions.forEach(function(transaction) {
+            var bucket = buckets.selectBucket(transaction);
+            var newPostKey = transaction.transaction_id;
+            var postData = {}
+            postData[newPostKey] = transaction;
+            firebase.database().ref('users/' + USER_ID + "/bucketTransactions/" + bucket).update(postData);
+
+        });
+
+        console.log('saved ' + transactionsResponse.transactions.length + ' transactions under ' + USER_ID);
+        return transactionsResponse;
+    });
+}
+
+function updateRemaining() {
+    var month = moment().month()
+    var year = moment().year()
+    if (month < 10) {
+        month = "0" + month
+    }
+
+    console.log("current month: " + year + "-" + month + '-01')
+    var startDate = year + '-' + month + '-01'
+    var endDate = moment().format('YYYY-MM-DD');
+
+    client.getTransactions(ACCESS_TOKEN, startDate, endDate, {
+      count: 500,
+      offset: 0,
+    }, function(error, transactionsResponse) {
+        if (error != null) {
+            console.log(JSON.stringify(error));
+            return {
+              error: error
+            };
+        }
+
+        var bucketsList = {};
+        // Sam: Begin Firebase section for updating transaction data
+        transactionsResponse.transactions.forEach(function(transaction) {
+            var bucket = buckets.selectBucket(transaction);
+            if (bucketsList[bucket]) {
+                bucketsList[bucket] += transaction.amount;
+            } else {
+                bucketsList[bucket] = transaction.amount;
+            }
+        });
+        for (var bucket in bucketsList) {
+            firebase.database().ref('users/' + USER_ID + "/bucketMoney/" +
+                bucket).update({Remaining: bucketsList[bucket]});
+        }
+        console.log('updated bucket spending for this month');
+    });
+}
 
 var server = app.listen(APP_PORT, function() {
   console.log('plaid-walkthrough server listening on port ' + APP_PORT);
