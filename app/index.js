@@ -352,7 +352,6 @@ function updateTransactions(time_period) {
             var postData = {}
             postData[newPostKey] = transaction;
             firebase.database().ref('users/' + USER_ID + "/bucketTransactions/" + bucket).update(postData);
-
         });
 
         console.log('saved ' + transactionsResponse.transactions.length + ' transactions under ' + USER_ID);
