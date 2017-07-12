@@ -265,7 +265,6 @@
                     } else {
                           var i = 0;
                     for (var key in data) {
-                            var per = 0;
                             var fillPercent = 0;
                             // Accounting for divide-by-zero error
                             if (data[key]['Total'] > 0) {
@@ -277,13 +276,8 @@
                             + "/" + data[key]['Total'] + " = " + fillPercent);
 
                             // Draws out bucket
-                            setInterval(function() {
-                                per++;
-                                if(per <= fillPercent) {
-                                    $('#' + key).css({background: "linear-gradient(to right, #000000 "+per+"%,#feffff "
-                                    +per+"%,#feffff 100%)"});
-                                }
-                            }, 100);
+                            $('#' + key).css({background: "linear-gradient(to right, #000000 "+fillPercent+"%,#feffff "
+                            +fillPercent+"%,#feffff 100%)"});
 
                             // $(".buckets-key")[i].textContent = key;  i++;
 
