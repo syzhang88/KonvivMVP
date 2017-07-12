@@ -58,8 +58,7 @@ exports.selectBucket = function selectBucket (transaction) {
 
 // Estimates the size of a bucket given transactions from a given interval of
 // days, which is passed in as estimationPeriod
-exports.estimateSize = function estimateSize (transactions, userId, estimationPeriod, pathTransaction,
-    pathMoney) {
+exports.estimateSize = function estimateSize (transactions, estimationPeriod) {
     console.log("creating buckets now...");
 
     var bucketAmounts = {
@@ -72,31 +71,29 @@ exports.estimateSize = function estimateSize (transactions, userId, estimationPe
         'Subscriptions': 0,
         'Income': 0
     };
-    firebase.database().ref(pathTransaction).once('value').then(function(snapshot) {
-        var monthlyBucketSum = 0;
-        for (var bucket in bucketAmounts) {
-            var totalBucketAmount = 0;
-            for (var key in snapshot.val()[bucket]) {
-                if (snapshot.val()[bucket][key]) {
-                    var amount = snapshot.val()[bucket][key]['amount'];
-                    totalBucketAmount += amount;
-                }
+    var monthlyBucketSum = 0;
+    for (var bucket in bucketAmounts) {
+        var totalBucketAmount = 0;
+        for (var key in snapshot.val()[bucket]) {
+            if (snapshot.val()[bucket][key]) {
+                var amount = snapshot.val()[bucket][key]['amount'];
+                totalBucketAmount += amount;
             }
-            var monthlyBucketAmount = totalBucketAmount/estimationPeriod * MONTH_PERIOD;
-
-            bucketAmounts[bucket] = {'Total': monthlyBucketAmount,
-                'Remaining': monthlyBucketAmount, 'Name': nameBuckets[bucket]};
-
-            monthlyBucketSum += monthlyBucketAmount;
         }
-        var generalBucket = -Math.max(bucketAmounts['Income']['Total'] - monthlyBucketSum, 0);
-        bucketAmounts['General Spending'] = {'Total': generalBucket,
-            'Remaining': generalBucket, 'Name': nameBuckets['General Spending']};
-            generalBucket;
-        firebase.database().ref(pathMoney).update(bucketAmounts);
+        var monthlyBucketAmount = totalBucketAmount/estimationPeriod * MONTH_PERIOD;
 
-        console.log('uploaded bucket estimations');
-    });
+        bucketAmounts[bucket] = {'Total': monthlyBucketAmount,
+            'Remaining': monthlyBucketAmount, 'Name': nameBuckets[bucket]};
+
+        monthlyBucketSum += monthlyBucketAmount;
+    }
+    var generalBucket = -Math.max(bucketAmounts['Income']['Total'] - monthlyBucketSum, 0);
+    bucketAmounts['General Spending'] = {'Total': generalBucket,
+        'Remaining': generalBucket, 'Name': nameBuckets['General Spending']};
+        generalBucket;
+
+    console.log('uploaded bucket estimations');
+    return bucketAmounts;
 }
 
 /*** REMAINING FUNCTIONS HAVE NOT BEEN TESTED AND MAY BE BUGGY ***/

@@ -226,8 +226,14 @@ app.post('/transactions', function(request, response, next) {
 
     var pathTransaction = 'users/' + USER_ID + "/bucketTransactions/";
     var pathMoney = 'users/' + USER_ID + "/bucketMoney";
-    buckets.estimateSize(transactionsResponse.transactions, USER_ID, NUMBER_DAYS,
-        pathTransaction, pathMoney);
+    var bucketAmounts = {};
+
+    firebase.database().ref(pathTransaction).once('value').then(function(snapshot) {
+        console.log('estimating bucket sizes...');
+        bucketAmounts = buckets.estimateSize(transactionsResponse.transactions, NUMBER_DAYS);
+    });
+
+    firebase.database().ref(pathMoney).update(bucketAmounts);
 
     console.log('saved transactions under ' + USER_ID);
     // Sam: End Firebase section
@@ -237,8 +243,6 @@ app.post('/transactions', function(request, response, next) {
     response.json(transactionsResponse);
   });
 });
-
-//
 
 app.get('/buckets', function(request, response, next) {
     console.log("/buckets has been called");
@@ -297,10 +301,16 @@ app.post('/log_in', function(request, response, next) {
         response.json({login: true});
         USER_ID = firebase.auth().currentUser.uid;
         USER_EMAIL = username;
+
+        firebase.database().ref('users/' + USER_ID + "/user_token").once('value').then(function(snapshot) {
+            if (ACCESS_TOKEN == null) {
+                ACCESS_TOKEN = snapshot.val()
+            }
+        });
     });
     promise.catch(e => console.log(e.message));
-    USER_ID = request.body.userId;
-    USER_EMAIL = request.body.email;
+    // USER_ID = request.body.userId;
+    // USER_EMAIL = request.body.email;
 });
 
 app.post('/sign_up', function(request, response, next) {
