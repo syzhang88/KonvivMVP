@@ -29,11 +29,9 @@
         <button id="buckets-btn">Buckets</button>
         <button id="menu-btn">Menu</button>
         <button class="logout-btn">Log Out</button>
-
     </div>
 
 <!-- KI KI ATTEMPT TO MAKE SURE BUCKETS IS NOT HARD CODED. LOAD EACH TIME BUCKET KEY IS CALLED -->
-
 <div id="buckets">
         <div class = "box">
             <button id="get-buckets-btn">Buckets</button>
@@ -41,20 +39,7 @@
         <div class = "box">
             <button class="logout-btn">Log Out</button>
         </div>
-
-<!--         ATTEMPT TO DO A RETURN BUTTON-->
-
-     <!-- <div class = "box">
-            <button class ="return-btn">Return</button>
-        </div> -->
-
-
         <div>
-
-    <!-- RENAME THE BUCKETS -->
-   <div class = "box">
-            <button id="rename-btn">Rename</button>
-        </div>
 <!--         START HERE -->
 <!-- begun to change the id to 'p' so i can change the name each time -->
                      <!-- income -->
@@ -165,10 +150,6 @@
             <button id="get-transactions-btn">Get Transactions</button>
             <div id="get-transactions-data"></div>
         </div>
-
-     <!--    <div class="box">
-            <button id="return-">Return</button>
-        </div> -->
         <div class = "box">
             <button class="logout-btn">Log Out</button>
         </div>
@@ -234,21 +215,6 @@
                 logOutSuccess(data.logout)
             });
         });
-
-
-/** RETURN BUTTON **/
-
-  $('.return-btn').on('click', function(e) {
-            console.log("RETURNING...");
-
-                   window.location.href="#menu";
-
-        });
-
-  /** RENAME BUCKETS **/
-
-          $('#get-accounts-btn').on('click', function(e) {
-
 
         $('#get-accounts-btn').on('click', function(e) {
 
