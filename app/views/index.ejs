@@ -31,7 +31,10 @@
         <button class="logout-btn">Log Out</button>
     </div>
 
-    <div id="buckets">
+
+
+<!--     NON HARD CODED DATA  -->
+   <!--  <div id="buckets">
         <div class = "box">
             <button id="get-buckets-btn">Buckets</button>
         </div>
@@ -40,21 +43,22 @@
         </div>
         <div>
             <div class="load-bar-frame">
-                <div id="Income" class="load-bar">Income</div>
+                <div class="buckets-key" class="load-bar">Income</div>
             </div>
         </div>
         <div>
             <div class="load-bar-frame">
-                <div id="Bills" class="load-bar">Bills</div>
+                <div class="buckets-key" class="load-bar">Bills</div>
+            </div>
+
+            <div class="load-bar-frame">
+                <div class="buckets-key" class="load-bar">Eating Out</div>
             </div>
             <div class="load-bar-frame">
-                <div id="Eating Out" class="load-bar">Eating Out</div>
+                <div class="buckets-key" class="load-bar">Entertainment</div>
             </div>
             <div class="load-bar-frame">
-                <div id="Entertainment" class="load-bar">Entertainment</div>
-            </div>
-            <div class="load-bar-frame">
-                <div id="Subscriptions" class="load-bar">Subscriptions</div>
+                <div class="buckets-key" class="load-bar">Subscriptions</div>
             </div>
         </div>
         <div>
@@ -69,6 +73,59 @@
             </div>
             <div class="load-bar-frame">
                 <div id="General Spending" class="load-bar">General Spending</div>
+            </div>
+        </div>
+    </div> -->
+
+
+    
+
+
+
+
+
+
+
+                <!--     BEGINNING OF HARD CODED DATA     -->    
+
+    <div id="buckets">
+        <div class = "box">
+            <button id="get-buckets-btn">Buckets</button>
+        </div>
+        <div class = "box">
+            <button class="logout-btn">Log Out</button>
+        </div>
+        <div>
+            <div class="load-bar-frame">
+                <div id="Income" class="load-bar">XYZ</div>
+            </div>
+        </div>
+        <div>
+            <div class="load-bar-frame">
+                <div id="Bills" class="load-bar">XYZ</div>
+            </div>
+            <div class="load-bar-frame">
+                <div id="Eating Out" class="load-bar">XYZ</div>
+            </div>
+            <div class="load-bar-frame">
+                <div id="Entertainment" class="load-bar">XYZ</div>
+            </div>
+            <div class="load-bar-frame">
+                <div id="Subscriptions" class="load-bar">XYZ</div>
+            </div>
+        </div>
+        <div>
+            <div class="load-bar-frame">
+                <div id="Groceries" class="load-bar">XYZ</div>
+            </div>
+            <div class="load-bar-frame">
+                <div id="Shopping" class="load-bar">XYZ</div>
+            </div>
+            <div class="load-bar-frame">
+                <div id="Transportation" class="load-bar">XYZ</div>
+            </div>
+            <div class="load-bar-frame">
+                <div id="General Spending" class="load-bar">XYZ</div>
             </div>
         </div>
     </div>
@@ -249,7 +306,7 @@
                 // RESTful call to index.js server using get function
                 $.get('/buckets', function(data) {
                     // Catching error
-
+                        console.log(data);
                     if (data.error != null) {
                         // Format the error
                         var errorHtml = '<div class="inner"><p>' +
@@ -263,7 +320,9 @@
                         });
                         // Using for loop to pull information for each bucket from data
                     } else {
-                          var i = 0;
+
+                        /* i = iterator for buckets-key array */
+                        //  var i = 0;
                     for (var key in data) {
                             var fillPercent = 0;
                             // Accounting for divide-by-zero error
@@ -272,13 +331,19 @@
                             }
 
                             //Printing out bucket information to console
-                            console.log("Bucket: " + key + ", Remaining amount: " + data[key]['Remaining']
-                            + "/" + data[key]['Total'] + " = " + fillPercent);
-
+                        //console.log("Bucket: " + key + ", Remaining amount: " + data[key]['Remaining']
+                            // + "/" + data[key]['Total'] + " = " + fillPercent);
+                            // console.log( 'The Key is: ' + key + " and the element is", $('#' + key).html());
+                            console.log("KeyP: " + key + " Data: " + data[key]['Remaining']);
                             // Draws out bucket
-                            $('#' + key).css({background: "linear-gradient(to right, #000000 "+fillPercent+"%,#feffff "
+                            // # +key makes a call to the 
+                             var selector = '[id="' + key + '"]';
+                             console.log( "Selector: " + selector);
+                            $(selector).css({background: "linear-gradient(to right, #000000 "+fillPercent+"%,#feffff "
                             +fillPercent+"%,#feffff 100%)"});
+                            $( selector).html( key);
 
+                            /* Load the key so it is not hard coded */
                             // $(".buckets-key")[i].textContent = key;  i++;
 
                         }
