@@ -122,6 +122,7 @@ app.post('/get_access_token', function(request, response, next) {
 
     updateTransactions(SIX_MONTHS);
     estimateBuckets();
+    updateMonthlySpending();
 
     console.log('Item ID: ' + ITEM_ID);
     response.json({
@@ -202,12 +203,11 @@ app.post('/transactions', function(request, response, next) {
 });
 
 app.get('/buckets', function(request, response, next) {
+    var bucketsList = {}
     console.log("/buckets has been called");
+    updateMonthlySpending();
 
-    updateRemaining();
-
-    firebase.database().ref('users/' + USER_ID + '/bucketMoney').on('value', function(snapshot) {
-        var bucketsList = {}
+    firebase.database().ref('users/' + USER_ID + '/bucketMoney').once('value', function(snapshot) {
         console.log("snapshot taken ");
         for (var key in snapshot.val()) {
             console.log("data is being pulled...");
@@ -216,13 +216,14 @@ app.get('/buckets', function(request, response, next) {
             // 'HasOwnProperty' for more info
             if (snapshot.val().hasOwnProperty(key)) {
                 var bucket = snapshot.val()[key];
-                bucketsList[bucket['Name']] = {'Remaining': bucket['Remaining'], 'Total': bucket['Total']};
-                console.log(bucket['Name'] + ' bucket: ' + bucketsList[bucket['Name']]['Remaining']
-                    + " remaining out of " + bucketsList[bucket['Name']]['Total']);
+                bucketsList[bucket['Name']] = {'monthlySpending': bucket['monthlySpending'], 'Total': bucket['Total']};
+                console.log(bucket['Name'] + ' bucket: ' + bucketsList[bucket['Name']]['monthlySpending']
+                    + " monthlySpending out of " + bucketsList[bucket['Name']]['Total']);
             }
         }
-        console.log("printing bucketsList: " + bucketsList)
+    }).then(function() {
         response.json(bucketsList);
+        console.log("printing bucketsList: " + bucketsList)
     });
 });
 
@@ -233,13 +234,7 @@ app.post('/log_in', function(request, response, next) {
     var database = firebase.database();
     var username = request.body.username;
     var password = request.body.password;
-    var promise = firebase.auth().signInWithEmailAndPassword(username, password).catch(function(error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        console.log('failed to log into Firebase: ' + errorMessage);
-        response.json({login: false});
-    }).then(function() {
+    var promise = firebase.auth().signInWithEmailAndPassword(username, password).then(function() {
         console.log('successfully logged into Firebase');
         response.json({login: true});
         USER_ID = firebase.auth().currentUser.uid;
@@ -257,6 +252,13 @@ app.post('/log_in', function(request, response, next) {
                 ACCESS_TOKEN = snapshot.val()['user_token'];
                 console.log('found existing access token: ' + ACCESS_TOKEN);
             }
+        }).catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log('failed to log into Firebase: ' + errorMessage);
+            firebase.auth().signOut()
+            response.json({login: false});
         });
         promise.catch(e => console.log(e.message));
     });
@@ -359,16 +361,11 @@ function updateTransactions(time_period) {
     });
 }
 
-function updateRemaining() {
-    var month = moment().month()
-    var year = moment().year()
-    if (month < 10) {
-        month = "0" + month
-    }
-
-    console.log("current month: " + year + "-" + month + '-01')
-    var startDate = year + '-' + month + '-01'
+function updateMonthlySpending() {
+    console.log("current date: " + moment().format('YYYY-MM-DD'))
+    var startDate = moment().format('YYYY-MM-DD').substr(0,8) + '01';
     var endDate = moment().format('YYYY-MM-DD');
+    console.log("start date: " + startDate)
 
     client.getTransactions(ACCESS_TOKEN, startDate, endDate, {
       count: 500,
@@ -381,22 +378,22 @@ function updateRemaining() {
             };
         }
 
-        var bucketsList = {};
+        var bucketAmounts = buckets.clone(buckets.bucketAmounts);
         // Sam: Begin Firebase section for updating transaction data
         transactionsResponse.transactions.forEach(function(transaction) {
             var bucket = buckets.selectBucket(transaction);
-            if (bucketsList[bucket]) {
-                bucketsList[bucket] += transaction.amount;
-            } else {
-                bucketsList[bucket] = transaction.amount;
-            }
+            bucketAmounts[bucket] += transaction.amount;
         });
-        for (var bucket in bucketsList) {
+        for (var bucket in bucketAmounts) {
             firebase.database().ref('users/' + USER_ID + "/bucketMoney/" +
-                bucket).update({Remaining: bucketsList[bucket]});
+                bucket).update({monthlySpending: bucketAmounts[bucket]});
         }
-        console.log('updated bucket spending for this month');
+        console.log('updated bucket spending for this month:');
+        console.log(bucketAmounts);
     });
+    return {
+      error: false
+    };
 }
 
 var server = app.listen(APP_PORT, function() {

@@ -32,6 +32,31 @@ var nameBuckets = {
     'General Spending': 'General Spending'
 }
 
+var bucketAmounts = {
+    'Groceries': 0,
+    'Eating Out': 0,
+    'Transportation': 0,
+    'Entertainment': 0,
+    'Shopping': 0,
+    'Bills': 0,
+    'Subscriptions': 0,
+    'Income': 0,
+    'General Spending': 0
+};
+
+
+function clone(obj) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+    }
+    return copy;
+}
+
+exports.clone = clone;
+
+exports.bucketAmounts = clone(bucketAmounts);
 
 // Classifies which bucket a certain transaction belongs to
 exports.selectBuckets = function selectBuckets (transactions) {
@@ -76,16 +101,7 @@ exports.selectBucket = function selectBucket (transaction) {
 exports.estimateSize = function estimateSize (transactions, estimationPeriod) {
     console.log("calculating buckets sizes now...");
 
-    var bucketAmounts = {
-        'Groceries': 0,
-        'Eating Out': 0,
-        'Transportation': 0,
-        'Entertainment': 0,
-        'Shopping': 0,
-        'Bills': 0,
-        'Subscriptions': 0,
-        'Income': 0
-    };
+    var bucketAmounts = clone(bucketAmounts);
     var monthlyBucketSum = 0;
     for (var bucket in bucketAmounts) {
         var totalBucketAmount = 0;

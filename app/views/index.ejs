@@ -78,7 +78,6 @@
     </div> -->
 
 
-    
 
 
 
@@ -86,7 +85,8 @@
 
 
 
-                <!--     BEGINNING OF HARD CODED DATA     -->    
+
+                <!--     BEGINNING OF HARD CODED DATA     -->
 
     <div id="buckets">
         <div class = "box">
@@ -327,16 +327,16 @@
                             var fillPercent = 0;
                             // Accounting for divide-by-zero error
                             if (data[key]['Total'] > 0) {
-                                fillPercent = data[key]['Remaining']/data[key]['Total']*100
+                                fillPercent = (1 - data[key]['monthlySpending']/data[key]['Total'])*100
                             }
 
                             //Printing out bucket information to console
-                        //console.log("Bucket: " + key + ", Remaining amount: " + data[key]['Remaining']
+                        //console.log("Bucket: " + key + ", monthlySpending amount: " + data[key]['monthlySpending']
                             // + "/" + data[key]['Total'] + " = " + fillPercent);
                             // console.log( 'The Key is: ' + key + " and the element is", $('#' + key).html());
-                            console.log("KeyP: " + key + " Data: " + data[key]['Remaining']);
+                            console.log("KeyP: " + key + " Data: " + data[key]['monthlySpending']);
                             // Draws out bucket
-                            // # +key makes a call to the 
+                            // # +key makes a call to the
                              var selector = '[id="' + key + '"]';
                              console.log( "Selector: " + selector);
                             $(selector).css({background: "linear-gradient(to right, #000000 "+fillPercent+"%,#feffff "
