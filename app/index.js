@@ -216,9 +216,9 @@ app.get('/buckets', function(request, response, next) {
             // 'HasOwnProperty' for more info
             if (snapshot.val().hasOwnProperty(key)) {
                 var bucket = snapshot.val()[key];
-                bucketsList[bucket['Name']] = {'monthlySpending': bucket['monthlySpending'], 'Total': bucket['Total']};
-                console.log(bucket['Name'] + ' bucket: ' + bucketsList[bucket['Name']]['monthlySpending']
-                    + " monthlySpending out of " + bucketsList[bucket['Name']]['Total']);
+                bucketsList[bucket['Name']] = {'Spending': bucket['Spending'], 'Total': bucket['Total']};
+                console.log(bucket['Name'] + ' bucket: ' + bucketsList[bucket['Name']]['Spending']
+                    + " spent this month out of " + bucketsList[bucket['Name']]['Total']);
             }
         }
     }).then(function() {
@@ -386,7 +386,7 @@ function updateMonthlySpending() {
         });
         for (var bucket in bucketAmounts) {
             firebase.database().ref('users/' + USER_ID + "/bucketMoney/" +
-                bucket).update({monthlySpending: bucketAmounts[bucket]});
+                bucket).update({Spending: bucketAmounts[bucket]});
         }
         console.log('updated bucket spending for this month:');
         console.log(bucketAmounts);

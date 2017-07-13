@@ -327,14 +327,14 @@
                             var fillPercent = 0;
                             // Accounting for divide-by-zero error
                             if (data[key]['Total'] > 0) {
-                                fillPercent = (1 - data[key]['monthlySpending']/data[key]['Total'])*100
+                                fillPercent = (1 - data[key]['Spending']/data[key]['Total'])*100
                             }
 
                             //Printing out bucket information to console
-                        //console.log("Bucket: " + key + ", monthlySpending amount: " + data[key]['monthlySpending']
+                        //console.log("Bucket: " + key + ", spending amount: " + data[key]['Spending']
                             // + "/" + data[key]['Total'] + " = " + fillPercent);
                             // console.log( 'The Key is: ' + key + " and the element is", $('#' + key).html());
-                            console.log("KeyP: " + key + " Data: " + data[key]['monthlySpending']);
+                            console.log("KeyP: " + key + " Data: " + data[key]['Spending']);
                             // Draws out bucket
                             // # +key makes a call to the
                              var selector = '[id="' + key + '"]';
