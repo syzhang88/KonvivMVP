@@ -90,6 +90,7 @@ a:visited {
 a:hover {
   text-decoration: underline;
 }
+
 #banner,
 #container,
 .box {
@@ -97,11 +98,12 @@ a:hover {
   max-width: 800px;
   margin: 20px auto 0;
   padding: 20px;
-  background: #fff;
-  border: 1px solid #c9c9c9;
+  background: #00b0b4;
+  border: 1px solid #00b0b4;
   border-radius: 2px;
   text-align: left;
 }
+
 #container p {
   font-size: 14px;
   line-height: 17px;
@@ -153,8 +155,9 @@ button:hover {
 }
 #banner h1 {
   color: #1a476a;
-  font-size: 18px;
+  font-size: 24px;
   font-weight: bold;
+  display: center;
 }
 #banner p {
   font-size: 14px;
@@ -185,6 +188,7 @@ button:hover {
   width: 100%; /* in this case 20% would be the current progress */
   height: 100%;
   border-radius: 100%;
+
 }
 
 .bucketclass {

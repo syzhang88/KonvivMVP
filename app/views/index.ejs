@@ -341,7 +341,8 @@
                              console.log( "Selector: " + selector);
                             $(selector).css({background: "linear-gradient(to right, #000000 "+fillPercent+"%,#feffff "
                             +fillPercent+"%,#feffff 100%)"});
-                            $( selector).html( key);
+                            $( '[id="' + key + '"] ').html( key);
+                            $(selector).html( key);
 
                             /* Load the key so it is not hard coded */
                             // $(".buckets-key")[i].textContent = key;  i++;
