@@ -367,13 +367,13 @@ function updateTransactions(time_period) {
     });
 }
 
-new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", url);
-    xhr.onload = () => resolve(xhr.responseText);
-    xhr.onerror = () => reject(xhr.statusText);
-    xhr.send();
-  });
+// new Promise((resolve, reject) => {
+//     const xhr = new XMLHttpRequest();
+//     xhr.open("GET", url);
+//     xhr.onload = () => resolve(xhr.responseText);
+//     xhr.onerror = () => reject(xhr.statusText);
+//     xhr.send();
+//   });
 
 function updateMonthlySpending() {
     return new Promise(function(resolve, reject) {
