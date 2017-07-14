@@ -124,7 +124,21 @@ app.post('/get_access_token', function(request, response, next) {
         response.json({
           'error': false
         });
-    }).then(updateTransactions(SIX_MONTHS)).then(estimateBuckets(value), function(error) {console.log(error)});
+    })
+
+    updateTransactions(SIX_MONTHS)
+    // estimate size
+    var pathTransaction = 'users/' + USER_ID + "/bucketTransactions/";
+    var pathMoney = 'users/' + USER_ID + "/bucketMoney";
+    var bucketAmounts = {};
+
+    firebase.database().ref(pathTransaction).on('value', function(snapshot) {
+        console.log('estimating bucket sizes...');
+        bucketAmounts = buckets.estimateSize(snapshot.val(), SIX_MONTHS);
+    }).then(function () {
+        firebase.database().ref(pathMoney).update(bucketAmounts);
+        console.log('uploaded bucket size estimations');
+    });
 });
 
 app.get('/accounts', function(request, response, next) {
@@ -319,20 +333,6 @@ app.get('/log_in_status', function(request, response, next) {
         response.json({login: false});
     }
 });
-
-function estimateBuckets(value) {
-    var pathTransaction = 'users/' + USER_ID + "/bucketTransactions/";
-    var pathMoney = 'users/' + USER_ID + "/bucketMoney";
-    var bucketAmounts = {};
-
-    firebase.database().ref(pathTransaction).once('value', function(snapshot) {
-        console.log('estimating bucket sizes...');
-        bucketAmounts = buckets.estimateSize(snapshot.val(), SIX_MONTHS);
-    }).then(function () {
-        firebase.database().ref(pathMoney).update(bucketAmounts);
-        console.log('uploaded bucket size estimations');
-    });
-}
 
 function updateTransactions(time_period) {
     var startDate = moment().subtract(time_period, 'days').format('YYYY-MM-DD');

@@ -58,7 +58,8 @@ exports.clone = clone;
 
 exports.bucketAmounts = clone(bucketAmountsOriginal);
 
-// Classifies which bucket a certain transaction belongs to
+// Deprecated
+// Classifies which buckets transactions on a list of transactions belongs to
 exports.selectBuckets = function selectBuckets (transactions) {
     // console.log('New Selection:');
     buckets = {};
@@ -73,6 +74,7 @@ exports.selectBuckets = function selectBuckets (transactions) {
     return buckets;
 }
 
+// Classifies which bucket a certain transaction belongs to
 exports.selectBucket = function selectBucket (transaction) {
     // console.log('New Selection:');
     var bucket = 'General Spending';
