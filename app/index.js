@@ -42,7 +42,7 @@ var APP_PORT = envvar.number('APP_PORT', 8000);
 var PLAID_CLIENT_ID = envvar.string('PLAID_CLIENT_ID', '593981e0bdc6a401d71d87b5');
 var PLAID_SECRET = envvar.string('PLAID_SECRET', '271426f90259600c6bf365d6b0f0aa');
 var PLAID_PUBLIC_KEY = envvar.string('PLAID_PUBLIC_KEY', '9f4ef21fdb37b5c0e3f80290db7716');
-var PLAID_ENV = envvar.string('PLAID_ENV', 'development');
+var PLAID_ENV = envvar.string('PLAID_ENV', 'sandbox');
 
 // We store the access_token in memory - in production, store it in a secure
 // persistent data store
@@ -124,7 +124,7 @@ app.post('/get_access_token', function(request, response, next) {
         response.json({
           'error': false
         });
-    }).then(updateTransactions(SIX_MONTHS)).then(estimateBuckets(), console.log(error));
+    }).then(updateTransactions(SIX_MONTHS)).then(estimateBuckets(value), function(error) {console.log(error)});
 });
 
 app.get('/accounts', function(request, response, next) {
@@ -241,8 +241,9 @@ app.get('/buckets', function(request, response, next) {
 });
 
 app.post('/log_in', function(request, response, next) {
-    var success = {login: true}
     console.log('Attempting log in...');
+
+    var success = {login: false}
 
     // gets object to database service
     var database = firebase.database();
@@ -252,18 +253,19 @@ app.post('/log_in', function(request, response, next) {
         console.log('successfully logged into Firebase');
         USER_ID = firebase.auth().currentUser.uid;
         USER_EMAIL = username;
+        success = {login: true}
+    }).then(function() {
+        firebase.database().ref('/users/' + USER_ID).once('value', function(snapshot) {
+            if (snapshot.val() && snapshot.val()['user_token']) {
+                ACCESS_TOKEN = snapshot.val()['user_token'];
+                console.log('found existing access token: ' + ACCESS_TOKEN);
+            }
+        })
     }).catch(e => console.log(e.message)
     ).then(function() {
-        firebase.database().ref('/users/' + USER_ID).once('value', function(snapshot) {
-            ACCESS_TOKEN = snapshot.val()['user_token'];
-            console.log('found existing access token: ' + ACCESS_TOKEN);
-        })
+        console.log("LOG IN SUCCESS: " + success['login']);
+        response.json(success);
     });
-
-    response.json(success);
-
-    // USER_ID = request.body.userId;
-    // USER_EMAIL = request.body.email;
 });
 
 app.post('/sign_up', function(request, response, next) {
@@ -273,17 +275,17 @@ app.post('/sign_up', function(request, response, next) {
     var database = firebase.database();
     var username = request.body.username;
     var password = request.body.password;
-    var promise = firebase.auth().createUserWithEmailAndPassword(username, password).catch(function(error) {
+    var promise = firebase.auth().createUserWithEmailAndPassword(username, password).then(function() {
+        console.log('successfully created user in Firebase');
+        response.json({login: true});
+        USER_ID = firebase.auth().currentUser.uid;
+        USER_EMAIL = username;
+    }, function(error) {
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
         console.log('failed to create user: ' + errorMessage);
         response.json({login: false});
-    }).then(function() {
-        console.log('successfully created user in Firebase');
-        response.json({login: true});
-        USER_ID = firebase.auth().currentUser.uid;
-        USER_EMAIL = username;
     });
     promise.catch(e => console.log(e.message));
 });
@@ -318,7 +320,7 @@ app.get('/log_in_status', function(request, response, next) {
     }
 });
 
-function estimateBuckets() {
+function estimateBuckets(value) {
     var pathTransaction = 'users/' + USER_ID + "/bucketTransactions/";
     var pathMoney = 'users/' + USER_ID + "/bucketMoney";
     var bucketAmounts = {};
