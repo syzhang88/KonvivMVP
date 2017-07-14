@@ -32,7 +32,7 @@ var nameBuckets = {
     'General Spending': 'General Spending'
 }
 
-var bucketAmounts = {
+var bucketAmountsOriginal = {
     'Groceries': 0,
     'Eating Out': 0,
     'Transportation': 0,
@@ -56,7 +56,7 @@ function clone(obj) {
 
 exports.clone = clone;
 
-exports.bucketAmounts = clone(bucketAmounts);
+exports.bucketAmounts = clone(bucketAmountsOriginal);
 
 // Classifies which bucket a certain transaction belongs to
 exports.selectBuckets = function selectBuckets (transactions) {
@@ -101,7 +101,9 @@ exports.selectBucket = function selectBucket (transaction) {
 exports.estimateSize = function estimateSize (transactions, estimationPeriod) {
     console.log("calculating buckets sizes now...");
 
-    var bucketAmounts = clone(bucketAmounts);
+    var bucketAmounts = clone(bucketAmountsOriginal);
+    console.log(bucketAmounts);
+
     var monthlyBucketSum = 0;
     for (var bucket in bucketAmounts) {
         var totalBucketAmount = 0;
@@ -114,14 +116,13 @@ exports.estimateSize = function estimateSize (transactions, estimationPeriod) {
         var monthlyBucketAmount = totalBucketAmount/estimationPeriod * MONTH_PERIOD;
 
         bucketAmounts[bucket] = {'Total': monthlyBucketAmount,
-            'Remaining': monthlyBucketAmount, 'Name': nameBuckets[bucket]};
+            'Spending': 0, 'Name': nameBuckets[bucket]};
 
         monthlyBucketSum += monthlyBucketAmount;
     }
     var generalBucket = -Math.max(bucketAmounts['Income']['Total'] - monthlyBucketSum, 0);
     bucketAmounts['General Spending'] = {'Total': generalBucket,
-        'Remaining': generalBucket, 'Name': nameBuckets['General Spending']};
-        generalBucket;
+        'Spending': 0, 'Name': nameBuckets['General Spending']};
 
     console.log('finished calculating bucket estimations... ' + bucketAmounts);
     return bucketAmounts;

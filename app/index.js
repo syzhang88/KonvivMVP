@@ -96,38 +96,36 @@ app.get('/index.ejs', function(request, response, next) {
 });
 
 app.post('/get_access_token', function(request, response, next) {
-  PUBLIC_TOKEN = request.body.public_token;
-  client.exchangePublicToken(PUBLIC_TOKEN, function(error, tokenResponse) {
-    if (error != null) {
-      var msg = 'Could not exchange public_token!';
-      console.log(msg + '\n' + error);
-      return response.json({
-        error: msg
-      });
-    }
-    // Sam: We HAVE to store the access token, so that Plaid does not think the
-    // user is a new user logging in each time. Even if the same username and
-    // password is used, if we do not reuse the same ACCESS TOKEN, Plaid will
-    // assume it is drawing data for the first time and give all the transactions,
-    // accounts, etc. new IDs. This will create duplicate transactions, accounts,
-    // and data in general in our Firebase database unless we use the same access
-    // token to log in each time.
-    ACCESS_TOKEN = tokenResponse.access_token;
-    ITEM_ID = tokenResponse.item_id;
-    console.log('LOADING Access Token: ' + ACCESS_TOKEN);
+    PUBLIC_TOKEN = request.body.public_token;
+    client.exchangePublicToken(PUBLIC_TOKEN, function(error, tokenResponse) {
+        if (error != null) {
+          var msg = 'Could not exchange public_token!';
+          console.log(msg + '\n' + error);
+          return response.json({
+            error: msg
+          });
+        }
+        // Sam: We HAVE to store the access token, so that Plaid does not think the
+        // user is a new user logging in each time. Even if the same username and
+        // password is used, if we do not reuse the same ACCESS TOKEN, Plaid will
+        // assume it is drawing data for the first time and give all the transactions,
+        // accounts, etc. new IDs. This will create duplicate transactions, accounts,
+        // and data in general in our Firebase database unless we use the same access
+        // token to log in each time.
+        ACCESS_TOKEN = tokenResponse.access_token;
+        ITEM_ID = tokenResponse.item_id;
+        console.log('LOADING Access Token: ' + ACCESS_TOKEN);
 
-    firebase.database().ref('users/' + USER_ID).set({
-        user_token: ACCESS_TOKEN
-    });
+        firebase.database().ref('users/' + USER_ID).set({
+            user_token: ACCESS_TOKEN
+        });
 
-    updateTransactions(SIX_MONTHS);
-    // updateMonthlySpending();
-
-    console.log('Item ID: ' + ITEM_ID);
-    response.json({
-      'error': false
-    });
-  });
+        console.log('Item ID: ' + ITEM_ID);
+        response.json({
+          'error': false
+        });
+    }).then(updateTransactions(SIX_MONTHS)
+    ).then(estimateBuckets());
 });
 
 app.get('/accounts', function(request, response, next) {
@@ -221,26 +219,25 @@ app.post('/transactions', function(request, response, next) {
 app.get('/buckets', function(request, response, next) {
     var bucketsList = {}
     console.log("/buckets has been called");
-    estimateBuckets();
-    updateMonthlySpending();
+    updateMonthlySpending().then(new Promise(function(resolve, reject) {
+        firebase.database().ref('users/' + USER_ID + '/bucketMoney').once('value', function(snapshot) {
+            console.log("snapshot taken ");
+            for (var key in snapshot.val()) {
+                console.log("data is being pulled...");
 
-    firebase.database().ref('users/' + USER_ID + '/bucketMoney').once('value', function(snapshot) {
-        console.log("snapshot taken ");
-        for (var key in snapshot.val()) {
-            console.log("data is being pulled...");
-
-            // Sam: hasOwnProperty(key) checks that we're only looking at keys we made. Google
-            // 'HasOwnProperty' for more info
-            if (snapshot.val().hasOwnProperty(key)) {
-                var bucket = snapshot.val()[key];
-                bucketsList[bucket['Name']] = {'Spending': bucket['Spending'], 'Total': bucket['Total']};
-                console.log(bucket['Name'] + ' bucket: ' + bucketsList[bucket['Name']]['Spending']
-                    + " spent this month out of " + bucketsList[bucket['Name']]['Total']);
+                // Sam: hasOwnProperty(key) checks that we're only looking at keys we made. Google
+                // 'HasOwnProperty' for more info
+                if (snapshot.val().hasOwnProperty(key)) {
+                    var bucket = snapshot.val()[key];
+                    bucketsList[bucket['Name']] = {'Spending': bucket['Spending'], 'Total': bucket['Total']};
+                    console.log(bucket['Name'] + ' bucket: ' + bucketsList[bucket['Name']]['Spending']
+                        + " spent this month out of " + bucketsList[bucket['Name']]['Total']);
+                }
             }
-        }
-    }).then(function() {
+            }).then(resolve("Stuff worked!"), reject(error));
+    })).then(function() {
         response.json(bucketsList);
-        console.log("printing bucketsList: " + bucketsList)
+        console.log("printing bucketsList: " + bucketsList);
     });
 });
 
@@ -360,71 +357,78 @@ function estimateBuckets() {
 function updateTransactions(time_period) {
     var startDate = moment().subtract(time_period, 'days').format('YYYY-MM-DD');
     var endDate = moment().format('YYYY-MM-DD');
-    var updatedTransactions = 'transactions are working'
-;
+    var updatedTransactions = 'transactions are working';
 
-    client.getTransactions(ACCESS_TOKEN, startDate, endDate, {
-      count: 500,
-      offset: 0,
-    }, function(error, transactionsResponse) {
-        if (error != null) {
-            console.log(JSON.stringify(error));
-            return {
-              error: error
-            };
-        }
+    return new Promise(function(resolve, reject) {
+        client.getTransactions(ACCESS_TOKEN, startDate, endDate, {
+          count: 500,
+          offset: 0,
+        }, function(error, transactionsResponse) {
+            if (error != null) {
+                console.log(JSON.stringify(error));
+                reject(error)
+            }
 
-        // Sam: Begin Firebase section for updating transaction data
-        transactionsResponse.transactions.forEach(function(transaction) {
-            var bucket = buckets.selectBucket(transaction);
-            var newPostKey = transaction.transaction_id;
-            var postData = {}
-            postData[newPostKey] = transaction;
-            firebase.database().ref('users/' + USER_ID + "/bucketTransactions/" + bucket).update(postData);
-        });
+            // Sam: Begin Firebase section for updating transaction data
+            transactionsResponse.transactions.forEach(function(transaction) {
+                var bucket = buckets.selectBucket(transaction);
+                var newPostKey = transaction.transaction_id;
+                var postData = {}
+                postData[newPostKey] = transaction;
+                firebase.database().ref('users/' + USER_ID + "/bucketTransactions/" + bucket).update(postData);
+            });
 
 
-        console.log('saved ' + transactionsResponse.transactions.length + ' transactions under ' + USER_ID);
-        updatedTransactions = buckets.clone(transactionsResponse);
+            console.log('saved ' + transactionsResponse.transactions.length + ' transactions under ' + USER_ID);
+            updatedTransactions = buckets.clone(transactionsResponse);
+        }).then(resolve('it worked!'), reject('error'));
+        console.log('returning transactions to be printed');
+        return updatedTransactions;
     });
-    console.log('returning transactions to be printed')
-    return updatedTransactions;
-
 }
 
+new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", url);
+    xhr.onload = () => resolve(xhr.responseText);
+    xhr.onerror = () => reject(xhr.statusText);
+    xhr.send();
+  });
+
 function updateMonthlySpending() {
-    console.log("current date: " + moment().format('YYYY-MM-DD'))
-    var startDate = moment().format('YYYY-MM-DD').substr(0,8) + '01';
-    var endDate = moment().format('YYYY-MM-DD');
-    console.log("start date: " + startDate)
+    return new Promise(function(resolve, reject) {
+        var errorPromise = null;
 
-    client.getTransactions(ACCESS_TOKEN, startDate, endDate, {
-      count: 500,
-      offset: 0,
-    }, function(error, transactionsResponse) {
-        if (error != null) {
-            console.log(JSON.stringify(error));
-            return {
-              error: error
-            };
-        }
+        console.log("current date: " + moment().format('YYYY-MM-DD'))
+        var startDate = moment().format('YYYY-MM-DD').substr(0,8) + '01';
+        var endDate = moment().format('YYYY-MM-DD');
+        console.log("start date: " + startDate)
 
-        var bucketAmounts = buckets.clone(buckets.bucketAmounts);
-        // Sam: Begin Firebase section for updating transaction data
-        transactionsResponse.transactions.forEach(function(transaction) {
-            var bucket = buckets.selectBucket(transaction);
-            bucketAmounts[bucket] += transaction.amount;
-        });
-        for (var bucket in bucketAmounts) {
-            firebase.database().ref('users/' + USER_ID + "/bucketMoney/" +
-                bucket).update({Spending: bucketAmounts[bucket]});
-        }
-        console.log('updated bucket spending for this month:');
-        console.log(bucketAmounts);
+        client.getTransactions(ACCESS_TOKEN, startDate, endDate, {
+          count: 500,
+          offset: 0,
+        }, function(error, transactionsResponse) {
+            if (error != null) {
+                console.log(JSON.stringify(error));
+                return reject(errorPromise);
+            }
+
+            var bucketAmounts = buckets.clone(buckets.bucketAmounts);
+            // Sam: Begin Firebase section for updating transaction data
+            transactionsResponse.transactions.forEach(function(transaction) {
+                var bucket = buckets.selectBucket(transaction);
+                bucketAmounts[bucket] += transaction.amount;
+            });
+            for (var bucket in bucketAmounts) {
+                firebase.database().ref('users/' + USER_ID + "/bucketMoney/" +
+                    bucket).update({
+                        Spending: bucketAmounts[bucket]
+                    });
+            }
+            console.log('updated bucket spending for this month:');
+            console.log(bucketAmounts);
+        }).then(resolve("Stuff worked!"), reject(errorPromise));
     });
-    return {
-      error: false
-    };
 }
 
 var server = app.listen(APP_PORT, function() {

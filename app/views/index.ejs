@@ -306,7 +306,7 @@
                 // RESTful call to index.js server using get function
                 $.get('/buckets', function(data) {
                     // Catching error
-                        console.log(data);
+                    console.log(data);
                     if (data.error != null) {
                         // Format the error
                         var errorHtml = '<div class="inner"><p>' +
@@ -331,9 +331,9 @@
                             }
 
                             //Printing out bucket information to console
-                        //console.log("Bucket: " + key + ", spending amount: " + data[key]['Spending']
-                            // + "/" + data[key]['Total'] + " = " + fillPercent);
-                            // console.log( 'The Key is: ' + key + " and the element is", $('#' + key).html());
+                            console.log("Bucket: " + key + ", spending amount: " + data[key]['Spending']
+                            + "/" + data[key]['Total'] + " = " + fillPercent);
+                            console.log( 'The Key is: ' + key + " and the element is", $('#' + key).html());
                             console.log("KeyP: " + key + " Data: " + data[key]['Spending']);
                             // Draws out bucket
                             // # +key makes a call to the
