@@ -124,26 +124,16 @@ app.post('/get_access_token', function(request, response, next) {
         response.json({
           'error': false
         });
-    })
-
-    updateTransactions(SIX_MONTHS)
-    // estimate size
-    var pathTransaction = 'users/' + USER_ID + "/bucketTransactions/";
-    var pathMoney = 'users/' + USER_ID + "/bucketMoney";
-    var bucketAmounts = {};
-
-    firebase.database().ref(pathTransaction).on('value', function(snapshot) {
-        console.log('estimating bucket sizes...');
-        bucketAmounts = buckets.estimateSize(snapshot.val(), SIX_MONTHS);
-    }).then(function () {
-        firebase.database().ref(pathMoney).update(bucketAmounts);
-        console.log('uploaded bucket size estimations');
+        // updateTransactions(SIX_MONTHS);
     });
+    // }).then(updateTransactions(SIX_MONTHS)).then(estimateBuckets(value), function(error) {console.log(error)});
 });
 
 app.get('/accounts', function(request, response, next) {
   // Retrieve high-level account information and account and routing numbers
   // for each account associated with the Item.
+  updateTransactions(SIX_MONTHS);
+
   client.getAuth(ACCESS_TOKEN, function(error, authResponse) {
 
     if (error != null) {
@@ -179,6 +169,8 @@ app.get('/accounts', function(request, response, next) {
 app.post('/item', function(request, response, next) {
   // Pull the Item - this includes information about available products,
   // billed products, webhook information, and more.
+  estimateBuckets();
+
   client.getItem(ACCESS_TOKEN, function(error, itemResponse) {
     if (error != null) {
       console.log(JSON.stringify(error));
@@ -334,6 +326,20 @@ app.get('/log_in_status', function(request, response, next) {
     }
 });
 
+function estimateBuckets() {
+    var pathTransaction = 'users/' + USER_ID + "/bucketTransactions/";
+    var pathMoney = 'users/' + USER_ID + "/bucketMoney";
+    var bucketAmounts = {};
+
+    firebase.database().ref(pathTransaction).once('value', function(snapshot) {
+        console.log('estimating bucket sizes...');
+        bucketAmounts = buckets.estimateSize(snapshot.val(), SIX_MONTHS);
+    }).then(function () {
+        firebase.database().ref(pathMoney).update(bucketAmounts);
+        console.log('uploaded bucket size estimations');
+    });
+}
+
 function updateTransactions(time_period) {
     var startDate = moment().subtract(time_period, 'days').format('YYYY-MM-DD');
     var endDate = moment().format('YYYY-MM-DD');
@@ -363,7 +369,7 @@ function updateTransactions(time_period) {
         }).then(function() {
             console.log('returning transactions to be printed');
             resolve(updatedTransactions);
-        }, reject('error'));
+        });
     });
 }
 

@@ -126,7 +126,9 @@ exports.estimateSize = function estimateSize (transactions, estimationPeriod) {
     bucketAmounts['General Spending'] = {'Total': generalBucket,
         'Spending': 0, 'Name': nameBuckets['General Spending']};
 
-    console.log('finished calculating bucket estimations... ' + bucketAmounts);
+    console.log('finished calculating bucket estimations... ');
+    console.log(bucketAmounts);
+
     return bucketAmounts;
 }
 
