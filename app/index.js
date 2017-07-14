@@ -42,7 +42,7 @@ var APP_PORT = envvar.number('APP_PORT', 8000);
 var PLAID_CLIENT_ID = envvar.string('PLAID_CLIENT_ID', '593981e0bdc6a401d71d87b5');
 var PLAID_SECRET = envvar.string('PLAID_SECRET', '271426f90259600c6bf365d6b0f0aa');
 var PLAID_PUBLIC_KEY = envvar.string('PLAID_PUBLIC_KEY', '9f4ef21fdb37b5c0e3f80290db7716');
-var PLAID_ENV = envvar.string('PLAID_ENV', 'sandbox');
+var PLAID_ENV = envvar.string('PLAID_ENV', 'development');
 
 // We store the access_token in memory - in production, store it in a secure
 // persistent data store
@@ -233,11 +233,11 @@ app.get('/buckets', function(request, response, next) {
                         + " spent this month out of " + bucketsList[bucket['Name']]['Total']);
                 }
             }
+            console.log("printing working bucketsList: ");
+            console.log(bucketsList);
+            response.json(bucketsList);
         })
-    ).then(function() {
-        response.json(bucketsList);
-        console.log("printing bucketsList: " + bucketsList);
-    });
+    )
 });
 
 app.post('/log_in', function(request, response, next) {
@@ -252,16 +252,14 @@ app.post('/log_in', function(request, response, next) {
         console.log('successfully logged into Firebase');
         USER_ID = firebase.auth().currentUser.uid;
         USER_EMAIL = username;
-    })
-
-    firebase.database().ref('/users/' + USER_ID).once('value', function(snapshot) {
-        if (ACCESS_TOKEN == null) {
+    }).catch(e => console.log(e.message)
+    ).then(function() {
+        firebase.database().ref('/users/' + USER_ID).once('value', function(snapshot) {
             ACCESS_TOKEN = snapshot.val()['user_token'];
             console.log('found existing access token: ' + ACCESS_TOKEN);
-        }
-    })
+        })
+    });
 
-    promise.catch(e => console.log(e.message));
     response.json(success);
 
     // USER_ID = request.body.userId;
@@ -313,7 +311,7 @@ app.get('/user_exists', function(request, response, next) {
 });
 
 app.get('/log_in_status', function(request, response, next) {
-    if (USER_ID || USER_EMAIL) {
+    if (USER_ID && USER_EMAIL) {
         response.json({login: true});
     } else {
         response.json({login: false});
