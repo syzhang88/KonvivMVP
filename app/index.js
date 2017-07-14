@@ -124,8 +124,7 @@ app.post('/get_access_token', function(request, response, next) {
         response.json({
           'error': false
         });
-    }).then(updateTransactions(SIX_MONTHS)
-    ).then(estimateBuckets());
+    }).then(updateTransactions(SIX_MONTHS)).then(estimateBuckets(), console.log(error));
 });
 
 app.get('/accounts', function(request, response, next) {
@@ -219,7 +218,7 @@ app.post('/transactions', function(request, response, next) {
 app.get('/buckets', function(request, response, next) {
     var bucketsList = {}
     console.log("/buckets has been called");
-    updateMonthlySpending().then(new Promise(function(resolve, reject) {
+    updateMonthlySpending().then(
         firebase.database().ref('users/' + USER_ID + '/bucketMoney').once('value', function(snapshot) {
             console.log("snapshot taken ");
             for (var key in snapshot.val()) {
@@ -234,14 +233,15 @@ app.get('/buckets', function(request, response, next) {
                         + " spent this month out of " + bucketsList[bucket['Name']]['Total']);
                 }
             }
-            }).then(resolve("Stuff worked!"), reject(error));
-    })).then(function() {
+        })
+    ).then(function() {
         response.json(bucketsList);
         console.log("printing bucketsList: " + bucketsList);
     });
 });
 
 app.post('/log_in', function(request, response, next) {
+    var success = {login: true}
     console.log('Attempting log in...');
 
     // gets object to database service
@@ -250,40 +250,20 @@ app.post('/log_in', function(request, response, next) {
     var password = request.body.password;
     var promise = firebase.auth().signInWithEmailAndPassword(username, password).then(function() {
         console.log('successfully logged into Firebase');
-        response.json({login: true});
         USER_ID = firebase.auth().currentUser.uid;
         USER_EMAIL = username;
-    },
-    function(error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        console.log('failed to log into Firebase: ' + errorMessage);
-        firebase.auth().signOut()
-        response.json({login: false});
-    }).then(function() {
-        console.log('looking for existing access token for ' + USER_ID);
-        firebase.database().ref('/users/' + USER_ID).once('value').catch(function(error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            console.log('failed to find access token: ' + errorMessage);
-            response.json({login: false});
-        }).then(function(snapshot) {
-            if (ACCESS_TOKEN == null) {
-                ACCESS_TOKEN = snapshot.val()['user_token'];
-                console.log('found existing access token: ' + ACCESS_TOKEN);
-            }
-        }).catch(function(error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            console.log('failed to log into Firebase: ' + errorMessage);
-            firebase.auth().signOut()
-            response.json({login: false});
-        });
-        promise.catch(e => console.log(e.message));
-    });
+    })
+
+    firebase.database().ref('/users/' + USER_ID).once('value', function(snapshot) {
+        if (ACCESS_TOKEN == null) {
+            ACCESS_TOKEN = snapshot.val()['user_token'];
+            console.log('found existing access token: ' + ACCESS_TOKEN);
+        }
+    })
+
+    promise.catch(e => console.log(e.message));
+    response.json(success);
+
     // USER_ID = request.body.userId;
     // USER_EMAIL = request.body.email;
 });
@@ -365,7 +345,7 @@ function updateTransactions(time_period) {
           offset: 0,
         }, function(error, transactionsResponse) {
             if (error != null) {
-                console.log(JSON.stringify(error));
+                console.log(error);
                 reject(error)
             }
 
@@ -378,12 +358,12 @@ function updateTransactions(time_period) {
                 firebase.database().ref('users/' + USER_ID + "/bucketTransactions/" + bucket).update(postData);
             });
 
-
             console.log('saved ' + transactionsResponse.transactions.length + ' transactions under ' + USER_ID);
             updatedTransactions = buckets.clone(transactionsResponse);
-        }).then(resolve('it worked!'), reject('error'));
-        console.log('returning transactions to be printed');
-        return updatedTransactions;
+        }).then(function() {
+            console.log('returning transactions to be printed');
+            resolve(updatedTransactions);
+        }, reject('error'));
     });
 }
 
