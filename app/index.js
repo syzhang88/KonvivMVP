@@ -42,7 +42,7 @@ var APP_PORT = envvar.number('APP_PORT', 8000);
 var PLAID_CLIENT_ID = envvar.string('PLAID_CLIENT_ID', '593981e0bdc6a401d71d87b5');
 var PLAID_SECRET = envvar.string('PLAID_SECRET', '271426f90259600c6bf365d6b0f0aa');
 var PLAID_PUBLIC_KEY = envvar.string('PLAID_PUBLIC_KEY', '9f4ef21fdb37b5c0e3f80290db7716');
-var PLAID_ENV = envvar.string('PLAID_ENV', 'development');
+var PLAID_ENV = envvar.string('PLAID_ENV', 'sandbox');
 
 // We store the access_token in memory - in production, store it in a secure
 // persistent data store
@@ -121,8 +121,7 @@ app.post('/get_access_token', function(request, response, next) {
     });
 
     updateTransactions(SIX_MONTHS);
-    estimateBuckets();
-    updateMonthlySpending();
+    // updateMonthlySpending();
 
     console.log('Item ID: ' + ITEM_ID);
     response.json({
@@ -199,12 +198,30 @@ app.post('/transactions', function(request, response, next) {
   // Pull transactions for the Item for the last 30 days to the front-end
   // Sam: I added a Firebase section here so that the transactions for the Item
   // are also added to the Firebase database
-  response.json(updateTransactions(SIX_MONTHS));
+  var startDate = moment().subtract(ONE_MONTH, 'days').format('YYYY-MM-DD');
+  var endDate = moment().format('YYYY-MM-DD');
+
+  var dict = updateTransactions(SIX_MONTHS);
+  console.log(dict);
+
+  client.getTransactions(ACCESS_TOKEN, startDate, endDate, {
+    count: 500,
+    offset: 0,
+  }, function(error, transactionsResponse) {
+      if (error != null) {
+          console.log(JSON.stringify(error));
+          return {
+            error: error
+          };
+      }
+      response.json(transactionsResponse);
+  });
 });
 
 app.get('/buckets', function(request, response, next) {
     var bucketsList = {}
     console.log("/buckets has been called");
+    estimateBuckets();
     updateMonthlySpending();
 
     firebase.database().ref('users/' + USER_ID + '/bucketMoney').once('value', function(snapshot) {
@@ -239,6 +256,14 @@ app.post('/log_in', function(request, response, next) {
         response.json({login: true});
         USER_ID = firebase.auth().currentUser.uid;
         USER_EMAIL = username;
+    },
+    function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log('failed to log into Firebase: ' + errorMessage);
+        firebase.auth().signOut()
+        response.json({login: false});
     }).then(function() {
         console.log('looking for existing access token for ' + USER_ID);
         firebase.database().ref('/users/' + USER_ID).once('value').catch(function(error) {
@@ -335,6 +360,8 @@ function estimateBuckets() {
 function updateTransactions(time_period) {
     var startDate = moment().subtract(time_period, 'days').format('YYYY-MM-DD');
     var endDate = moment().format('YYYY-MM-DD');
+    var updatedTransactions = 'transactions are working'
+;
 
     client.getTransactions(ACCESS_TOKEN, startDate, endDate, {
       count: 500,
@@ -356,9 +383,13 @@ function updateTransactions(time_period) {
             firebase.database().ref('users/' + USER_ID + "/bucketTransactions/" + bucket).update(postData);
         });
 
+
         console.log('saved ' + transactionsResponse.transactions.length + ' transactions under ' + USER_ID);
-        return transactionsResponse;
+        updatedTransactions = buckets.clone(transactionsResponse);
     });
+    console.log('returning transactions to be printed')
+    return updatedTransactions;
+
 }
 
 function updateMonthlySpending() {
