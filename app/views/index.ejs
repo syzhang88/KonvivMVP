@@ -39,60 +39,6 @@
     </div>
 
 
-
-<!--     NON HARD CODED DATA  -->
-   <!--  <div id="buckets">
-        <div class = "box">
-            <button id="get-buckets-btn">Buckets</button>
-        </div>
-        <div class = "box">
-            <button class="logout-btn">Log Out</button>
-        </div>
-        <div>
-            <div class="load-bar-frame">
-                <div class="buckets-key" class="load-bar">Income</div>
-            </div>
-        </div>
-        <div>
-            <div class="load-bar-frame">
-                <div class="buckets-key" class="load-bar">Bills</div>
-            </div>
-
-            <div class="load-bar-frame">
-                <div class="buckets-key" class="load-bar">Eating Out</div>
-            </div>
-            <div class="load-bar-frame">
-                <div class="buckets-key" class="load-bar">Entertainment</div>
-            </div>
-            <div class="load-bar-frame">
-                <div class="buckets-key" class="load-bar">Subscriptions</div>
-            </div>
-        </div>
-        <div>
-            <div class="load-bar-frame">
-                <div id="Groceries" class="load-bar">Groceries</div>
-            </div>
-            <div class="load-bar-frame">
-                <div id="Shopping" class="load-bar">Shopping</div>
-            </div>
-            <div class="load-bar-frame">
-                <div id="Transportation" class="load-bar">Transportation</div>
-            </div>
-            <div class="load-bar-frame">
-                <div id="General Spending" class="load-bar">General Spending</div>
-            </div>
-        </div>
-    </div> -->
-
-
-
-
-
-
-
-
-
-
                 <!--     BEGINNING OF HARD CODED DATA     -->
 
     <div id="buckets">
@@ -170,46 +116,6 @@
             </div>
         </div>
 
-
-
-
-<!-- 
-        <div>
-            <div class="load-bar-frame">
-                <div id="Income" class="load-bar"></div>                    
-                <div id=fillPercent></div>
-
-            </div>
-        </div>
-        <div>
-            <div class="load-bar-frame">
-                <div id="Bills" class="load-bar"></div>
-
-            </div>
-            <div class="load-bar-frame">
-                <div id="Eating Out" class="load-bar"></div>
-            </div>
-            <div class="load-bar-frame">
-                <div id="Entertainment" class="load-bar"></div>
-            </div>
-            <div class="load-bar-frame">
-                <div id="Subscriptions" class="load-bar"></div>
-            </div>
-        </div>
-        <div>
-            <div class="load-bar-frame">
-                <div id="Groceries" class="load-bar"></div>
-            </div>
-            <div class="load-bar-frame">
-                <div id="Shopping" class="load-bar"></div>
-            </div>
-            <div class="load-bar-frame">
-                <div id="Transportation" class="load-bar"></div>
-            </div>
-            <div class="load-bar-frame">
-                <div id="General Spending" class="load-bar"></div>
-            </div>
-        </div> -->
     </div>
 
 
@@ -442,12 +348,12 @@
                             //$( '[id="' + key + '"] ').html( key);
 
 
-
-console.log(key + ": " + newPercent);
- $(selector)
-    .find(".top").text(key).end()
-    .find(".bottom").text(newPercent + "%").end()
-    .find(".perc-value").css("width", newPercent + "%");
+                            /* NEW CODE */
+                            console.log(key + ": " + newPercent);
+                             $(selector)
+                                .find(".top").text(key).end()
+                                .find(".bottom").text(newPercent + "%").end()
+                                .find(".perc-value").css("width", newPercent + "%");
                             /* Load the key so it is not hard coded */
                             // $(".buckets-key")[i].textContent = key;  i++;
 
