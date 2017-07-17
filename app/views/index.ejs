@@ -8,9 +8,9 @@
 </head>
 <body>
     <div id="banner">
-        <h1>Welcome to Konviv!</h1>
-        <p id="intro">
-          Test Application for KONVIV
+        <h1> K O N V I V </h1>
+        <p id="intro"> 
+          
         </p>
 <!--     <p id="steps">
       Great - you just created an Item! The server was successfully able to exchange the public_token for an access_token.
@@ -18,17 +18,24 @@
     </p> -->
     </div>
 
-    <div id="container">
-        <p>
-          Click the button below to open a list of Institutions - after you select one,
-          you'll be guided through an authentication process. The public_token will be passed
-          back to the example server, which will then exchange it for an access token and log it
-          to your console.
-        </p>
+
+    <div id = "container">
         <button id="link-btn">Link Account</button>
         <button id="buckets-btn">Buckets</button>
         <button id="menu-btn">Menu</button>
         <button class="logout-btn">Log Out</button>
+    </div>
+
+    
+    <div id="container">
+        <p> We are here to help you manage your finances. </p>
+
+         <p> Please select "Link Account" if you have not yet input your bank account information. </p> 
+
+         <p> please select "Buckets" to see how we have sorted your bank finances </p>
+
+         <p> Please select "Menu" to see a break down of your transactions in the past month  </p>
+        
     </div>
 
 
@@ -150,6 +157,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
 <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+
 
 <script>
     $.get('/log_in_status', function(data) {
