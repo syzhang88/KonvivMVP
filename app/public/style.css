@@ -75,7 +75,8 @@ html {
   padding: 0px;
   margin: 0;
   text-align: center;
-  background: #f9f9f9;
+  background: #cceff0;
+
 }
 body {
   padding: 0px;
@@ -91,22 +92,38 @@ a:hover {
   text-decoration: underline;
 }
 #banner,
-#container,
 .box {
   min-width: 280px;
   max-width: 800px;
   margin: 20px auto 0;
   padding: 20px;
   background: #fff;
-  border: 1px solid #c9c9c9;
+  border: 2px solid white;
   border-radius: 2px;
   text-align: left;
 }
+
+#container {
+  min-width: 280px;
+  max-width: 800px;
+  margin: 20px auto 0;
+  padding: 20px;
+  background: #fff;
+  border: 2px solid white;
+  border-radius: 2px;
+  text-align: left;
+  background: #cceff0
+}
+
+
+
 #container p {
   font-size: 14px;
   line-height: 17px;
   margin-bottom: 20px;
+
 }
+
 button {
   background-color: #1a476a;
   background-image: -webkit-linear-gradient(top, #29618e, #164a74);
@@ -160,11 +177,16 @@ button:hover {
   border-top: 0px;
   margin-top: 0px;
   border-radius: 0 0 2px 2px;
+  background-color: #a3bfc0
 }
 #banner h1 {
   color: #1a476a;
-  font-size: 18px;
+  font-size: 24px;
   font-weight: bold;
+
+   margin-left: auto;
+    margin-right: auto;
+    width: 6em
 }
 #banner p {
   font-size: 14px;
