@@ -42,7 +42,7 @@ var APP_PORT = envvar.number('APP_PORT', 8000);
 var PLAID_CLIENT_ID = envvar.string('PLAID_CLIENT_ID', '593981e0bdc6a401d71d87b5');
 var PLAID_SECRET = envvar.string('PLAID_SECRET', '271426f90259600c6bf365d6b0f0aa');
 var PLAID_PUBLIC_KEY = envvar.string('PLAID_PUBLIC_KEY', '9f4ef21fdb37b5c0e3f80290db7716');
-var PLAID_ENV = envvar.string('PLAID_ENV', 'sandbox');
+var PLAID_ENV = envvar.string('PLAID_ENV', 'development');
 
 // We store the access_token in memory - in production, store it in a secure
 // persistent data store
@@ -114,6 +114,7 @@ app.post('/get_access_token', function(request, response, next) {
         // token to log in each time.
         ACCESS_TOKEN = tokenResponse.access_token;
         ITEM_ID = tokenResponse.item_id;
+        // SAVED_ACCESS_TOKEN = access-development-c866ffa8-6ea3-4784-8579-3b62df0ba607
         console.log('LOADING Access Token: ' + ACCESS_TOKEN);
 
         firebase.database().ref('users/' + USER_ID).set({
@@ -335,7 +336,7 @@ function estimateBuckets() {
         console.log('estimating bucket sizes...');
         bucketAmounts = buckets.estimateSize(snapshot.val(), SIX_MONTHS);
     }).then(function () {
-        firebase.database().ref(pathMoney).update(bucketAmounts);
+        firebase.database().ref(pathMoney).set(bucketAmounts);
         console.log('uploaded bucket size estimations');
     });
 }
