@@ -9,8 +9,8 @@
 <body>
     <div id="banner">
         <h1> K O N V I V </h1>
-        <p id="intro"> 
-          
+        <p id="intro">
+
         </p>
 <!--     <p id="steps">
       Great - you just created an Item! The server was successfully able to exchange the public_token for an access_token.
@@ -26,16 +26,16 @@
         <button class="logout-btn">Log Out</button>
     </div>
 
-    
+
     <div id="container">
         <p> We are here to help you manage your finances. </p>
 
-         <p> Please select "Link Account" if you have not yet input your bank account information. </p> 
+         <p> Please select "Link Account" if you have not yet input your bank account information. </p>
 
          <p> please select "Buckets" to see how we have sorted your bank finances </p>
 
          <p> Please select "Menu" to see a break down of your transactions in the past month  </p>
-        
+
     </div>
 
 
@@ -177,7 +177,7 @@
         var handler = Plaid.create({
             apiVersion: 'v2',
             clientName: 'Konviv Android Demo',
-            env: 'development',
+            env: 'sandbox',
             product: ['transactions'],
             key: '9f4ef21fdb37b5c0e3f80290db7716',
             onSuccess: function(public_token) {
