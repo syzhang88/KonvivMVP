@@ -102,14 +102,89 @@
         <div class = "box">
             <button class="logout-btn">Log Out</button>
         </div>
+        <div class="box">
+            <div class="wrap">
+              <div class="circle" id="Income">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Bills">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Eating Out">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Entertainment">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Subscriptions">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Groceries">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Shopping">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Transportation">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="General Spending">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+            </div>
+        </div>
+
+
+
+
+<!-- 
         <div>
             <div class="load-bar-frame">
-                <div id="Income" class="load-bar"></div>
+                <div id="Income" class="load-bar"></div>                    
+                <div id=fillPercent></div>
+
             </div>
         </div>
         <div>
             <div class="load-bar-frame">
                 <div id="Bills" class="load-bar"></div>
+
             </div>
             <div class="load-bar-frame">
                 <div id="Eating Out" class="load-bar"></div>
@@ -134,8 +209,13 @@
             <div class="load-bar-frame">
                 <div id="General Spending" class="load-bar"></div>
             </div>
-        </div>
+        </div> -->
     </div>
+
+
+
+
+
 
     <div id="menu">
         <div class="box">
@@ -338,20 +418,36 @@
                                 fillPercent = (1 - data[key]['Spending']/data[key]['Total'])*100
                             }
 
+                          newPercent = fillPercent;
+                            //var kiki = '[id="' + key + '"]';
+                            //$(kiki).html(newPercent);
+
+
                             //Printing out bucket information to console
-                            console.log("Bucket: " + key + ", spending amount: " + data[key]['Spending']
-                            + "/" + data[key]['Total'] + " = " + fillPercent);
-                            console.log( 'The Key is: ' + key + " and the element is", $('#' + key).html());
-                            console.log("KeyP: " + key + " Data: " + data[key]['Spending']);
+                            // console.log("Bucket: " + key + ", spending amount: " + data[key]['Spending']
+                            // + "/" + data[key]['Total'] + " = " + fillPercent);
+                            // console.log( 'The Key is: ' + key + " and the element is", $('#' + key).html());
+                            // console.log("KeyP: " + key + " Data: " + data[key]['Spending']);
+
+
+
                             // Draws out bucket
                             // # +key makes a call to the
                              var selector = '[id="' + key + '"]';
-                             console.log( "Selector: " + selector);
-                            $(selector).css({background: "linear-gradient(to right, #000000 "+fillPercent+"%,#feffff "
-                            +fillPercent+"%,#feffff 100%)"});
-                            $( '[id="' + key + '"] ').html( key);
-                            $(selector).html( key);
+                             //console.log( "Selector: " + selector);
+                           
+                            //$(selector).css({background: "linear-gradient(to right, #000000 "+fillPercent+"%,#feffff "
+                            //+fillPercent+"%,#feffff 100%)"});
+                            //
+                            //$( '[id="' + key + '"] ').html( key);
 
+
+
+console.log(key + ": " + newPercent);
+ $(selector)
+    .find(".top").text(key).end()
+    .find(".bottom").text(newPercent + "%").end()
+    .find(".perc-value").css("width", newPercent + "%");
                             /* Load the key so it is not hard coded */
                             // $(".buckets-key")[i].textContent = key;  i++;
 
