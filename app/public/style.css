@@ -101,6 +101,9 @@ a:hover {
   border: 2px solid white;
   border-radius: 2px;
   text-align: left;
+  display: block;
+  /*display: inline-block;*/
+  overflow:auto;
 }
 
 #container {
@@ -137,6 +140,9 @@ button {
   padding: 10px 30px;
   font-size: 18px;
   border-radius: 4px;
+  display: inline-block;
+  float: left;
+  overflow:auto;
 }
 button:hover {
   color: #f1f1f1;
@@ -153,10 +159,10 @@ button:hover {
   font-size: 14px;
 }
 #menu {
-  display: none;
+  /*display: none;*/
 }
 #menu textarea {
-  display: none;
+  /*display: none;*/
   height: 100px;
   width: 260px;
   padding: 10px;

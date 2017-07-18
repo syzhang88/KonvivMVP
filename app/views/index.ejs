@@ -18,127 +18,14 @@
     </p> -->
     </div>
 
-
-    <div id = "container">
-        <button id="link-btn">Link Account</button>
-        <button id="menu-btn">Menu</button>
-        <button class="logout-btn">Log Out</button>
-    </div>
-
-
-    <div id="container">
-        <p> We are here to help you manage your finances. </p>
-
-         <p> Please select "Link Account" if you have not yet input your bank account information. </p>
-
-         <p> please select "Buckets" to see how we have sorted your bank finances </p>
-
-         <p> Please select "Menu" to see a break down of your transactions in the past month  </p>
-
-    </div>
-
-
-                <!--     BEGINNING OF HARD CODED DATA     -->
-
-    <!-- <div id="buckets">
-        <div class = "box">
-            <button id="get-buckets-btn">Buckets</button>
-        </div>
-        <div class = "box">
-            <button class="logout-btn">Log Out</button>
-        </div>
-        <div class="box">
-            <div class="wrap">
-              <div class="circle" id="Income">
-                <div class="perc">
-                  <div class="perc-value"></div>
-                </div>
-                <span class="top"></span>
-                <span class="bottom"></span>
-              </div>
-              <div class="circle" id="Bills">
-                <div class="perc">
-                  <div class="perc-value"></div>
-                </div>
-                <span class="top"></span>
-                <span class="bottom"></span>
-              </div>
-              <div class="circle" id="Eating Out">
-                <div class="perc">
-                  <div class="perc-value"></div>
-                </div>
-                <span class="top"></span>
-                <span class="bottom"></span>
-              </div>
-              <div class="circle" id="Entertainment">
-                <div class="perc">
-                  <div class="perc-value"></div>
-                </div>
-                <span class="top"></span>
-                <span class="bottom"></span>
-              </div>
-              <div class="circle" id="Subscriptions">
-                <div class="perc">
-                  <div class="perc-value"></div>
-                </div>
-                <span class="top"></span>
-                <span class="bottom"></span>
-              </div>
-              <div class="circle" id="Groceries">
-                <div class="perc">
-                  <div class="perc-value"></div>
-                </div>
-                <span class="top"></span>
-                <span class="bottom"></span>
-              </div>
-              <div class="circle" id="Shopping">
-                <div class="perc">
-                  <div class="perc-value"></div>
-                </div>
-                <span class="top"></span>
-                <span class="bottom"></span>
-              </div>
-              <div class="circle" id="Transportation">
-                <div class="perc">
-                  <div class="perc-value"></div>
-                </div>
-                <span class="top"></span>
-                <span class="bottom"></span>
-              </div>
-              <div class="circle" id="General Spending">
-                <div class="perc">
-                  <div class="perc-value"></div>
-                </div>
-                <span class="top"></span>
-                <span class="bottom"></span>
-              </div>
-            </div>
-        </div>
-
-    </div> -->
-
-
-
-
-
     <div id="menu">
         <div class="box">
             <button id="get-accounts-btn">Get Accounts</button>
-            <div id="get-accounts-data"></div>
-        </div>
-        <div class="box">
             <button id="get-item-btn">Get Item</button>
-            <div id="get-item-data"></div>
-        </div>
-        <div class="box">
             <button id="get-transactions-btn">Get Transactions</button>
-            <div id="get-transactions-data"></div>
-        </div>
-        
-       
+            <button class="logout-btn">Log Out</button>
 
-        <div class = "box">
-            <button id="get-buckets-btn">Buckets</button>
+            <div id="get-button-data"></div>
         </div>
         <div class="box">
             <div class="wrap">
@@ -207,16 +94,11 @@
               </div>
             </div>
         </div>
-
-
-        <div class = "box">
-            <button class="logout-btn">Log Out</button>
-        </div>
     </div>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
 <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
-
 
 <script>
     $.get('/log_in_status', function(data) {
@@ -231,6 +113,73 @@
             console.log('unable to log out');
         }
     };
+
+    // RESTful call to index.js server using get function
+    $.get('/buckets', function(data) {
+        // Catching error
+        console.log(data);
+        if (data.error != null) {
+            // Format the error
+            var errorHtml = '<div class="inner"><p>' +
+            '<strong>' + data.error.error_code + ':</strong> ' +
+            data.error.error_message + '</p></div>';
+            // Render the error
+            $('#get-button-data').slideUp(function() {
+                $(this).slideUp(function() {
+                    $(this).html(errorHtml).slideDown();
+                });
+            });
+            // Using for loop to pull information for each bucket from data
+        } else {
+
+            /* i = iterator for buckets-key array */
+            //  var i = 0;
+        for (var key in data) {
+                var fillPercent = 0;
+                // Accounting for divide-by-zero error
+                if (data[key]['Total'] > 0) {
+                    fillPercent = (1 - data[key]['Spending']/data[key]['Total'])*100
+                }
+
+                bucketSpent = Math.round((data[key]['Total'] - data[key]['Spending'])*100)/100;
+                bucketTotal = Math.round(data[key]['Total']*100)/100;
+
+              newPercent = fillPercent;
+                //var kiki = '[id="' + key + '"]';
+                //$(kiki).html(newPercent);
+
+
+                //Printing out bucket information to console
+                // console.log("Bucket: " + key + ", spending amount: " + data[key]['Spending']
+                // + "/" + data[key]['Total'] + " = " + fillPercent);
+                // console.log( 'The Key is: ' + key + " and the element is", $('#' + key).html());
+                // console.log("KeyP: " + key + " Data: " + data[key]['Spending']);
+
+
+
+                // Draws out bucket
+                // # +key makes a call to the
+                 var selector = '[id="' + key + '"]';
+                 //console.log( "Selector: " + selector);
+
+                //$(selector).css({background: "linear-gradient(to right, #000000 "+fillPercent+"%,#feffff "
+                //+fillPercent+"%,#feffff 100%)"});
+                //
+                //$( '[id="' + key + '"] ').html( key);
+
+
+                /* NEW CODE */
+                console.log(key + ": " + newPercent);
+                 $(selector)
+                    .find(".top").text(key).end()
+                    .find(".bottom").text("$" + bucketSpent + " / $" + bucketTotal).end()
+                    .find(".perc-value").css("width", newPercent + "%");
+                /* Load the key so it is not hard coded */
+                // $(".buckets-key")[i].textContent = key;  i++;
+
+            }
+        }
+    });
 
     (function($) {
         var handler = Plaid.create({
@@ -279,7 +228,7 @@
         $('#get-accounts-btn').on('click', function(e) {
 
             $.get('/accounts', function(data) {
-                $('#get-accounts-data').slideUp(function() {
+                $('#get-button-data').slideUp(function() {
                     var html = '';
                     data.accounts.forEach(function(account, idx) {
                         html += '<div class="inner">';
@@ -296,7 +245,7 @@
 
         $('#get-item-btn').on('click', function(e) {
             $.post('/item', function(data) {
-                $('#get-item-data').slideUp(function() {
+                $('#get-button-data').slideUp(function() {
                     if (data.error)
                     $(this).html('<p>' + data.error + '</p>').slideDown();
                     else {
@@ -329,13 +278,13 @@
                         'transaction pull.</a></p></div>';
                     }
                     // Render the error
-                    $('#get-transactions-data').slideUp(function() {
+                    $('#get-button-data').slideUp(function() {
                         $(this).slideUp(function() {
                             $(this).html(errorHtml).slideDown();
                         });
                     });
                 } else {
-                    $('#get-transactions-data').slideUp(function() {
+                    $('#get-button-data').slideUp(function() {
                         var html = '';
                         data.transactions.forEach(function(txn, idx) {
                             //code for displaying category for each transaction
@@ -362,79 +311,6 @@
                         });
                     });
                 }
-            });
-        });
-
-        // Buckets Button
-        $('#get-buckets-btn').click(function(e){
-            $(this).slideDown(function() {
-
-                // RESTful call to index.js server using get function
-                $.get('/buckets', function(data) {
-                    // Catching error
-                    console.log(data);
-                    if (data.error != null) {
-                        // Format the error
-                        var errorHtml = '<div class="inner"><p>' +
-                        '<strong>' + data.error.error_code + ':</strong> ' +
-                        data.error.error_message + '</p></div>';
-                        // Render the error
-                        $('#get-transactions-data').slideUp(function() {
-                            $(this).slideUp(function() {
-                                $(this).html(errorHtml).slideDown();
-                            });
-                        });
-                        // Using for loop to pull information for each bucket from data
-                    } else {
-
-                        /* i = iterator for buckets-key array */
-                        //  var i = 0;
-                    for (var key in data) {
-                            var fillPercent = 0;
-                            // Accounting for divide-by-zero error
-                            if (data[key]['Total'] > 0) {
-                                fillPercent = (1 - data[key]['Spending']/data[key]['Total'])*100
-                            }
-
-                            bucketSpent = Math.round((data[key]['Total'] - data[key]['Spending'])*100)/100;
-                            bucketTotal = Math.round(data[key]['Total']*100)/100;
-
-                          newPercent = fillPercent;
-                            //var kiki = '[id="' + key + '"]';
-                            //$(kiki).html(newPercent);
-
-
-                            //Printing out bucket information to console
-                            // console.log("Bucket: " + key + ", spending amount: " + data[key]['Spending']
-                            // + "/" + data[key]['Total'] + " = " + fillPercent);
-                            // console.log( 'The Key is: ' + key + " and the element is", $('#' + key).html());
-                            // console.log("KeyP: " + key + " Data: " + data[key]['Spending']);
-
-
-
-                            // Draws out bucket
-                            // # +key makes a call to the
-                             var selector = '[id="' + key + '"]';
-                             //console.log( "Selector: " + selector);
-
-                            //$(selector).css({background: "linear-gradient(to right, #000000 "+fillPercent+"%,#feffff "
-                            //+fillPercent+"%,#feffff 100%)"});
-                            //
-                            //$( '[id="' + key + '"] ').html( key);
-
-
-                            /* NEW CODE */
-                            console.log(key + ": " + newPercent);
-                             $(selector)
-                                .find(".top").text(key).end()
-                                .find(".bottom").text("$" + bucketSpent + " / $" + bucketTotal).end()
-                                .find(".perc-value").css("width", newPercent + "%");
-                            /* Load the key so it is not hard coded */
-                            // $(".buckets-key")[i].textContent = key;  i++;
-
-                        }
-                    }
-                });
             });
         });
     })(jQuery);
