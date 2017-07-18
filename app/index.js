@@ -330,7 +330,6 @@ function estimateBuckets() {
     firebase.database().ref(pathTransaction).once('value', function(snapshot) {
         console.log('estimating bucket sizes...');
         bucketAmounts = buckets.estimateSize(snapshot.val(), SIX_MONTHS);
-    }).then(function () {
         firebase.database().ref(pathMoney).update(bucketAmounts);
         console.log('uploaded bucket size estimations');
     });

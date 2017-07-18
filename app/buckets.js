@@ -109,10 +109,13 @@ exports.estimateSize = function estimateSize (transactions, estimationPeriod) {
     var monthlyBucketSum = 0;
     for (var bucket in bucketAmounts) {
         var totalBucketAmount = 0;
+        console.log("Bucket " + bucket + "calculating now...")
         for (var key in transactions[bucket]) {
             if (transactions[bucket][key]) {
                 var amount = transactions[bucket][key]['amount'];
+                console.log("Bucket " + bucket + ": + amount " + amount);
                 totalBucketAmount += amount;
+                console.log("Bucket " + bucket + ": " + totalBucketAmount);
             }
         }
         var monthlyBucketAmount = totalBucketAmount/estimationPeriod * MONTH_PERIOD;
