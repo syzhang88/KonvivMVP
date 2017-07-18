@@ -98,12 +98,14 @@
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
-<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
 
 <script>
+    var buttonValue = '';
+
     $.get('/log_in_status', function(data) {
         logOutSuccess(!data.login);
     });
+
     function logOutSuccess(logout) {
         if (logout == true) {
             location.href="/";
@@ -131,10 +133,7 @@
             });
             // Using for loop to pull information for each bucket from data
         } else {
-
-            /* i = iterator for buckets-key array */
-            //  var i = 0;
-        for (var key in data) {
+            for (var key in data) {
                 var fillPercent = 0;
                 // Accounting for divide-by-zero error
                 if (data[key]['Total'] > 0) {
@@ -145,79 +144,18 @@
                 bucketTotal = Math.round(data[key]['Total']*100)/100;
 
               newPercent = fillPercent;
-                //var kiki = '[id="' + key + '"]';
-                //$(kiki).html(newPercent);
-
-
-                //Printing out bucket information to console
-                // console.log("Bucket: " + key + ", spending amount: " + data[key]['Spending']
-                // + "/" + data[key]['Total'] + " = " + fillPercent);
-                // console.log( 'The Key is: ' + key + " and the element is", $('#' + key).html());
-                // console.log("KeyP: " + key + " Data: " + data[key]['Spending']);
-
-
-
-                // Draws out bucket
-                // # +key makes a call to the
                  var selector = '[id="' + key + '"]';
-                 //console.log( "Selector: " + selector);
-
-                //$(selector).css({background: "linear-gradient(to right, #000000 "+fillPercent+"%,#feffff "
-                //+fillPercent+"%,#feffff 100%)"});
-                //
-                //$( '[id="' + key + '"] ').html( key);
-
-
                 /* NEW CODE */
                 console.log(key + ": " + newPercent);
                  $(selector)
                     .find(".top").text(key).end()
                     .find(".bottom").text("$" + bucketSpent + " / $" + bucketTotal).end()
                     .find(".perc-value").css("width", newPercent + "%");
-                /* Load the key so it is not hard coded */
-                // $(".buckets-key")[i].textContent = key;  i++;
-
             }
         }
     });
 
     (function($) {
-        var handler = Plaid.create({
-            apiVersion: 'v2',
-            clientName: 'Konviv Android Demo',
-            env: 'development',
-            product: ['transactions'],
-            key: '9f4ef21fdb37b5c0e3f80290db7716',
-            onSuccess: function(public_token) {
-                $.post('/get_access_token', {
-                    public_token: public_token
-                }, function() {
-                    $('#container').fadeOut('fast', function() {
-                        $('#intro').hide();
-                        $('#menu').fadeIn('slow');
-                    });
-                });
-            },
-        });
-
-        $('#link-btn').on('click', function(e) {
-            handler.open();
-        });
-
-        $('#buckets-btn').on('click', function(e) {
-            $('#container').fadeOut('fast', function() {
-                $('#intro').hide();
-                $('#buckets').fadeIn('slow');
-            });
-        });
-
-        $('#menu-btn').on('click', function(e) {
-            $('#container').fadeOut('fast', function() {
-                $('#intro').hide();
-                $('#menu').fadeIn('slow');
-            });
-        });
-
         $('.logout-btn').on('click', function(e) {
             console.log("logging out...");
             $.get('/log_out', function(data) {
@@ -226,8 +164,13 @@
         });
 
         $('#get-accounts-btn').on('click', function(e) {
-
+            if ($('#get-button-data').is(':visible') && buttonValue == "account") {
+                buttonValue = "";
+                return $('#get-button-data').slideUp();
+            }
             $.get('/accounts', function(data) {
+                buttonValue = "account";
+
                 $('#get-button-data').slideUp(function() {
                     var html = '';
                     data.accounts.forEach(function(account, idx) {
@@ -244,11 +187,17 @@
         });
 
         $('#get-item-btn').on('click', function(e) {
+            if ($('#get-button-data').is(':visible') && buttonValue == "item") {
+                buttonValue = "";
+                return $('#get-button-data').slideUp();
+            }
             $.post('/item', function(data) {
+                buttonValue = "item";
+
                 $('#get-button-data').slideUp(function() {
-                    if (data.error)
-                    $(this).html('<p>' + data.error + '</p>').slideDown();
-                    else {
+                    if (data.error) {
+                        $(this).html('<p>' + data.error + '</p>').slideDown();
+                    } else {
                         var html = '<div class="inner">';
                         html += '<p>Here\'s some basic information about your Item:</p>';
                         html += '<p>Institution name:' + data.institution.name + '</p>';
@@ -262,7 +211,13 @@
         });
 
         $('#get-transactions-btn').on('click', function(e) {
+            if ($('#get-button-data').is(':visible') && buttonValue == "transactions") {
+                buttonValue = "";
+                return $('#get-button-data').slideUp();
+            }
             $.post('/transactions', function(data) {
+                buttonValue = "transactions";
+
                 if (data.error != null) {
                     // Format the error
                     var errorHtml = '<div class="inner"><p>' +

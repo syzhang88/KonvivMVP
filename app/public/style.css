@@ -289,3 +289,7 @@ button:hover {
 .wrap .circle .bottom {
   bottom: -25px;
 }
+
+#get-button-data {
+    display: none;
+}

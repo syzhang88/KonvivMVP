@@ -42,7 +42,7 @@ var APP_PORT = envvar.number('APP_PORT', 8000);
 var PLAID_CLIENT_ID = envvar.string('PLAID_CLIENT_ID', '593981e0bdc6a401d71d87b5');
 var PLAID_SECRET = envvar.string('PLAID_SECRET', '271426f90259600c6bf365d6b0f0aa');
 var PLAID_PUBLIC_KEY = envvar.string('PLAID_PUBLIC_KEY', '9f4ef21fdb37b5c0e3f80290db7716');
-var PLAID_ENV = envvar.string('PLAID_ENV', 'development');
+var PLAID_ENV = envvar.string('PLAID_ENV', 'sandbox');
 
 // We store the access_token in memory - in production, store it in a secure
 // persistent data store
@@ -84,13 +84,20 @@ app.use(bodyParser.json());
 
 app.get('/', function(request, response, next) {
   response.render('login.ejs', {
-    PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
-    PLAID_ENV: PLAID_ENV,
+  //   PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+  //   PLAID_ENV: PLAID_ENV,
   });
 });
 
 app.get('/index.ejs', function(request, response, next) {
   response.render('index.ejs', {
+  //   PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+  //   PLAID_ENV: PLAID_ENV,
+  });
+});
+
+app.get('/newuser.ejs', function(request, response, next) {
+  response.render('newuser.ejs', {
     PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
     PLAID_ENV: PLAID_ENV,
   });
@@ -358,7 +365,6 @@ function updateTransactions(timePeriod, callbackFunction) {
             var transactionDate = new Date(txnDate.substr(0, 4), txnDate.substr(5, 2), txnDate.substr(8,2));
             var thisMonth = new Date(endDate.substr(0, 4), endDate.substr(5, 2), '01');
             // console.log('date comparison running: ')
-            console.log(transactionDate + " vs. this month: " + thisMonth)
 
             if (transactionDate >= thisMonth) {
                 // console.log('date comparison working')
