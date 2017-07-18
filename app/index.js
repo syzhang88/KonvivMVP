@@ -42,7 +42,7 @@ var APP_PORT = envvar.number('APP_PORT', 8000);
 var PLAID_CLIENT_ID = envvar.string('PLAID_CLIENT_ID', '593981e0bdc6a401d71d87b5');
 var PLAID_SECRET = envvar.string('PLAID_SECRET', '271426f90259600c6bf365d6b0f0aa');
 var PLAID_PUBLIC_KEY = envvar.string('PLAID_PUBLIC_KEY', '9f4ef21fdb37b5c0e3f80290db7716');
-var PLAID_ENV = envvar.string('PLAID_ENV', 'sandbox');
+var PLAID_ENV = envvar.string('PLAID_ENV', 'development');
 
 // We store the access_token in memory - in production, store it in a secure
 // persistent data store
@@ -193,7 +193,7 @@ app.post('/transactions', function(request, response, next) {
   // Pull transactions for the Item for the last 30 days to the front-end
   // Sam: I added a Firebase section here so that the transactions for the Item
   // are also added to the Firebase database
-  var startDate = moment().subtract(ONE_MONTH, 'days').format('YYYY-MM-DD');
+  var startDate = moment().format('YYYY-MM-DD').substr(0,8) + '01';
   var endDate = moment().format('YYYY-MM-DD');
 
   client.getTransactions(ACCESS_TOKEN, startDate, endDate, {
@@ -208,30 +208,31 @@ app.post('/transactions', function(request, response, next) {
     response.json(transactionsResponse);
   });
 
-  updateTransactions(SIX_MONTHS, estimateBuckets);
+  updateTransactions(SIX_MONTHS, () => {});
 });
 
 app.get('/buckets', function(request, response, next) {
     var bucketsList = {}
     console.log("/buckets has been called");
-    updateMonthlySpending();
-    firebase.database().ref('users/' + USER_ID + '/bucketMoney').once('value', function(snapshot) {
-        console.log("snapshot taken ");
-        for (var key in snapshot.val()) {
-            console.log("data is being pulled...");
-            // Sam: hasOwnProperty(key) checks that we're only looking at keys we made. Google
-            // 'HasOwnProperty' for more info
-            if (snapshot.val().hasOwnProperty(key)) {
-                var bucket = snapshot.val()[key];
-                bucketsList[bucket['Name']] = {'Spending': bucket['Spending'], 'Total': bucket['Total']};
-                console.log(bucket['Name'] + ' bucket: ' + bucketsList[bucket['Name']]['Spending']
-                    + " spent this month out of " + bucketsList[bucket['Name']]['Total']);
+    updateTransactions(SIX_MONTHS, function() {
+        firebase.database().ref('users/' + USER_ID + '/bucketMoney').once('value', function(snapshot) {
+            console.log("snapshot taken ");
+            for (var key in snapshot.val()) {
+                console.log("data is being pulled...");
+                // Sam: hasOwnProperty(key) checks that we're only looking at keys we made. Google
+                // 'HasOwnProperty' for more info
+                if (snapshot.val().hasOwnProperty(key)) {
+                    var bucket = snapshot.val()[key];
+                    bucketsList[bucket['Name']] = {'Spending': bucket['Spending'], 'Total': bucket['Total']};
+                    console.log(bucket['Name'] + ' bucket: ' + bucketsList[bucket['Name']]['Spending']
+                        + " spent this month out of " + bucketsList[bucket['Name']]['Total']);
+                }
             }
-        }
-        console.log("printing working bucketsList: ");
-        console.log(bucketsList);
-        response.json(bucketsList);
-    })
+            console.log("printing working bucketsList: ");
+            console.log(bucketsList);
+            response.json(bucketsList);
+        })
+    });
 });
 
 app.post('/log_in', function(request, response, next) {
@@ -323,7 +324,7 @@ function estimateBuckets() {
         console.log('estimating bucket sizes...');
         bucketAmounts = buckets.estimateSize(snapshot.val(), SIX_MONTHS);
     }).then(function () {
-        firebase.database().ref(pathMoney).set(bucketAmounts);
+        firebase.database().ref(pathMoney).update(bucketAmounts);
         console.log('uploaded bucket size estimations');
     });
 }
@@ -349,10 +350,31 @@ function updateTransactions(timePeriod, callbackFunction) {
             var postData = {}
             postData[newPostKey] = transaction;
             firebase.database().ref('users/' + USER_ID + "/bucketTransactions/" + bucket).update(postData);
-            if date {
-                firebase.database().ref('users/' + USER_ID + "/bucketTransactions/" + bucket).update(postData);
+
+            //Get Bucket Spending
+            // console.log(endDate.substr(0,4));
+            var txnDate = transaction.date;
+
+            var transactionDate = new Date(txnDate.substr(0, 4), txnDate.substr(5, 2), txnDate.substr(8,2));
+            var thisMonth = new Date(endDate.substr(0, 4), endDate.substr(5, 2), '01');
+            // console.log('date comparison running: ')
+            console.log(transactionDate + " vs. this month: " + thisMonth)
+
+            if (transactionDate >= thisMonth) {
+                // console.log('date comparison working')
+                bucketAmounts[bucket] += transaction.amount;
             }
         });
+        //Get Bucket Spending
+        for (var bucket in bucketAmounts) {
+            firebase.database().ref('users/' + USER_ID + "/bucketMoney/" +
+                bucket).update({
+                    Spending: bucketAmounts[bucket]
+                });
+        }
+        console.log('updated bucket spending for this month:');
+        console.log(bucketAmounts);
+
         callbackFunction();
 
         console.log('saved ' + transactionsResponse.transactions.length + ' transactions under ' + USER_ID);

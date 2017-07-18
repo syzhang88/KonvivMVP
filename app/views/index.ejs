@@ -163,7 +163,7 @@
         var handler = Plaid.create({
             apiVersion: 'v2',
             clientName: 'Konviv Android Demo',
-            env: 'sandbox',
+            env: 'development',
             product: ['transactions'],
             key: '9f4ef21fdb37b5c0e3f80290db7716',
             onSuccess: function(public_token) {
@@ -324,6 +324,9 @@
                                 fillPercent = (1 - data[key]['Spending']/data[key]['Total'])*100
                             }
 
+                            bucketSpent = Math.round((data[key]['Total'] - data[key]['Spending'])*100)/100;
+                            bucketTotal = Math.round(data[key]['Total']*100)/100;
+
                           newPercent = fillPercent;
                             //var kiki = '[id="' + key + '"]';
                             //$(kiki).html(newPercent);
@@ -341,7 +344,7 @@
                             // # +key makes a call to the
                              var selector = '[id="' + key + '"]';
                              //console.log( "Selector: " + selector);
-                           
+
                             //$(selector).css({background: "linear-gradient(to right, #000000 "+fillPercent+"%,#feffff "
                             //+fillPercent+"%,#feffff 100%)"});
                             //
@@ -352,7 +355,7 @@
                             console.log(key + ": " + newPercent);
                              $(selector)
                                 .find(".top").text(key).end()
-                                .find(".bottom").text(newPercent + "%").end()
+                                .find(".bottom").text("$" + bucketSpent + " / $" + bucketTotal).end()
                                 .find(".perc-value").css("width", newPercent + "%");
                             /* Load the key so it is not hard coded */
                             // $(".buckets-key")[i].textContent = key;  i++;
