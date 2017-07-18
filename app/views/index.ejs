@@ -21,7 +21,6 @@
 
     <div id = "container">
         <button id="link-btn">Link Account</button>
-        <button id="buckets-btn">Buckets</button>
         <button id="menu-btn">Menu</button>
         <button class="logout-btn">Log Out</button>
     </div>
@@ -41,7 +40,7 @@
 
                 <!--     BEGINNING OF HARD CODED DATA     -->
 
-    <div id="buckets">
+    <!-- <div id="buckets">
         <div class = "box">
             <button id="get-buckets-btn">Buckets</button>
         </div>
@@ -116,8 +115,7 @@
             </div>
         </div>
 
-    </div>
-
+    </div> -->
 
 
 
@@ -136,6 +134,81 @@
             <button id="get-transactions-btn">Get Transactions</button>
             <div id="get-transactions-data"></div>
         </div>
+        
+       
+
+        <div class = "box">
+            <button id="get-buckets-btn">Buckets</button>
+        </div>
+        <div class="box">
+            <div class="wrap">
+              <div class="circle" id="Income">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Bills">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Eating Out">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Entertainment">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Subscriptions">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Groceries">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Shopping">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Transportation">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="General Spending">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+            </div>
+        </div>
+
+
         <div class = "box">
             <button class="logout-btn">Log Out</button>
         </div>
@@ -296,7 +369,6 @@
         $('#get-buckets-btn').click(function(e){
             $(this).slideDown(function() {
 
-                console.log("calling get-buckets-btn");
                 // RESTful call to index.js server using get function
                 $.get('/buckets', function(data) {
                     // Catching error
