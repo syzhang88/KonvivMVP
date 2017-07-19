@@ -104,7 +104,6 @@ exports.estimateSize = function estimateSize (transactions, estimationPeriod, to
     console.log("calculating buckets sizes now...");
 
     var bucketAmounts = clone(bucketAmountsOriginal);
-    console.log(bucketAmounts);
 
     var monthlyTotal = 0;
     for (var bucket in bucketAmounts) {
@@ -122,8 +121,10 @@ exports.estimateSize = function estimateSize (transactions, estimationPeriod, to
 
         bucketAmounts[bucket] = {'Total': monthlyBucketAmount,
             'Spending': 0, 'Name': nameBuckets[bucket]};
-
-        monthlyTotal += monthlyBucketAmount;
+        if (bucket != "Income") {
+            monthlyTotal += monthlyBucketAmount;
+            console.log(bucket + ": " + monthlyBucketAmount);
+        }
     }
     var generalBucket = totalBalance - monthlyTotal;
     console.log("Bucket General Bucket " + ": " + generalBucket);

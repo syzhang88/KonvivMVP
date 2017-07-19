@@ -256,15 +256,12 @@ app.post('/log_in', function(request, response, next) {
         USER_ID = firebase.auth().currentUser.uid;
         USER_EMAIL = username;
         success = {login: true}
-    }).then(function() {
         firebase.database().ref('/users/' + USER_ID).once('value', function(snapshot) {
             if (snapshot.val() && snapshot.val()['user_token']) {
                 ACCESS_TOKEN = snapshot.val()['user_token'];
                 console.log('found existing access token: ' + ACCESS_TOKEN);
             }
         })
-    }).catch(e => console.log(e.message)
-    ).then(function() {
         console.log("LOG IN SUCCESS: " + success['login']);
         response.json(success);
     });
@@ -336,10 +333,14 @@ function estimateBuckets() {
         firebase.database().ref(pathAccounts).once('value', function(snapshot) {
             for (var key in snapshot.val()) {
                 var account = snapshot.val()[key];
-                console.log(account);
                 if (account.balances != null) {
-                    totalBalance += account.balances.available;
+                    if (account.balances.available != null) {
+                        totalBalance += account.balances.available;
+                    } else {
+                        totalBalance += account.balances.current;
+                    }
                 }
+                console.log(totalBalance);
             }
             bucketAmounts = buckets.estimateSize(transactions, SIX_MONTHS, totalBalance);
             firebase.database().ref(pathMoney).update(bucketAmounts);
