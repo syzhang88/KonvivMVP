@@ -1,0 +1,21 @@
+{
+  "name": "konviv-mvp",
+  "version": "0.1.0",
+  "description": "A web app for the Konviv MVP.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "deepdatta@konviv.com",
+  "repository": "https://github.com/syzhang88/KonvivMVP/",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "1.15.x",
+    "ejs": "2.4.x",
+    "envvar": "1.1.x",
+    "express": "4.13.x",
+    "firebase": "^4.1.3",
+    "moment": "2.17.x",
+    "plaid": "2.0.x"
+  }
+}
