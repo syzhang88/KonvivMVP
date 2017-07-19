@@ -100,22 +100,22 @@ exports.selectBucket = function selectBucket (transaction) {
 // Estimates the size of a bucket given transactions from a given interval of
 // days, which is passed in as estimationPeriod
 
-exports.estimateSize = function estimateSize (transactions, estimationPeriod) {
+exports.estimateSize = function estimateSize (transactions, estimationPeriod, totalBalance) {
     console.log("calculating buckets sizes now...");
 
     var bucketAmounts = clone(bucketAmountsOriginal);
     console.log(bucketAmounts);
 
-    var monthlyBucketSum = 0;
+    var monthlyTotal = 0;
     for (var bucket in bucketAmounts) {
         var totalBucketAmount = 0;
-        console.log("Bucket " + bucket + "calculating now...")
+        // console.log("Bucket " + bucket + " calculating now...")
         for (var key in transactions[bucket]) {
             if (transactions[bucket][key]) {
                 var amount = transactions[bucket][key]['amount'];
-                console.log("Bucket " + bucket + ": + amount " + amount);
+                // console.log("Bucket " + bucket + ": + amount " + amount);
                 totalBucketAmount += amount;
-                console.log("Bucket " + bucket + ": " + totalBucketAmount);
+                // console.log("Bucket " + bucket + ": " + totalBucketAmount);
             }
         }
         var monthlyBucketAmount = totalBucketAmount/estimationPeriod * MONTH_PERIOD;
@@ -123,9 +123,12 @@ exports.estimateSize = function estimateSize (transactions, estimationPeriod) {
         bucketAmounts[bucket] = {'Total': monthlyBucketAmount,
             'Spending': 0, 'Name': nameBuckets[bucket]};
 
-        monthlyBucketSum += monthlyBucketAmount;
+        monthlyTotal += monthlyBucketAmount;
     }
-    var generalBucket = -Math.max(bucketAmounts['Income']['Total'] - monthlyBucketSum, 0);
+    var generalBucket = totalBalance - monthlyTotal;
+    console.log("Bucket General Bucket " + ": " + generalBucket);
+    console.log("Total Balance " + ": " + totalBalance);
+
     bucketAmounts['General Spending'] = {'Total': generalBucket,
         'Spending': 0, 'Name': nameBuckets['General Spending']};
 

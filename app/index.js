@@ -42,7 +42,7 @@ var APP_PORT = envvar.number('APP_PORT', 8000);
 var PLAID_CLIENT_ID = envvar.string('PLAID_CLIENT_ID', '593981e0bdc6a401d71d87b5');
 var PLAID_SECRET = envvar.string('PLAID_SECRET', '271426f90259600c6bf365d6b0f0aa');
 var PLAID_PUBLIC_KEY = envvar.string('PLAID_PUBLIC_KEY', '9f4ef21fdb37b5c0e3f80290db7716');
-var PLAID_ENV = envvar.string('PLAID_ENV', 'sandbox');
+var PLAID_ENV = envvar.string('PLAID_ENV', 'development');
 
 // We store the access_token in memory - in production, store it in a secure
 // persistent data store
@@ -324,14 +324,27 @@ app.get('/log_in_status', function(request, response, next) {
 
 function estimateBuckets() {
     var pathTransaction = 'users/' + USER_ID + "/bucketTransactions/";
+    var pathAccounts = 'users/' + USER_ID + "/accounts";
     var pathMoney = 'users/' + USER_ID + "/bucketMoney";
     var bucketAmounts = {};
 
     firebase.database().ref(pathTransaction).once('value', function(snapshot) {
         console.log('estimating bucket sizes...');
-        bucketAmounts = buckets.estimateSize(snapshot.val(), SIX_MONTHS);
-        firebase.database().ref(pathMoney).update(bucketAmounts);
-        console.log('uploaded bucket size estimations');
+        var transactions = snapshot.val();
+        var totalBalance = 0;
+
+        firebase.database().ref(pathAccounts).once('value', function(snapshot) {
+            for (var key in snapshot.val()) {
+                var account = snapshot.val()[key];
+                console.log(account);
+                if (account.balances != null) {
+                    totalBalance += account.balances.available;
+                }
+            }
+            bucketAmounts = buckets.estimateSize(transactions, SIX_MONTHS, totalBalance);
+            firebase.database().ref(pathMoney).update(bucketAmounts);
+            console.log('uploaded bucket size estimations');
+        });
     });
 }
 
