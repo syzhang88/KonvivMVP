@@ -251,7 +251,8 @@ app.post('/log_in', function(request, response, next) {
     var database = firebase.database();
     var username = request.body.username;
     var password = request.body.password;
-    var promise = firebase.auth().signInWithEmailAndPassword(username, password).then(function() {
+
+    firebase.auth().signInWithEmailAndPassword(username, password).then(function() {
         console.log('successfully logged into Firebase');
         USER_ID = firebase.auth().currentUser.uid;
         USER_EMAIL = username;
@@ -261,9 +262,9 @@ app.post('/log_in', function(request, response, next) {
                 ACCESS_TOKEN = snapshot.val()['user_token'];
                 console.log('found existing access token: ' + ACCESS_TOKEN);
             }
+            response.json(success);
         })
         console.log("LOG IN SUCCESS: " + success['login']);
-        response.json(success);
     });
 });
 
