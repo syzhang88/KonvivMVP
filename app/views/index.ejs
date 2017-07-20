@@ -109,7 +109,7 @@
 
     var handler = Plaid.create({
         apiVersion: 'v2',
-        clientName: 'Konviv Android Demo',
+        clientName: 'Konviv MVP',
         env: 'development',
         product: ['transactions'],
         key: '9f4ef21fdb37b5c0e3f80290db7716',
@@ -210,7 +210,7 @@
                         var fillPercent = 0;
                         // Accounting for divide-by-zero error
                         if (data[key]['Total'] > 0) {
-                            fillPercent = (1 - data[key]['Spending']/data[key]['Total'])*100
+                            fillPercent = (data[key]['Spending']/data[key]['Total'])*100
                         }
 
                         bucketSpent = Math.round((data[key]['Total'] - data[key]['Spending'])*100)/100;
@@ -223,9 +223,8 @@
                          $(selector)
                             .find(".top").text(key).end()
                             .find(".bottom").text("$" + bucketSpent + " / $" + bucketTotal).end()
-                            .find(".perc-value").css("width", newPercent + "%");
+                            .find(".perc-value").css("height", newPercent + "%");
                     }
-                    console.log("buckets refreshed");
                 }
             });
         });
