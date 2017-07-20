@@ -38,7 +38,7 @@ firebase.initializeApp(config);
 // Sam: End Firebase setup
 
 // Sam: Begin Plaid code for configuration, initialization, and authentication
-var APP_PORT = envvar.number('APP_PORT', process.env.PORT || 8000 );
+var APP_PORT = envvar.number('APP_PORT', process.env.PORT || 3000 );
 var PLAID_CLIENT_ID = envvar.string('PLAID_CLIENT_ID', '593981e0bdc6a401d71d87b5');
 var PLAID_SECRET = envvar.string('PLAID_SECRET', '271426f90259600c6bf365d6b0f0aa');
 var PLAID_PUBLIC_KEY = envvar.string('PLAID_PUBLIC_KEY', '9f4ef21fdb37b5c0e3f80290db7716');
