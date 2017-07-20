@@ -9,24 +9,22 @@
 <body>
     <div id="banner">
         <h1> K O N V I V </h1>
-        <p id="intro">
-
-        </p>
-<!--     <p id="steps">
-      Great - you just created an Item! The server was successfully able to exchange the public_token for an access_token.
-      Below are a few options - you can get account data, retrieve information about the Item itself, or pull transaction data.
-    </p> -->
+        <p id="intro"></p>
     </div>
+
+     <div><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/toppad.jpg" alt="Top Banner Image" style="width:414px;" /></div>
 
     <div id="menu">
         <div class="box">
-            <button id="get-accounts-btn">Get Accounts</button>
-            <button id="get-item-btn">Get Item</button>
-            <button id="get-transactions-btn">Get Transactions</button>
-            <button class="logout-btn">Log Out</button>
-
-            <div id="get-button-data"></div>
+            <button class="button2" style="margin:10px 10px 10px 14px;" id="get-accounts-btn"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/geticon.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Accounts</span></button>
+            <button class="button2" style="margin:10px 10px;" id="get-item-btn"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/accounts.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Information</span></button>
+            <button class="button2" style="margin:10px 10px;" id="get-transactions-btn"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/transactions.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Transactions</span></button>
+            <button style="margin:10px 10px;" class="logout-btn button2"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/logout.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Logout</span></button>
         </div>
+
+        <div id="get-button-data"></div>
+
+        <div><h1 style="font-size:18px; padding:15px 0px 0px 5px;">Main Buckets</h1></div>
         <div class="box">
             <div class="wrap">
               <div class="circle" id="Income">
@@ -95,7 +93,7 @@
             </div>
         </div>
         <div class="box">
-            <button class="link-btn">Link New Bank (will replace any old bank)</button>
+            <p style="margin-left:60px;"><button class="link-btn">Update Bank Account</button></p>
         </div>
     </div>
 
