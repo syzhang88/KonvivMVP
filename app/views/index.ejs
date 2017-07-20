@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Konviv MVP</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div id="banner">
+        <h1> K O N V I V </h1>
+        <p id="intro">
+
+        </p>
+<!--     <p id="steps">
+      Great - you just created an Item! The server was successfully able to exchange the public_token for an access_token.
+      Below are a few options - you can get account data, retrieve information about the Item itself, or pull transaction data.
+    </p> -->
+    </div>
+
+    <div id="menu">
+        <div class="box">
+            <button id="get-accounts-btn">Get Accounts</button>
+            <button id="get-item-btn">Get Item</button>
+            <button id="get-transactions-btn">Get Transactions</button>
+            <button class="logout-btn">Log Out</button>
+
+            <div id="get-button-data"></div>
+        </div>
+        <div class="box">
+            <div class="wrap">
+              <div class="circle" id="Income">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Bills">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Eating Out">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Entertainment">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Subscriptions">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Groceries">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Shopping">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="Transportation">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+              <div class="circle" id="General Spending">
+                <div class="perc">
+                  <div class="perc-value"></div>
+                </div>
+                <span class="top"></span>
+                <span class="bottom"></span>
+              </div>
+            </div>
+        </div>
+        <div class="box">
+            <button id="get-buckets-btn">Refresh Buckets Page</button>
+            <button class="link-btn">Link New Bank (will replace any old bank)</button>
+        </div>
+    </div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+<script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+
+<script>
+    var buttonValue = '';
+
+    var handler = Plaid.create({
+        apiVersion: 'v2',
+        clientName: 'Konviv Android Demo',
+        env: 'development',
+        product: ['transactions'],
+        key: '9f4ef21fdb37b5c0e3f80290db7716',
+        onSuccess: function(public_token) {
+            $.post('/get_access_token', {
+                public_token: public_token
+            }, function() {
+                console.log("new bank added!")
+                location.href="index.ejs";
+            });
+        },
+    });
+
+    $.get('/log_in_status', function(data) {
+        logOutSuccess(!data.login);
+    });
+
+    function logOutSuccess(logout) {
+        if (logout == true) {
+            location.href="/";
+            console.log("currently logged out");
+            // alert("currently logged out");
+        } else {
+            console.log('unable to log out');
+        }
+    };
+
+    // RESTful call to index.js server using get function
+    $.get('/buckets', function(data) {
+        // Catching error
+        console.log(data);
+        if (data.error != null) {
+            // Format the error
+            var errorHtml = '<div class="inner"><p>' +
+            '<strong>' + data.error.error_code + ':</strong> ' +
+            data.error.error_message + '</p></div>';
+            // Render the error
+            $('#get-button-data').slideUp(function() {
+                $(this).slideUp(function() {
+                    $(this).html(errorHtml).slideDown();
+                });
+            });
+            // Using for loop to pull information for each bucket from data
+        } else {
+            for (var key in data) {
+                var fillPercent = 0;
+                // Accounting for divide-by-zero error
+                if (data[key]['Total'] > 0) {
+                    fillPercent = (data[key]['Spending']/data[key]['Total'])*100
+                }
+
+                bucketSpent = Math.round((data[key]['Total'] - data[key]['Spending'])*100)/100;
+                bucketTotal = Math.round(data[key]['Total']*100)/100;
+
+              newPercent = fillPercent;
+                 var selector = '[id="' + key + '"]';
+                /* NEW CODE */
+                console.log(key + ": " + newPercent);
+                 $(selector)
+                    .find(".top").text(key).end()
+                    .find(".bottom").text("$" + bucketSpent + " / $" + bucketTotal).end()
+                    .find(".perc-value").css("height", newPercent + "%");
+            }
+        }
+    });
+
+    (function($) {
+        $('.link-btn').on('click', function(e) {
+            handler.open()
+        });
+
+        $('.logout-btn').on('click', function(e) {
+            console.log("logging out...");
+            $.get('/log_out', function(data) {
+                logOutSuccess(data.logout)
+            });
+        });
+
+        $('#get-buckets-btn').on('click', function(e) {
+            // RESTful call to index.js server using get function
+            $.get('/buckets', function(data) {
+                // Catching error
+                console.log(data);
+                if (data.error != null) {
+                    // Format the error
+                    var errorHtml = '<div class="inner"><p>' +
+                    '<strong>' + data.error.error_code + ':</strong> ' +
+                    data.error.error_message + '</p></div>';
+                    // Render the error
+                    $('#get-button-data').slideUp(function() {
+                        $(this).slideUp(function() {
+                            $(this).html(errorHtml).slideDown();
+                        });
+                    });
+                    // Using for loop to pull information for each bucket from data
+                } else {
+                    for (var key in data) {
+                        var fillPercent = 0;
+                        // Accounting for divide-by-zero error
+                        if (data[key]['Total'] > 0) {
+                            fillPercent = (1 - data[key]['Spending']/data[key]['Total'])*100
+                        }
+
+                        bucketSpent = Math.round((data[key]['Total'] - data[key]['Spending'])*100)/100;
+                        bucketTotal = Math.round(data[key]['Total']*100)/100;
+
+                      newPercent = fillPercent;
+                         var selector = '[id="' + key + '"]';
+                        /* NEW CODE */
+                        console.log(key + ": " + newPercent);
+                         $(selector)
+                            .find(".top").text(key).end()
+                            .find(".bottom").text("$" + bucketSpent + " / $" + bucketTotal).end()
+                            .find(".perc-value").css("width", newPercent + "%");
+                    }
+                    console.log("buckets refreshed");
+                }
+            });
+        });
+
+        $('#get-accounts-btn').on('click', function(e) {
+            if ($('#get-button-data').is(':visible') && buttonValue == "account") {
+                buttonValue = "";
+                return $('#get-button-data').slideUp();
+            }
+            $.get('/accounts', function(data) {
+                buttonValue = "account";
+
+                $('#get-button-data').slideUp(function() {
+                    var html = '';
+                    data.accounts.forEach(function(account, idx) {
+                        html += '<div class="inner">';
+                        html += '<strong>' + account.name +
+                        ' $' + (account.balances.available != null ? account.balances.available : account.balances.current) + '</strong><br>';
+                        html += account.subtype + ' ' + account.mask;
+                        html += '</div>';
+                    });
+
+                    $(this).html(html).slideDown();
+                });
+            });
+        });
+
+        $('#get-item-btn').on('click', function(e) {
+            if ($('#get-button-data').is(':visible') && buttonValue == "item") {
+                buttonValue = "";
+                return $('#get-button-data').slideUp();
+            }
+            $.post('/item', function(data) {
+                buttonValue = "item";
+
+                $('#get-button-data').slideUp(function() {
+                    if (data.error) {
+                        $(this).html('<p>' + data.error + '</p>').slideDown();
+                    } else {
+                        var html = '<div class="inner">';
+                        html += '<p>Here\'s some basic information about your Item:</p>';
+                        html += '<p>Institution name:' + data.institution.name + '</p>';
+                        html += '<p>Billed products: ' + data.item.billed_products.join(', ') + '</p>';
+                        html += '<p>Available products: ' + data.item.available_products.join(', ') + '</p>';
+                        html += '</div>';
+                        $(this).html(html).slideDown();
+                    }
+                });
+            });
+        });
+
+        $('#get-transactions-btn').on('click', function(e) {
+            if ($('#get-button-data').is(':visible') && buttonValue == "transactions") {
+                buttonValue = "";
+                return $('#get-button-data').slideUp();
+            }
+            $.post('/transactions', function(data) {
+                buttonValue = "transactions";
+
+                if (data.error != null) {
+                    // Format the error
+                    var errorHtml = '<div class="inner"><p>' +
+                    '<strong>' + data.error.error_code + ':</strong> ' +
+                    data.error.error_message + '</p></div>';
+
+                    if (data.error.error_code === 'PRODUCT_NOT_READY') {
+                        // Add additional context for `PRODUCT_NOT_READY` errors
+                        errorHtml += '<div class="inner"><p>The PRODUCT_NOT_READY ' +
+                        'error is returned when a request to retrieve Transaction data ' +
+                        'is made before Plaid finishes the <a href="https://plaid.com/' +
+                        'docs/quickstart/#transaction-data-with-webhooks">initial ' +
+                        'transaction pull.</a></p></div>';
+                    }
+                    // Render the error
+                    $('#get-button-data').slideUp(function() {
+                        $(this).slideUp(function() {
+                            $(this).html(errorHtml).slideDown();
+                        });
+                    });
+                } else {
+                    $('#get-button-data').slideUp(function() {
+                        var html = '';
+                        data.transactions.forEach(function(txn, idx) {
+                            //code for displaying category for each transaction
+                            var category = '';
+                            if (txn.category) {
+                                category = txn.category[0]
+                                for (var i = 1; i < txn.category.length; i++) {
+                                    category = category + ", " + txn.category[i]
+                                }
+                            }
+                            else {
+                                category = 'Uncategorized'
+                            }
+                            html += '<div class="inner">';
+                            html += '<strong>' + txn.name + '</strong><br>';
+                            html += '<em>' + category + '</em><br>';
+                            html += '$' + txn.amount + '<br>';
+                            html += '<em>' + txn.date + '</em>';
+                            html += '</div>';
+                        });
+
+                        $(this).slideUp(function() {
+                            $(this).html(html).slideDown();
+                        });
+                    });
+                }
+            });
+        });
+    })(jQuery);
+</script>
+</body>
+</html>

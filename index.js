@@ -49,7 +49,6 @@ var PLAID_ENV = envvar.string('PLAID_ENV', 'development');
 var ACCESS_TOKEN = null;
 var PUBLIC_TOKEN = null;
 var ITEM_ID = null;
-// var SAVED_ACCESS_TOKEN = 'access-development-c866ffa8-6ea3-4784-8579-3b62df0ba607'
 
 // Initialize the Plaid client
 var client = new plaid.Client(
