@@ -95,7 +95,6 @@
             </div>
         </div>
         <div class="box">
-            <button id="get-buckets-btn">Refresh Buckets Page</button>
             <button class="link-btn">Link New Bank (will replace any old bank)</button>
         </div>
     </div>
@@ -185,47 +184,6 @@
             console.log("logging out...");
             $.get('/log_out', function(data) {
                 logOutSuccess(data.logout)
-            });
-        });
-
-        $('#get-buckets-btn').on('click', function(e) {
-            // RESTful call to index.js server using get function
-            $.get('/buckets', function(data) {
-                // Catching error
-                console.log(data);
-                if (data.error != null) {
-                    // Format the error
-                    var errorHtml = '<div class="inner"><p>' +
-                    '<strong>' + data.error.error_code + ':</strong> ' +
-                    data.error.error_message + '</p></div>';
-                    // Render the error
-                    $('#get-button-data').slideUp(function() {
-                        $(this).slideUp(function() {
-                            $(this).html(errorHtml).slideDown();
-                        });
-                    });
-                    // Using for loop to pull information for each bucket from data
-                } else {
-                    for (var key in data) {
-                        var fillPercent = 0;
-                        // Accounting for divide-by-zero error
-                        if (data[key]['Total'] > 0) {
-                            fillPercent = (data[key]['Spending']/data[key]['Total'])*100
-                        }
-
-                        bucketSpent = Math.round((data[key]['Total'] - data[key]['Spending'])*100)/100;
-                        bucketTotal = Math.round(data[key]['Total']*100)/100;
-
-                      newPercent = fillPercent;
-                         var selector = '[id="' + key + '"]';
-                        /* NEW CODE */
-                        console.log(key + ": " + newPercent);
-                         $(selector)
-                            .find(".top").text(key).end()
-                            .find(".bottom").text("$" + bucketSpent + " / $" + bucketTotal).end()
-                            .find(".perc-value").css("height", newPercent + "%");
-                    }
-                }
             });
         });
 
