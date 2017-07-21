@@ -52,7 +52,7 @@
   float: left;
   overflow:auto;
 }
-.btn-primary:hover { 
+.btn-primary:hover {
   color: #f1f1f1;
   cursor: pointer;
 }
@@ -115,7 +115,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     <div class="login">
     <p><a class="back" href="index.js">< Back</a></p>
     <h1 style="font-size:45px; font-family:'Lato';">Let's start by creating an account!</h1>
-   
+
           <input id="enterEmail" type="email" placeholder="Username" required="required" />
           <input id="enterPassword" type="Password" placeholder="Password" required="required" />
           <input id="checkPassword" type="Password" placeholder="Confirm Password" required="required" />
@@ -128,7 +128,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
            <div style="margin-top:300px; text-align:center; margin:10px 5px;"><p style="font-size:14px; color:#DDD;">Konviv uses a secure connection and 256-bit encryption just like your bank!</p></div>
     </div>
 
-
+    <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
 
     <script>
         $(document).ready(function() {
@@ -151,7 +151,6 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
             var errorCode = null;
             var errorMsg = null;
 
-            console.log(enterPassword.value + " vs. " + checkPassword.value);
             if (enterPassword.value != checkPassword.value) {
                 errorMsg = "Passwords do not match!";
                 console.log("passwords do not match");
