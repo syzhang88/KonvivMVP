@@ -75,8 +75,11 @@ html {
   padding: 0px;
   margin: 0;
   text-align: center;
-  background: #cceff0;
-
+  background: #00b1b5;
+    background: -webkit-linear-gradient(#09868c, #00b7b8); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#09868c, #00b7b8); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#09868c, #00b7b8); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#09868c, #00b7b8);
 }
 body {
   padding: 0px;
@@ -170,8 +173,10 @@ button:hover {
   padding: 10px;
   font-size: 14px;
 }
-#menu {
-  /*display: none;*/
+#menu .box {
+  display: flex;
+  justify-content: space-between;
+  background: #09868c;
 }
 #menu textarea {
   /*display: none;*/
@@ -192,18 +197,23 @@ button:hover {
   margin-top: 20px;
 }
 #banner {
-  border-top: 0px;
-  margin-top: 0px;
+  margin-top: 30px;
   border-radius: 0 0 2px 2px;
+  background:#09868c
 }
 #banner h1 {
-  color: #1799a6;
+/*  color: #1799a6;
   font-size: 30px;
   font-weight: bold;
   font-family:'Lato';
   margin-left: auto;
   margin-right: auto;
-  width: 6em
+  width: 6em*/
+
+  color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3);
+    letter-spacing:1px;
+    text-align:center;
+     font-size: 5em;
 }
 #banner p {
   font-size: 14px;
@@ -297,6 +307,8 @@ button:hover {
 .wrap .circle .top {
   top: -38px;
   font-size:18px;
+  font-weight: bold;
+
 }
 .wrap .circle .bottom {
   bottom: 78px;
@@ -305,4 +317,15 @@ button:hover {
 
 #get-button-data {
     display: none;
+    max-width: 850px;
+    display: block;
+    margin: auto;
+
+}
+
+#footer .box{
+  background: #00b7b8;
+  margin-bottom: 30px;
+
+
 }

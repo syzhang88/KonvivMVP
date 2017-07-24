@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
+
     <div id="banner">
         <h1> K O N V I V </h1>
         <p id="intro">
@@ -94,8 +95,10 @@
               </div>
             </div>
         </div>
+      <div id="footer">
         <div class="box">
-            <button class="link-btn">Link New Bank (will replace any old bank)</button>
+                 <button class="link-btn">Link New Bank (will replace any old bank)</button>
+            </div>
         </div>
     </div>
 
@@ -223,10 +226,10 @@
                         $(this).html('<p>' + data.error + '</p>').slideDown();
                     } else {
                         var html = '<div class="inner">';
-                        html += '<p>Here\'s some basic information about your Item:</p>';
-                        html += '<p>Institution name:' + data.institution.name + '</p>';
-                        html += '<p>Billed products: ' + data.item.billed_products.join(', ') + '</p>';
-                        html += '<p>Available products: ' + data.item.available_products.join(', ') + '</p>';
+                        // html += '<p><b>BASIC INFORMATION ABOUT YOUR BANK ACCOUNT<b></p> <br>'; 
+                        html += '<p><b>Bank Account</b> ' + data.institution.name + '</p>';
+                        // html += '<p>Billed products: ' + data.item.billed_products.join(', ') + '</p>';
+                        // html += '<p>Available products: ' + data.item.available_products.join(', ') + '</p>';
                         html += '</div>';
                         $(this).html(html).slideDown();
                     }
