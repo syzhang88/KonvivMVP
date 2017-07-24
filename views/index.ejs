@@ -104,6 +104,10 @@
 <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
 
 <script>
+    $.get('/log_in_status', function(data) {
+        logOutSuccess(!data.login);
+    });
+
     var buttonValue = '';
 
     var handler = Plaid.create({
@@ -120,10 +124,6 @@
                 location.href="index.ejs";
             });
         },
-    });
-
-    $.get('/log_in_status', function(data) {
-        logOutSuccess(!data.login);
     });
 
     function logOutSuccess(logout) {

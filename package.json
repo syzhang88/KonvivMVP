@@ -16,7 +16,8 @@
     "express": "4.13.x",
     "firebase": "^4.1.3",
     "moment": "2.17.x",
-    "plaid": "2.0.x"
+    "plaid": "2.0.x",
+    "jsonwebtoken": "^5.7.0" 
   },
   "engines": {
   	"node": "6.10.3"

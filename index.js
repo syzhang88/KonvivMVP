@@ -9,7 +9,7 @@ var bodyParser = require('body-parser');
 var moment = require('moment');
 var plaid = require('plaid');
 var buckets = require('./buckets');
-// var jwt    = require('jsonwebtoken');
+var jwt    = require('jsonwebtoken');
 
 const SIX_MONTHS = 6;
 const ONE_MONTH = 1;
@@ -70,6 +70,9 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 // Sam: End Express setup
 
+// Sam: API routes setup
+// get an instance of the router for api routes
+var apiRoutes = express.Router();
 
 /*** Sam: Here is where we define actual RESTful calls (Using Express I believe;
     check on this) ***/
@@ -266,17 +269,22 @@ app.post('/log_in', function(request, response, next) {
                 ACCESS_TOKEN = snapshot.val()['user_token'];
                 console.log('found existing access token: ' + ACCESS_TOKEN);
             }
-            success = {login: true};
+            var token = jwt.sign(user, app.get('superSecret'), {
+                            expiresIn: 1200 // expires in 20 minutes
+                        });
+            success = {
+                login: true,
+                token: token
+            };
             response.json(success);
+            console.log("LOG IN SUCCEEDED");
         })
-        // var token = jwt.sign(user, app.get('superSecret'), {
-        //                 expiresIn: 1200 // expires in 20 minutes
-        //             });
-        console.log("LOG IN SUCCESS: " + success['login']);
     }, function() {
-        success = {login: false};
+        success = {
+            login: false
+        };
         response.json(success);
-        console.log("LOG IN SUCCESS: " + success['login']);
+        console.log("LOG IN FAILED");
     });
 });
 
@@ -331,7 +339,8 @@ app.get('/user_exists', function(request, response, next) {
 });
 
 app.get('/log_in_status', function(request, response, next) {
-    if (USER_ID && USER_EMAIL) {
+    var user = firebase.auth().currentUser;
+    if (user) {
         response.json({login: true});
     } else {
         response.json({login: false});
@@ -339,14 +348,15 @@ app.get('/log_in_status', function(request, response, next) {
 });
 
 function updateTransactions(timePeriod, callbackFunction) {
-    var startDate = moment().subtract(timePeriod, 'months').format('YYYY-MM-DD'); '2017-07-24'
+    var startDate = moment().subtract(timePeriod, 'months').format('YYYY-MM-DD');
     var endDate = moment().format('YYYY-MM-DD');
     var updatedTransactions = 'transactions are working';
 
     var thisMonth = new Date(endDate.substr(0, 4), endDate.substr(5, 2), '01');
-    var startMonth = new Date(startDate.substr(0, 4), startDate.substr(5, 2), '01');
 
-    client.getTransactions(ACCESS_TOKEN, startDate, endDate, {
+    var startMonth = startDate.substr(0,8) + '01';
+
+    client.getTransactions(ACCESS_TOKEN, startMonth, endDate, {
       count: 500,
       offset: 0,
     }, function(error, transactionsResponse) {
