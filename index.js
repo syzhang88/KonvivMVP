@@ -9,9 +9,10 @@ var bodyParser = require('body-parser');
 var moment = require('moment');
 var plaid = require('plaid');
 var buckets = require('./buckets');
+// var jwt    = require('jsonwebtoken');
 
-const SIX_MONTHS = 180;
-const ONE_MONTH = 30;
+const SIX_MONTHS = 6;
+const ONE_MONTH = 1;
 
 // Sam: @ARCHAN, you need to find a way to securely store this when users log in
 // after they have made their accounts
@@ -38,11 +39,11 @@ firebase.initializeApp(config);
 // Sam: End Firebase setup
 
 // Sam: Begin Plaid code for configuration, initialization, and authentication
-var APP_PORT = envvar.number('APP_PORT', Number(process.env.PORT || 3000 ));
+var APP_PORT = envvar.number('APP_PORT', Number(process.env.PORT || 8000 ));
 var PLAID_CLIENT_ID = envvar.string('PLAID_CLIENT_ID', '593981e0bdc6a401d71d87b5');
 var PLAID_SECRET = envvar.string('PLAID_SECRET', '271426f90259600c6bf365d6b0f0aa');
 var PLAID_PUBLIC_KEY = envvar.string('PLAID_PUBLIC_KEY', '9f4ef21fdb37b5c0e3f80290db7716');
-var PLAID_ENV = envvar.string('PLAID_ENV', 'development');
+var PLAID_ENV = envvar.string('PLAID_ENV', 'sandbox');
 
 // We store the access_token in memory - in production, store it in a secure
 // persistent data store
@@ -127,7 +128,7 @@ app.post('/get_access_token', function(request, response, next) {
           'error': false
         });
 
-        updateTransactions(SIX_MONTHS, estimateBuckets);
+        updateTransactions(SIX_MONTHS, () => {});
     });
 });
 
@@ -263,6 +264,9 @@ app.post('/log_in', function(request, response, next) {
             }
             response.json(success);
         })
+        // var token = jwt.sign(user, app.get('superSecret'), {
+        //                 expiresIn: 1200 // expires in 20 minutes
+        //             });
         console.log("LOG IN SUCCESS: " + success['login']);
     });
 });
@@ -276,7 +280,10 @@ app.post('/sign_up', function(request, response, next) {
     var password = request.body.password;
     var promise = firebase.auth().createUserWithEmailAndPassword(username, password).then(function() {
         console.log('successfully created user in Firebase');
-        response.json({login: true});
+        response.json({
+            login: true,
+            error: null
+        });
         USER_ID = firebase.auth().currentUser.uid;
         USER_EMAIL = username;
     }, function(error) {
@@ -284,7 +291,10 @@ app.post('/sign_up', function(request, response, next) {
         var errorCode = error.code;
         var errorMessage = error.message;
         console.log('failed to create user: ' + errorMessage);
-        response.json({login: false});
+        response.json({
+            login: false,
+            error: errorMessage
+        });
     });
     promise.catch(e => console.log(e.message));
 });
@@ -319,40 +329,13 @@ app.get('/log_in_status', function(request, response, next) {
     }
 });
 
-function estimateBuckets() {
-    var pathTransaction = 'users/' + USER_ID + "/bucketTransactions/";
-    var pathAccounts = 'users/' + USER_ID + "/accounts";
-    var pathMoney = 'users/' + USER_ID + "/bucketMoney";
-    var bucketAmounts = {};
-
-    firebase.database().ref(pathTransaction).once('value', function(snapshot) {
-        console.log('estimating bucket sizes...');
-        var transactions = snapshot.val();
-        var totalBalance = 0;
-
-        firebase.database().ref(pathAccounts).once('value', function(snapshot) {
-            for (var key in snapshot.val()) {
-                var account = snapshot.val()[key];
-                if (account.balances != null) {
-                    if (account.balances.available != null) {
-                        totalBalance += account.balances.available;
-                    } else {
-                        totalBalance += account.balances.current;
-                    }
-                }
-                console.log(totalBalance);
-            }
-            bucketAmounts = buckets.estimateSize(transactions, SIX_MONTHS, totalBalance);
-            firebase.database().ref(pathMoney).update(bucketAmounts);
-            console.log('uploaded bucket size estimations');
-        });
-    });
-}
-
 function updateTransactions(timePeriod, callbackFunction) {
-    var startDate = moment().subtract(timePeriod, 'days').format('YYYY-MM-DD');
+    var startDate = moment().subtract(timePeriod, 'months').format('YYYY-MM-DD'); '2017-07-24'
     var endDate = moment().format('YYYY-MM-DD');
     var updatedTransactions = 'transactions are working';
+
+    var thisMonth = new Date(endDate.substr(0, 4), endDate.substr(5, 2), '01');
+    var startMonth = new Date(startDate.substr(0, 4), startDate.substr(5, 2), '01');
 
     client.getTransactions(ACCESS_TOKEN, startDate, endDate, {
       count: 500,
@@ -362,7 +345,8 @@ function updateTransactions(timePeriod, callbackFunction) {
             return console.log(error);
         }
 
-        var bucketAmounts = buckets.clone(buckets.bucketAmounts);
+        var bucketSpending = buckets.clone(buckets.bucketAmounts);
+        var bucketTotal = buckets.clone(buckets.bucketAmounts);
         // Sam: Begin Firebase section for updating transaction data
         transactionsResponse.transactions.forEach(function(transaction) {
             var bucket = buckets.selectBucket(transaction);
@@ -376,59 +360,31 @@ function updateTransactions(timePeriod, callbackFunction) {
             var txnDate = transaction.date;
 
             var transactionDate = new Date(txnDate.substr(0, 4), txnDate.substr(5, 2), txnDate.substr(8,2));
-            var thisMonth = new Date(endDate.substr(0, 4), endDate.substr(5, 2), '01');
             // console.log('date comparison running: ')
 
             if (transactionDate >= thisMonth) {
                 // console.log('date comparison working')
-                bucketAmounts[bucket] += transaction.amount;
+                bucketSpending[bucket] += transaction.amount;
+            } else {
+                bucketTotal[bucket]+= transaction.amount;
             }
         });
         //Get Bucket Spending
-        for (var bucket in bucketAmounts) {
+        for (var bucket in bucketSpending) {
             firebase.database().ref('users/' + USER_ID + "/bucketMoney/" +
                 bucket).update({
-                    Spending: bucketAmounts[bucket]
+                    Name: buckets.nameBuckets[bucket],
+                    Spending: bucketSpending[bucket],
+                    Total: bucketTotal[bucket]/timePeriod
                 });
         }
         console.log('updated bucket spending for this month:');
-        console.log(bucketAmounts);
+        console.log(bucketSpending);
 
         callbackFunction();
 
         console.log('saved ' + transactionsResponse.transactions.length + ' transactions under ' + USER_ID);
         updatedTransactions = buckets.clone(transactionsResponse);
-    });
-}
-
-function updateMonthlySpending() {
-    console.log("current date: " + moment().format('YYYY-MM-DD'));
-    var startDate = moment().format('YYYY-MM-DD').substr(0,8) + '01';
-    var endDate = moment().format('YYYY-MM-DD');
-    console.log("start date: " + startDate)
-
-    client.getTransactions(ACCESS_TOKEN, startDate, endDate, {
-      count: 500,
-      offset: 0,
-    }, function(error, transactionsResponse) {
-        if (error != null) {
-            console.log(JSON.stringify(error));
-        }
-
-        var bucketAmounts = buckets.clone(buckets.bucketAmounts);
-        // Sam: Begin Firebase section for updating transaction data
-        transactionsResponse.transactions.forEach(function(transaction) {
-            var bucket = buckets.selectBucket(transaction);
-            bucketAmounts[bucket] += transaction.amount;
-        });
-        for (var bucket in bucketAmounts) {
-            firebase.database().ref('users/' + USER_ID + "/bucketMoney/" +
-                bucket).update({
-                    Spending: bucketAmounts[bucket]
-                });
-        }
-        console.log('updated bucket spending for this month:');
-        console.log(bucketAmounts);
     });
 }
 

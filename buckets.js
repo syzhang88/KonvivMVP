@@ -58,6 +58,8 @@ exports.clone = clone;
 
 exports.bucketAmounts = clone(bucketAmountsOriginal);
 
+exports.nameBuckets = nameBuckets;
+
 // Deprecated
 // Classifies which buckets transactions on a list of transactions belongs to
 exports.selectBuckets = function selectBuckets (transactions) {
