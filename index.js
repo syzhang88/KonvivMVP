@@ -212,6 +212,11 @@ app.post('/transactions', function(request, response, next) {
         return response.json({
             error: error});
         }
+    transactionsResponse.transactions.forEach(function(txn, idx) {
+        if (txn.category) {
+            txn.bucket = buckets.selectBucket(txn);
+        }
+    });
     response.json(transactionsResponse);
   });
 
@@ -256,17 +261,21 @@ app.post('/log_in', function(request, response, next) {
         console.log('successfully logged into Firebase');
         USER_ID = firebase.auth().currentUser.uid;
         USER_EMAIL = username;
-        success = {login: true}
         firebase.database().ref('/users/' + USER_ID).once('value', function(snapshot) {
             if (snapshot.val() && snapshot.val()['user_token']) {
                 ACCESS_TOKEN = snapshot.val()['user_token'];
                 console.log('found existing access token: ' + ACCESS_TOKEN);
             }
+            success = {login: true};
             response.json(success);
         })
         // var token = jwt.sign(user, app.get('superSecret'), {
         //                 expiresIn: 1200 // expires in 20 minutes
         //             });
+        console.log("LOG IN SUCCESS: " + success['login']);
+    }, function() {
+        success = {login: false};
+        response.json(success);
         console.log("LOG IN SUCCESS: " + success['login']);
     });
 });
@@ -355,15 +364,10 @@ function updateTransactions(timePeriod, callbackFunction) {
             postData[newPostKey] = transaction;
             firebase.database().ref('users/' + USER_ID + "/bucketTransactions/" + bucket).update(postData);
 
-            //Get Bucket Spending
-            // console.log(endDate.substr(0,4));
             var txnDate = transaction.date;
-
             var transactionDate = new Date(txnDate.substr(0, 4), txnDate.substr(5, 2), txnDate.substr(8,2));
-            // console.log('date comparison running: ')
 
             if (transactionDate >= thisMonth) {
-                // console.log('date comparison working')
                 bucketSpending[bucket] += transaction.amount;
             } else {
                 bucketTotal[bucket]+= transaction.amount;
