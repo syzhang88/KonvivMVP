@@ -269,12 +269,12 @@ app.post('/log_in', function(request, response, next) {
                 ACCESS_TOKEN = snapshot.val()['user_token'];
                 console.log('found existing access token: ' + ACCESS_TOKEN);
             }
-            var token = jwt.sign(user, app.get('superSecret'), {
-                            expiresIn: 1200 // expires in 20 minutes
-                        });
+            // var token = jwt.sign(user, app.get('superSecret'), {
+            //                 expiresIn: 1200 // expires in 20 minutes
+            //             });
             success = {
                 login: true,
-                token: token
+                // token: token
             };
             response.json(success);
             console.log("LOG IN SUCCEEDED");
