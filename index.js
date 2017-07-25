@@ -165,6 +165,19 @@ app.post('/sign_up', function(request, response, next) {
     promise.catch(e => console.log(e.message));
 });
 
+app.get('/log_out', function(request, response, next) {
+    firebase.auth().signOut().catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log('failed to log out of Firebase: ' + errorMessage);
+        response.json({logout: false});
+    }).then(function() {
+        console.log('successfully logged out of Firebase');
+        response.json({logout: true});
+    });
+});
+
 app.get('/log_in_status', function(request, response, next) {
     var user = firebase.auth().currentUser;
     if (user) {
@@ -191,10 +204,17 @@ apiRoutes.use(function(request, response, next) {
                 message: 'Failed to authenticate token.' });
         });
 	} else {
-        return response.json({
-            error: new Error('No token provided.'),
-			// message: 'No token provided.'
-		});
+        firebase.auth().signOut().catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log('failed to log out of Firebase: ' + errorMessage);
+        }).then(function() {
+            response.render('login.ejs', {
+                PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+                PLAID_ENV: PLAID_ENV,
+            });
+        });
 	}
 });
 
@@ -339,19 +359,6 @@ apiRoutes.post('/buckets', function(request, response, next) {
             console.log(bucketsList);
             response.json(bucketsList);
         })
-    });
-});
-
-apiRoutes.get('/log_out', function(request, response, next) {
-    firebase.auth().signOut().catch(function(error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        console.log('failed to log out of Firebase: ' + errorMessage);
-        response.json({logout: false});
-    }).then(function() {
-        console.log('successfully logged out of Firebase');
-        response.json({logout: true});
     });
 });
 
