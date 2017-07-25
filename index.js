@@ -200,10 +200,11 @@ app.get('/log_out', function(request, response, next) {
 
 app.get('/log_in_status', function(request, response, next) {
     var user = firebase.auth().currentUser;
-    console.log(user.iud);
     if (user) {
+        console.log('log in status:' + user.uid);
         response.json({login: true});
     } else {
+        console.log('log in status: no current user');
         response.json({login: false});
     }
 });
