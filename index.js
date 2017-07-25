@@ -70,9 +70,8 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 app.use(bodyParser.json());
-app.set('access token', null);
 app.set('public token', null);
-app.set('item id', null);
+// app.set('item id', null);
 // app.set('firebase', firebase.initializeApp(config));
 // Sam: End Express setup
 
@@ -93,6 +92,7 @@ app.get('/', function(request, response, next) {
 });
 
 app.get('/index.ejs', function(request, response, next) {
+    console.log(request.body.accessToken);
     response.render('index.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
@@ -108,7 +108,9 @@ app.get('/newuser.ejs', function(request, response, next) {
 
 app.post('/log_in', function(request, response, next) {
     console.log('Attempting log in...');
-    var success = {login: false}
+    var success = {
+        login: false
+    }
 
     // gets object to database service
     // var database = firebase.database();
@@ -120,21 +122,14 @@ app.post('/log_in', function(request, response, next) {
         // grabs admin session token
         user.getIdToken().then(function(token) {
             console.log('successfully logged into firebase');
-            // grabs Plaid access token
-            admin.database().ref('/users/' + user.uid).once('value', function(snapshot) {
-                if (snapshot.val() && snapshot.val()['user_token']) {
-                    app.set('access token', snapshot.val()['user_token']);
-                    console.log('found existing access token: ' + app.get('access token'));
-                }
-                success = {
-                    login: true,
-                    token: token,
-                    error: null
-                };
-                firebase.auth().signOut();
-                response.json(success);
-                console.log("LOG IN SUCCEEDED");
-            });
+            success = {
+                login: true,
+                token: token,
+                error: null
+            };
+            firebase.auth().signOut();
+            response.json(success);
+            console.log("LOG IN SUCCEEDED");
         }).catch(function(error) {
             // Handle Errors here.
             var errorCode = error.code;
@@ -224,9 +219,17 @@ apiRoutes.use(function(request, response, next) {
 
     if (token) {
         admin.auth().verifyIdToken(token).then(function(decodedToken) {
-            request.body.userId = decodedToken.uid;
-            console.log("verified token for " + request.body.userId);
-            next();
+            // grabs Plaid access token
+            admin.database().ref('/users/' + user.uid).once('value', function(snapshot) {
+                if (snapshot.val() && snapshot.val()['user_token']) {
+                    request.body.accessToken = snapshot.val()['user_token'];
+                    console.log('found existing access token: ' + request.body.accessToken);
+                }
+                request.body.userId = decodedToken.uid;
+
+                console.log("verified token for " + request.body.userId);
+                next();
+            });
         }).catch(function(error) {
             console.log('Failed to authenticate token.');
             return response.json({
@@ -254,13 +257,13 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
         }
         // Sam: We HAVE to store the access token, so that Plaid does not think the
         // user is a new user logging in each time.
-        app.set('access token', tokenResponse.access_token);
+        // app.set('access token', tokenResponse.access_token);
         // ITEM_ID = tokenResponse.item_id;
 
-        console.log('LOADING Access Token: ' + app.get('access token'));
+        console.log('LOADING Access Token: ' + tokenResponse.access_token);
 
         admin.database().ref('users/' + request.body.userId).set({
-            user_token: app.get('access token'),
+            user_token: tokenResponse.access_token,
             item_id: tokenResponse.item_id
         });
 
@@ -276,7 +279,7 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
 apiRoutes.post('/accounts', function(request, response, next) {
   // Retrieve high-level account information and account and routing numbers
   // for each account associated with the Item.
-  client.getAuth(app.get('access token'), function(error, authResponse) {
+  client.getAuth(request.body.accessToken, function(error, authResponse) {
 
     if (error != null) {
       var msg = 'Unable to pull accounts from the Plaid API.';
@@ -311,7 +314,7 @@ apiRoutes.post('/accounts', function(request, response, next) {
 apiRoutes.post('/item', function(request, response, next) {
   // Pull the Item - this includes information about available products,
   // billed products, webhook information, and more.
-  client.getItem(app.get('access token'), function(error, itemResponse) {
+  client.getItem(request.body.accessToken, function(error, itemResponse) {
     if (error != null) {
       console.log(JSON.stringify(error));
       return response.json({
@@ -344,7 +347,7 @@ apiRoutes.post('/transactions', function(request, response, next) {
   var startDate = moment().format('YYYY-MM-DD').substr(0,8) + '01';
   var endDate = moment().format('YYYY-MM-DD');
 
-  client.getTransactions(app.get('access token'), startDate, endDate, {
+  client.getTransactions(request.body.accessToken, startDate, endDate, {
     count: 500,
     offset: 0,
   }, function(error, transactionsResponse) {
@@ -397,7 +400,7 @@ function updateTransactions(timePeriod, userId, callbackFunction) {
 
     var startMonth = startDate.substr(0,8) + '01';
 
-    client.getTransactions(app.get('access token'), startMonth, endDate, {
+    client.getTransactions(request.body.accessToken, startMonth, endDate, {
       count: 500,
       offset: 0,
     }, function(error, transactionsResponse) {
