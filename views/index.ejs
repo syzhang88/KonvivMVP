@@ -108,6 +108,14 @@
 <script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
 
 <script>
+    if (sessionStorage.token) {
+        console.log('currently logged in');
+        console.log('token: ' + sessionStorage.token);
+    } else {
+        location.href="/";
+        console.log("currently logged out");
+    }
+
     // Initialize Firebase
     var config = {
         apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
@@ -119,9 +127,19 @@
     };
     firebase.initializeApp(config);
 
-    $.get('/log_in_status', function(data) {
-        logOutSuccess(!data.login);
-    });
+    // $.get('/log_in_status', function(data) {
+    //     logOutSuccess(!data.login);
+    // });
+
+    function logOutSuccess(logout) {
+        if (logout == true) {
+            location.href="/";
+            console.log("currently logged out");
+        } else {
+            console.log('unable to log out');
+            console.log('token: ' + sessionStorage.token);
+        }
+    };
 
     var buttonValue = '';
 
@@ -141,16 +159,6 @@
         },
     });
 
-    function logOutSuccess(logout) {
-        if (logout == true) {
-            location.href="/";
-            console.log("currently logged out");
-            // alert("currently logged out");
-        } else {
-            console.log('unable to log out');
-        }
-    };
-
     // RESTful call to index.js server using get function
     $.post('/buckets', {
         token: sessionStorage.token
@@ -159,7 +167,7 @@
         console.log(data);
         if (data.error != null) {
             // Format the error
-            var errorHtml = '<div class="inner"><p><strong>' + data.error.keys + '</strong></p></div>';
+            var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
             // Render the error
             $('#get-button-data').slideUp(function() {
                 $(this).slideUp(function() {
@@ -197,10 +205,8 @@
 
         $('.logout-btn').on('click', function(e) {
             console.log("logging out...");
-            $.get('/log_out', function(data) {
-                sessionStorage.clear();
-                logOutSuccess(data.logout)
-            });
+            sessionStorage.clear();
+            logOutSuccess(true)
         });
 
         $('#get-accounts-btn').on('click', function(e) {
