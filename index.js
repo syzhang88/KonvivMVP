@@ -86,7 +86,7 @@ var apiRoutes = express.Router();
 app.get('/', function(request, response, next) {
     console.log("app loading...");
     app.get('firebase').initializeApp(config);
-    
+
     response.render('login.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
