@@ -30,8 +30,6 @@ var config = {
   messagingSenderId: "41760220514",
 };
 
-var admin = require("firebase-admin");
-
 var serviceAccount = require("./konvivandroid-firebase-adminsdk-re0l3-f09e6af5d7.json");
 
 admin.initializeApp({
