@@ -73,7 +73,7 @@ app.use(bodyParser.json());
 app.set('access token', null);
 app.set('public token', null);
 app.set('item id', null);
-app.set('firebase', firebase);
+app.set('firebase', firebase.initializeApp(config));
 // Sam: End Express setup
 
 // Sam: API routes setup
@@ -85,8 +85,6 @@ var apiRoutes = express.Router();
 
 app.get('/', function(request, response, next) {
     console.log("app loading...");
-    app.get('firebase').initializeApp(config);
-
     response.render('login.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
