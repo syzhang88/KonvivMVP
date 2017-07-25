@@ -37,7 +37,7 @@ admin.initializeApp({
   databaseURL: "https://konvivandroid.firebaseio.com"
 });
 
-firebase.initializeApp(config);
+// firebase.initializeApp(config);
 // Sam: End Firebase setup
 
 // Sam: Begin Plaid code for configuration, initialization, and authentication
@@ -85,6 +85,8 @@ var apiRoutes = express.Router();
 
 app.get('/', function(request, response, next) {
     console.log("app loading...");
+    app.get('firebase').initializeApp(config);
+    
     response.render('login.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
