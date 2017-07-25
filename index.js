@@ -10,6 +10,7 @@ var moment = require('moment');
 var plaid = require('plaid');
 var buckets = require('./buckets');
 var admin = require("firebase-admin");
+var firebase = require("firebase");
 
 const SIX_MONTHS = 6;
 const ONE_MONTH = 1;
@@ -20,7 +21,6 @@ const ONE_MONTH = 1;
 // Currently, we are linking to DEEP's Firebase database (KonvivAndroid), no
 // longer my own.
 // Here is its link: https://console.firebase.google.com/project/konvivandroid/database/data
-var firebase = require("firebase");
 var config = {
   apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
   authDomain: "konvivandroid.firebaseapp.com",
@@ -49,9 +49,9 @@ var PLAID_ENV = envvar.string('PLAID_ENV', 'development');
 
 // We store the access_token in memory - in production, store it in a secure
 // persistent data store
-var ACCESS_TOKEN = null;
-var PUBLIC_TOKEN = null;
-var ITEM_ID = null;
+// var ACCESS_TOKEN = null;
+// var PUBLIC_TOKEN = null;
+// var ITEM_ID = null;
 
 // Initialize the Plaid client
 var client = new plaid.Client(
@@ -70,6 +70,9 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 app.use(bodyParser.json());
+app.set('access token', null);
+app.set('public token', null);
+app.set('item id', null);
 // Sam: End Express setup
 
 // Sam: API routes setup
@@ -115,20 +118,32 @@ app.post('/log_in', function(request, response, next) {
 
     firebase.auth().signInWithEmailAndPassword(username, password).then(function() {
         var user = firebase.auth().currentUser;
+        // grabs Firebase session token
         user.getIdToken().then(function(token) {
             console.log('successfully logged into Firebase');
+            // grabs Plaid access token
             firebase.database().ref('/users/' + user.uid).once('value', function(snapshot) {
                 if (snapshot.val() && snapshot.val()['user_token']) {
-                    ACCESS_TOKEN = snapshot.val()['user_token'];
-                    console.log('found existing access token: ' + ACCESS_TOKEN);
+                    app.set('access token', snapshot.val()['user_token']);
+                    console.log('found existing access token: ' + app.get('access token'));
                 }
                 success = {
                     login: true,
-                    token: token
+                    token: token,
+                    error: null
                 };
                 response.json(success);
                 console.log("LOG IN SUCCEEDED");
             })
+        }).catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log('failed to create user: ' + errorMessage);
+            response.json({
+                login: false,
+                error: errorMessage
+            });
         });
     }, function() {
         success = {
@@ -147,12 +162,17 @@ app.post('/sign_up', function(request, response, next) {
     var username = request.body.username;
     var password = request.body.password;
     var promise = firebase.auth().createUserWithEmailAndPassword(username, password).then(function() {
-        console.log('successfully created user in Firebase');
-        response.json({
-            login: true,
-            error: null
+        // grabs Firebase session token
+        var user = firebase.auth().currentUser;
+        user.getIdToken().then(function(token) {
+            console.log('successfully created user in Firebase');
+            response.json({
+                login: true,
+                token: token,
+                error: null
+            });
         });
-    }, function(error) {
+    }).catch(function(error) {
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
@@ -180,6 +200,7 @@ app.get('/log_out', function(request, response, next) {
 
 app.get('/log_in_status', function(request, response, next) {
     var user = firebase.auth().currentUser;
+    console.log(user.iud);
     if (user) {
         response.json({login: true});
     } else {
@@ -191,7 +212,7 @@ app.get('/log_in_status', function(request, response, next) {
 // route middleware to authenticate and check token
 // ---------------------------------------------------------
 apiRoutes.use(function(request, response, next) {
-    console.log("validating token: " + request.body.token);
+    // console.log("validating token: " + request.body.token);
     var token = request.body.token;
 
     if (token) {
@@ -219,10 +240,10 @@ apiRoutes.use(function(request, response, next) {
 });
 
 apiRoutes.post('/get_access_token', function(request, response, next) {
-    PUBLIC_TOKEN = request.body.public_token;
-    client.exchangePublicToken(PUBLIC_TOKEN, function(error, tokenResponse) {
+    app.set('public token', request.body.public_token);
+    client.exchangePublicToken(app.get('public token'), function(error, tokenResponse) {
         if (error != null) {
-          var msg = 'Could not exchange public_token!';
+          var msg = 'Could not exchange public token!';
           console.log(msg + '\n' + error);
           return response.json({
             error: msg
@@ -230,15 +251,17 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
         }
         // Sam: We HAVE to store the access token, so that Plaid does not think the
         // user is a new user logging in each time.
-        ACCESS_TOKEN = tokenResponse.access_token;
-        ITEM_ID = tokenResponse.item_id;
-        console.log('LOADING Access Token: ' + ACCESS_TOKEN);
+        app.set('access token', tokenResponse.access_token);
+        // ITEM_ID = tokenResponse.item_id;
+
+        console.log('LOADING Access Token: ' + app.get('access token'));
 
         firebase.database().ref('users/' + request.body.userId).set({
-            user_token: ACCESS_TOKEN
+            user_token: app.get('access token'),
+            item_id: tokenResponse.item_id
         });
 
-        console.log('Item ID: ' + ITEM_ID);
+        // console.log('Item ID: ' + ITEM_ID);
         response.json({
           'error': false
         });
@@ -250,7 +273,7 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
 apiRoutes.post('/accounts', function(request, response, next) {
   // Retrieve high-level account information and account and routing numbers
   // for each account associated with the Item.
-  client.getAuth(ACCESS_TOKEN, function(error, authResponse) {
+  client.getAuth(app.get('access token'), function(error, authResponse) {
 
     if (error != null) {
       var msg = 'Unable to pull accounts from the Plaid API.';
@@ -285,7 +308,7 @@ apiRoutes.post('/accounts', function(request, response, next) {
 apiRoutes.post('/item', function(request, response, next) {
   // Pull the Item - this includes information about available products,
   // billed products, webhook information, and more.
-  client.getItem(ACCESS_TOKEN, function(error, itemResponse) {
+  client.getItem(app.get('access token'), function(error, itemResponse) {
     if (error != null) {
       console.log(JSON.stringify(error));
       return response.json({
@@ -318,7 +341,7 @@ apiRoutes.post('/transactions', function(request, response, next) {
   var startDate = moment().format('YYYY-MM-DD').substr(0,8) + '01';
   var endDate = moment().format('YYYY-MM-DD');
 
-  client.getTransactions(ACCESS_TOKEN, startDate, endDate, {
+  client.getTransactions(app.get('access token'), startDate, endDate, {
     count: 500,
     offset: 0,
   }, function(error, transactionsResponse) {
@@ -371,7 +394,7 @@ function updateTransactions(timePeriod, userId, callbackFunction) {
 
     var startMonth = startDate.substr(0,8) + '01';
 
-    client.getTransactions(ACCESS_TOKEN, startMonth, endDate, {
+    client.getTransactions(app.get('access token'), startMonth, endDate, {
       count: 500,
       offset: 0,
     }, function(error, transactionsResponse) {
