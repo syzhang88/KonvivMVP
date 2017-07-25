@@ -197,7 +197,7 @@
 
         $('.logout-btn').on('click', function(e) {
             console.log("logging out...");
-            $.post('/log_out', function(data) {
+            $.get('/log_out', function(data) {
                 sessionStorage.clear();
                 logOutSuccess(data.logout)
             });
