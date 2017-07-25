@@ -105,8 +105,20 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
 <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
 
 <script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
+        authDomain: "konvivandroid.firebaseapp.com",
+        databaseURL: "https://konvivandroid.firebaseio.com",
+        projectId: "konvivandroid",
+        storageBucket: "konvivandroid.appspot.com",
+        messagingSenderId: "41760220514"
+    };
+    firebase.initializeApp(config);
+
     $.get('/log_in_status', function(data) {
         logOutSuccess(!data.login);
     });
@@ -140,14 +152,14 @@
     };
 
     // RESTful call to index.js server using get function
-    $.get('/buckets', function(data) {
+    $.post('/buckets', {
+        token: sessionStorage.token
+    }, function(data) {
         // Catching error
         console.log(data);
         if (data.error != null) {
             // Format the error
-            var errorHtml = '<div class="inner"><p>' +
-            '<strong>' + data.error.error_code + ':</strong> ' +
-            data.error.error_message + '</p></div>';
+            var errorHtml = '<div class="inner"><p><strong>' + data.error.keys + '</strong></p></div>';
             // Render the error
             $('#get-button-data').slideUp(function() {
                 $(this).slideUp(function() {
@@ -185,7 +197,8 @@
 
         $('.logout-btn').on('click', function(e) {
             console.log("logging out...");
-            $.get('/log_out', function(data) {
+            $.post('/log_out', function(data) {
+                sessionStorage.clear();
                 logOutSuccess(data.logout)
             });
         });
@@ -195,7 +208,9 @@
                 buttonValue = "";
                 return $('#get-button-data').slideUp();
             }
-            $.get('/accounts', function(data) {
+            $.post('/accounts', {
+                token: sessionStorage.token
+            }, function(data) {
                 buttonValue = "account";
 
                 $('#get-button-data').slideUp(function() {
@@ -218,7 +233,9 @@
                 buttonValue = "";
                 return $('#get-button-data').slideUp();
             }
-            $.post('/item', function(data) {
+            $.post('/item', {
+                token: sessionStorage.token
+            }, function(data) {
                 buttonValue = "item";
 
                 $('#get-button-data').slideUp(function() {
@@ -226,7 +243,7 @@
                         $(this).html('<p>' + data.error + '</p>').slideDown();
                     } else {
                         var html = '<div class="inner">';
-                        // html += '<p><b>BASIC INFORMATION ABOUT YOUR BANK ACCOUNT<b></p> <br>'; 
+                        // html += '<p><b>BASIC INFORMATION ABOUT YOUR BANK ACCOUNT<b></p> <br>';
                         html += '<p><b>Bank Account</b> ' + data.institution.name + '</p>';
                         // html += '<p>Billed products: ' + data.item.billed_products.join(', ') + '</p>';
                         // html += '<p>Available products: ' + data.item.available_products.join(', ') + '</p>';
@@ -242,7 +259,9 @@
                 buttonValue = "";
                 return $('#get-button-data').slideUp();
             }
-            $.post('/transactions', function(data) {
+            $.post('/transactions', {
+                token: sessionStorage.token
+            }, function(data) {
                 buttonValue = "transactions";
 
                 if (data.error != null) {

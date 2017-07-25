@@ -8,7 +8,6 @@
 
     <title>Konviv App</title>
 
-  <script src="https://ajax.gnoogleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
@@ -167,7 +166,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
         });
 
         (function() {
-            console.log('does this get called even?');
+            console.log("log in page loaded");
             $.get('/log_in_status', function(data) {
                 logInSuccess(data.login);
             });
@@ -191,6 +190,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
                     username: email,
                     password: pass
                 }, function(data) {
+                    sessionStorage.setItem("token", data.token);
                     logInSuccess(data.login);
                 });
             });

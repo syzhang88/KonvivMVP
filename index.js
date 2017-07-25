@@ -9,15 +9,10 @@ var bodyParser = require('body-parser');
 var moment = require('moment');
 var plaid = require('plaid');
 var buckets = require('./buckets');
-var jwt    = require('jsonwebtoken');
+var admin = require("firebase-admin");
 
 const SIX_MONTHS = 6;
 const ONE_MONTH = 1;
-
-// Sam: @ARCHAN, you need to find a way to securely store this when users log in
-// after they have made their accounts
-var USER_ID = null;
-var USER_EMAIL = null;
 
 /*** SETTING UP FIREBASE, PLAID, AND EXPRESS ***/
 
@@ -34,6 +29,15 @@ var config = {
   storageBucket: "konvivandroid.appspot.com",
   messagingSenderId: "41760220514",
 };
+
+var admin = require("firebase-admin");
+
+var serviceAccount = require("./konvivandroid-firebase-adminsdk-re0l3-f09e6af5d7.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://konvivandroid.firebaseio.com"
+});
 
 firebase.initializeApp(config);
 // Sam: End Firebase setup
@@ -77,36 +81,126 @@ var apiRoutes = express.Router();
 /*** Sam: Here is where we define actual RESTful calls (Using Express I believe;
     check on this) ***/
 
-/* Call log in page */
-
-/* if no plaid account, direct to index.ejs */
-
-/* if have both konviv and plaid account, go to bucket page */
-
-/*AUTHENTICATION PAGE: just added the login.ejs page*/
-
 app.get('/', function(request, response, next) {
-  response.render('login.ejs', {
-  //   PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
-  //   PLAID_ENV: PLAID_ENV,
-  });
+    console.log("app loading...");
+    response.render('login.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+    console.log("app loaded");
 });
 
 app.get('/index.ejs', function(request, response, next) {
-  response.render('index.ejs', {
-  //   PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
-  //   PLAID_ENV: PLAID_ENV,
-  });
+    response.render('index.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
 });
 
 app.get('/newuser.ejs', function(request, response, next) {
-  response.render('newuser.ejs', {
-    PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
-    PLAID_ENV: PLAID_ENV,
-  });
+    response.render('newuser.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
 });
 
-app.post('/get_access_token', function(request, response, next) {
+
+app.post('/log_in', function(request, response, next) {
+    console.log('Attempting log in...');
+
+    var success = {login: false}
+
+    // gets object to database service
+    var database = firebase.database();
+    var username = request.body.username;
+    var password = request.body.password;
+
+    firebase.auth().signInWithEmailAndPassword(username, password).then(function() {
+        var user = firebase.auth().currentUser;
+        user.getIdToken().then(function(token) {
+            console.log('successfully logged into Firebase');
+            firebase.database().ref('/users/' + user.uid).once('value', function(snapshot) {
+                if (snapshot.val() && snapshot.val()['user_token']) {
+                    ACCESS_TOKEN = snapshot.val()['user_token'];
+                    console.log('found existing access token: ' + ACCESS_TOKEN);
+                }
+                success = {
+                    login: true,
+                    token: token
+                };
+                response.json(success);
+                console.log("LOG IN SUCCEEDED");
+            })
+        });
+    }, function() {
+        success = {
+            login: false
+        };
+        response.json(success);
+        console.log("LOG IN FAILED");
+    });
+});
+
+app.post('/sign_up', function(request, response, next) {
+    console.log('Attempting sign up...');
+
+    // gets object to database service
+    var database = firebase.database();
+    var username = request.body.username;
+    var password = request.body.password;
+    var promise = firebase.auth().createUserWithEmailAndPassword(username, password).then(function() {
+        console.log('successfully created user in Firebase');
+        response.json({
+            login: true,
+            error: null
+        });
+    }, function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log('failed to create user: ' + errorMessage);
+        response.json({
+            login: false,
+            error: errorMessage
+        });
+    });
+    promise.catch(e => console.log(e.message));
+});
+
+app.get('/log_in_status', function(request, response, next) {
+    var user = firebase.auth().currentUser;
+    if (user) {
+        response.json({login: true});
+    } else {
+        response.json({login: false});
+    }
+});
+
+// ---------------------------------------------------------
+// route middleware to authenticate and check token
+// ---------------------------------------------------------
+apiRoutes.use(function(request, response, next) {
+    console.log("validating token: " + request.body.token);
+    var token = request.body.token;
+
+    if (token) {
+        admin.auth().verifyIdToken(token).then(function(decodedToken) {
+            request.body.userId = decodedToken.uid;
+            next();
+        }).catch(function(error) {
+            return response.json({
+                error: error,
+                message: 'Failed to authenticate token.' });
+        });
+	} else {
+        return response.json({
+            error: new Error('No token provided.'),
+			// message: 'No token provided.'
+		});
+	}
+});
+
+apiRoutes.post('/get_access_token', function(request, response, next) {
     PUBLIC_TOKEN = request.body.public_token;
     client.exchangePublicToken(PUBLIC_TOKEN, function(error, tokenResponse) {
         if (error != null) {
@@ -122,7 +216,7 @@ app.post('/get_access_token', function(request, response, next) {
         ITEM_ID = tokenResponse.item_id;
         console.log('LOADING Access Token: ' + ACCESS_TOKEN);
 
-        firebase.database().ref('users/' + USER_ID).set({
+        firebase.database().ref('users/' + request.body.userId).set({
             user_token: ACCESS_TOKEN
         });
 
@@ -131,11 +225,11 @@ app.post('/get_access_token', function(request, response, next) {
           'error': false
         });
 
-        updateTransactions(SIX_MONTHS, () => {});
+        updateTransactions(SIX_MONTHS, request.body.userId, () => {});
     });
 });
 
-app.get('/accounts', function(request, response, next) {
+apiRoutes.post('/accounts', function(request, response, next) {
   // Retrieve high-level account information and account and routing numbers
   // for each account associated with the Item.
   client.getAuth(ACCESS_TOKEN, function(error, authResponse) {
@@ -157,8 +251,8 @@ app.get('/accounts', function(request, response, next) {
         'accounts': authResponse.accounts
     };
 
-    firebase.database().ref('users/' + USER_ID).update(postData);
-    console.log('posted item for: ' + USER_ID);
+    firebase.database().ref('users/' + request.body.userId).update(postData);
+    console.log('posted item for: ' + request.body.userId);
     // Sam: End Firebase section
 
     response.json({
@@ -170,7 +264,7 @@ app.get('/accounts', function(request, response, next) {
   });
 });
 
-app.post('/item', function(request, response, next) {
+apiRoutes.post('/item', function(request, response, next) {
   // Pull the Item - this includes information about available products,
   // billed products, webhook information, and more.
   client.getItem(ACCESS_TOKEN, function(error, itemResponse) {
@@ -199,7 +293,7 @@ app.post('/item', function(request, response, next) {
   });
 });
 
-app.post('/transactions', function(request, response, next) {
+apiRoutes.post('/transactions', function(request, response, next) {
   // Pull transactions for the Item for the last 30 days to the front-end
   // Sam: I added a Firebase section here so that the transactions for the Item
   // are also added to the Firebase database
@@ -223,14 +317,14 @@ app.post('/transactions', function(request, response, next) {
     response.json(transactionsResponse);
   });
 
-  updateTransactions(SIX_MONTHS, () => {});
+  updateTransactions(SIX_MONTHS, request.body.userId, () => {});
 });
 
-app.get('/buckets', function(request, response, next) {
+apiRoutes.post('/buckets', function(request, response, next) {
     var bucketsList = {}
     console.log("/buckets has been called");
-    updateTransactions(SIX_MONTHS, function() {
-        firebase.database().ref('users/' + USER_ID + '/bucketMoney').once('value', function(snapshot) {
+    updateTransactions(SIX_MONTHS, request.body.userId, function() {
+        firebase.database().ref('users/' + request.body.userId + '/bucketMoney').once('value', function(snapshot) {
             console.log("snapshot taken ");
             for (var key in snapshot.val()) {
                 console.log("data is being pulled...");
@@ -250,73 +344,7 @@ app.get('/buckets', function(request, response, next) {
     });
 });
 
-app.post('/log_in', function(request, response, next) {
-    console.log('Attempting log in...');
-
-    var success = {login: false}
-
-    // gets object to database service
-    var database = firebase.database();
-    var username = request.body.username;
-    var password = request.body.password;
-
-    firebase.auth().signInWithEmailAndPassword(username, password).then(function() {
-        console.log('successfully logged into Firebase');
-        USER_ID = firebase.auth().currentUser.uid;
-        USER_EMAIL = username;
-        firebase.database().ref('/users/' + USER_ID).once('value', function(snapshot) {
-            if (snapshot.val() && snapshot.val()['user_token']) {
-                ACCESS_TOKEN = snapshot.val()['user_token'];
-                console.log('found existing access token: ' + ACCESS_TOKEN);
-            }
-            // var token = jwt.sign(user, app.get('superSecret'), {
-            //                 expiresIn: 1200 // expires in 20 minutes
-            //             });
-            success = {
-                login: true,
-                // token: token
-            };
-            response.json(success);
-            console.log("LOG IN SUCCEEDED");
-        })
-    }, function() {
-        success = {
-            login: false
-        };
-        response.json(success);
-        console.log("LOG IN FAILED");
-    });
-});
-
-app.post('/sign_up', function(request, response, next) {
-    console.log('Attempting sign up...');
-
-    // gets object to database service
-    var database = firebase.database();
-    var username = request.body.username;
-    var password = request.body.password;
-    var promise = firebase.auth().createUserWithEmailAndPassword(username, password).then(function() {
-        console.log('successfully created user in Firebase');
-        response.json({
-            login: true,
-            error: null
-        });
-        USER_ID = firebase.auth().currentUser.uid;
-        USER_EMAIL = username;
-    }, function(error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        console.log('failed to create user: ' + errorMessage);
-        response.json({
-            login: false,
-            error: errorMessage
-        });
-    });
-    promise.catch(e => console.log(e.message));
-});
-
-app.get('/log_out', function(request, response, next) {
+apiRoutes.get('/log_out', function(request, response, next) {
     firebase.auth().signOut().catch(function(error) {
         // Handle Errors here.
         var errorCode = error.code;
@@ -326,28 +354,10 @@ app.get('/log_out', function(request, response, next) {
     }).then(function() {
         console.log('successfully logged out of Firebase');
         response.json({logout: true});
-        USER_ID = null;
-        USER_EMAIL = null;
     });
 });
 
-app.get('/user_exists', function(request, response, next) {
-    var usersRef = firebase.database().ref('users/');
-    usersRef.child(request.body.userId).once('value', function(snapshot) {
-        response.json({exists: (snapshot.val() !== null)});
-    });
-});
-
-app.get('/log_in_status', function(request, response, next) {
-    var user = firebase.auth().currentUser;
-    if (user) {
-        response.json({login: true});
-    } else {
-        response.json({login: false});
-    }
-});
-
-function updateTransactions(timePeriod, callbackFunction) {
+function updateTransactions(timePeriod, userId, callbackFunction) {
     var startDate = moment().subtract(timePeriod, 'months').format('YYYY-MM-DD');
     var endDate = moment().format('YYYY-MM-DD');
     var updatedTransactions = 'transactions are working';
@@ -372,7 +382,7 @@ function updateTransactions(timePeriod, callbackFunction) {
             var newPostKey = transaction.transaction_id;
             var postData = {}
             postData[newPostKey] = transaction;
-            firebase.database().ref('users/' + USER_ID + "/bucketTransactions/" + bucket).update(postData);
+            firebase.database().ref('users/' + userId + "/bucketTransactions/" + bucket).update(postData);
 
             var txnDate = transaction.date;
             var transactionDate = new Date(txnDate.substr(0, 4), txnDate.substr(5, 2), txnDate.substr(8,2));
@@ -385,7 +395,7 @@ function updateTransactions(timePeriod, callbackFunction) {
         });
         //Get Bucket Spending
         for (var bucket in bucketSpending) {
-            firebase.database().ref('users/' + USER_ID + "/bucketMoney/" +
+            firebase.database().ref('users/' + userId + "/bucketMoney/" +
                 bucket).update({
                     Name: buckets.nameBuckets[bucket],
                     Spending: bucketSpending[bucket],
@@ -397,10 +407,12 @@ function updateTransactions(timePeriod, callbackFunction) {
 
         callbackFunction();
 
-        console.log('saved ' + transactionsResponse.transactions.length + ' transactions under ' + USER_ID);
+        console.log('saved ' + transactionsResponse.transactions.length + ' transactions under ' + userId);
         updatedTransactions = buckets.clone(transactionsResponse);
     });
 }
+
+app.use('/', apiRoutes);
 
 var server = app.listen(APP_PORT, function() {
   console.log('plaid-walkthrough server listening on port ' + APP_PORT);

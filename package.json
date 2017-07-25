@@ -4,7 +4,7 @@
   "description": "A web app for the Konviv MVP.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "author": "deepdatta@konviv.com",
   "repository": "https://github.com/syzhang88/KonvivMVP/",
@@ -15,14 +15,12 @@
     "envvar": "1.1.x",
     "express": "4.13.x",
     "firebase": "^4.1.3",
+    "firebase-admin": "^5.0.1",
+    "jsonwebtoken": "^5.7.0",
     "moment": "2.17.x",
-    "plaid": "2.0.x",
-    "jsonwebtoken": "^5.7.0" 
+    "plaid": "2.0.x"
   },
   "engines": {
-  	"node": "6.10.3"
-  },
-  "scripts": {
-  	"start": "node index.js"
+    "node": "6.10.3"
   }
 }
