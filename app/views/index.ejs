@@ -108,190 +108,190 @@
 <script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
 
 <script>
-    if (sessionStorage.token) {
-        console.log('currently logged in');
-        // console.log('token: ' + sessionStorage.token);
-    } else {
-        location.href="/";
-        console.log("currently logged out");
-    }
-    // Initialize Firebase
-    var config = {
-        apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
-        authDomain: "konvivandroid.firebaseapp.com",
-        databaseURL: "https://konvivandroid.firebaseio.com",
-        projectId: "konvivandroid",
-        storageBucket: "konvivandroid.appspot.com",
-        messagingSenderId: "41760220514"
-    };
-    firebase.initializeApp(config);
-    // $.get('/log_in_status', function(data) {
-    //     logOutSuccess(!data.login);
+    // if (sessionStorage.token) {
+    //     console.log('currently logged in');
+    //     // console.log('token: ' + sessionStorage.token);
+    // } else {
+    //     location.href="/";
+    //     console.log("currently logged out");
+    // }
+    // // Initialize Firebase
+    // var config = {
+    //     apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
+    //     authDomain: "konvivandroid.firebaseapp.com",
+    //     databaseURL: "https://konvivandroid.firebaseio.com",
+    //     projectId: "konvivandroid",
+    //     storageBucket: "konvivandroid.appspot.com",
+    //     messagingSenderId: "41760220514"
+    // };
+    // firebase.initializeApp(config);
+    // // $.get('/log_in_status', function(data) {
+    // //     logOutSuccess(!data.login);
+    // // });
+    // function logOutSuccess(logout) {
+    //     if (logout == true) {
+    //         location.href="/";
+    //         console.log("currently logged out");
+    //     } else {
+    //         console.log('unable to log out');
+    //         console.log('token: ' + sessionStorage.token);
+    //     }
+    // };
+    // var buttonValue = '';
+    // var handler = Plaid.create({
+    //     apiVersion: 'v2',
+    //     clientName: 'Konviv MVP',
+    //     env: 'development',
+    //     product: ['transactions'],
+    //     key: '9f4ef21fdb37b5c0e3f80290db7716',
+    //     onSuccess: function(public_token) {
+    //         $.post('/get_access_token', {
+    //             public_token: public_token
+    //         }, function() {
+    //             console.log("new bank added!")
+    //             location.href="index.ejs";
+    //         });
+    //     },
     // });
-    function logOutSuccess(logout) {
-        if (logout == true) {
-            location.href="/";
-            console.log("currently logged out");
-        } else {
-            console.log('unable to log out');
-            console.log('token: ' + sessionStorage.token);
-        }
-    };
-    var buttonValue = '';
-    var handler = Plaid.create({
-        apiVersion: 'v2',
-        clientName: 'Konviv MVP',
-        env: 'development',
-        product: ['transactions'],
-        key: '9f4ef21fdb37b5c0e3f80290db7716',
-        onSuccess: function(public_token) {
-            $.post('/get_access_token', {
-                public_token: public_token
-            }, function() {
-                console.log("new bank added!")
-                location.href="index.ejs";
-            });
-        },
-    });
-    // RESTful call to index.js server using get function
-    $.post('/buckets', {
-        token: sessionStorage.token
-    }, function(data) {
-        // Catching error
-        console.log(data);
-        if (data.error != null) {
-            // Format the error
-            var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
-            // Render the error
-            $('#get-button-data').slideUp(function() {
-                $(this).slideUp(function() {
-                    $(this).html(errorHtml).slideDown();
-                });
-            });
-            // Using for loop to pull information for each bucket from data
-        } else {
-            for (var key in data) {
-                var fillPercent = 0;
-                // Accounting for divide-by-zero error
-                if (data[key]['Total'] > 0) {
-                    fillPercent = (data[key]['Spending']/data[key]['Total'])*100
-                }
-                bucketSpent = Math.round((data[key]['Total'] - data[key]['Spending'])*100)/100;
-                bucketTotal = Math.round(data[key]['Total']*100)/100;
-              newPercent = fillPercent;
-                 var selector = '[id="' + key + '"]';
-                /* NEW CODE */
-                console.log(key + ": " + newPercent);
-                 $(selector)
-                    .find(".top").text(key).end()
-                    .find(".bottom").text("$" + bucketSpent + " / $" + bucketTotal).end()
-                    .find(".perc-value").css("height", newPercent + "%");
-            }
-        }
-    });
-    (function($) {
-        $('.link-btn').on('click', function(e) {
-            handler.open()
-        });
-        $('.logout-btn').on('click', function(e) {
-            console.log("logging out...");
-            sessionStorage.clear();
-            logOutSuccess(true)
-        });
-        $('#get-accounts-btn').on('click', function(e) {
-            if ($('#get-button-data').is(':visible') && buttonValue == "account") {
-                buttonValue = "";
-                return $('#get-button-data').slideUp();
-            }
-            $.post('/accounts', {
-                token: sessionStorage.token
-            }, function(data) {
-                buttonValue = "account";
-                $('#get-button-data').slideUp(function() {
-                    var html = '';
-                    data.accounts.forEach(function(account, idx) {
-                        html += '<div class="inner">';
-                        html += '<strong>' + account.name +
-                        ' $' + (account.balances.available != null ? account.balances.available : account.balances.current) + '</strong><br>';
-                        html += account.subtype + ' ' + account.mask;
-                        html += '</div>';
-                    });
-                    $(this).html(html).slideDown();
-                });
-            });
-        });
-        $('#get-item-btn').on('click', function(e) {
-            if ($('#get-button-data').is(':visible') && buttonValue == "item") {
-                buttonValue = "";
-                return $('#get-button-data').slideUp();
-            }
-            $.post('/item', {
-                token: sessionStorage.token
-            }, function(data) {
-                buttonValue = "item";
-                $('#get-button-data').slideUp(function() {
-                    if (data.error) {
-                        $(this).html('<p>' + data.error + '</p>').slideDown();
-                    } else {
-                        var html = '<div class="inner">';
-                        // html += '<p><b>BASIC INFORMATION ABOUT YOUR BANK ACCOUNT<b></p> <br>';
-                        html += '<p><b>Bank Account</b> ' + data.institution.name + '</p>';
-                        // html += '<p>Billed products: ' + data.item.billed_products.join(', ') + '</p>';
-                        // html += '<p>Available products: ' + data.item.available_products.join(', ') + '</p>';
-                        html += '</div>';
-                        $(this).html(html).slideDown();
-                    }
-                });
-            });
-        });
-        $('#get-transactions-btn').on('click', function(e) {
-            if ($('#get-button-data').is(':visible') && buttonValue == "transactions") {
-                buttonValue = "";
-                return $('#get-button-data').slideUp();
-            }
-            $.post('/transactions', {
-                token: sessionStorage.token
-            }, function(data) {
-                buttonValue = "transactions";
-                if (data.error != null) {
-                    // Format the error
-                    var errorHtml = '<div class="inner"><p>' +
-                    '<strong>' + data.error.error_code + ':</strong> ' +
-                    data.error.error_message + '</p></div>';
-                    if (data.error.error_code === 'PRODUCT_NOT_READY') {
-                        // Add additional context for `PRODUCT_NOT_READY` errors
-                        errorHtml += '<div class="inner"><p>The PRODUCT_NOT_READY ' +
-                        'error is returned when a request to retrieve Transaction data ' +
-                        'is made before Plaid finishes the <a href="https://plaid.com/' +
-                        'docs/quickstart/#transaction-data-with-webhooks">initial ' +
-                        'transaction pull.</a></p></div>';
-                    }
-                    // Render the error
-                    $('#get-button-data').slideUp(function() {
-                        $(this).slideUp(function() {
-                            $(this).html(errorHtml).slideDown();
-                        });
-                    });
-                } else {
-                    $('#get-button-data').slideUp(function() {
-                        var html = '';
-                        data.transactions.forEach(function(txn, idx) {
-                            //code for displaying category for each transaction
-                            html += '<div class="inner">';
-                            html += '<strong>' + txn.name + '</strong><br>';
-                            html += '<em>' + txn.bucket + '</em><br>';
-                            html += '$' + txn.amount + '<br>';
-                            html += '<em>' + txn.date + '</em>';
-                            html += '</div>';
-                        });
-                        $(this).slideUp(function() {
-                            $(this).html(html).slideDown();
-                        });
-                    });
-                }
-            });
-        });
-    })(jQuery);
+    // // RESTful call to index.js server using get function
+    // $.post('/buckets', {
+    //     token: sessionStorage.token
+    // }, function(data) {
+    //     // Catching error
+    //     console.log(data);
+    //     if (data.error != null) {
+    //         // Format the error
+    //         var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
+    //         // Render the error
+    //         $('#get-button-data').slideUp(function() {
+    //             $(this).slideUp(function() {
+    //                 $(this).html(errorHtml).slideDown();
+    //             });
+    //         });
+    //         // Using for loop to pull information for each bucket from data
+    //     } else {
+    //         for (var key in data) {
+    //             var fillPercent = 0;
+    //             // Accounting for divide-by-zero error
+    //             if (data[key]['Total'] > 0) {
+    //                 fillPercent = (data[key]['Spending']/data[key]['Total'])*100
+    //             }
+    //             bucketSpent = Math.round((data[key]['Total'] - data[key]['Spending'])*100)/100;
+    //             bucketTotal = Math.round(data[key]['Total']*100)/100;
+    //           newPercent = fillPercent;
+    //              var selector = '[id="' + key + '"]';
+    //             /* NEW CODE */
+    //             console.log(key + ": " + newPercent);
+    //              $(selector)
+    //                 .find(".top").text(key).end()
+    //                 .find(".bottom").text("$" + bucketSpent + " / $" + bucketTotal).end()
+    //                 .find(".perc-value").css("height", newPercent + "%");
+    //         }
+    //     }
+    // });
+    // (function($) {
+    //     $('.link-btn').on('click', function(e) {
+    //         handler.open()
+    //     });
+    //     $('.logout-btn').on('click', function(e) {
+    //         console.log("logging out...");
+    //         sessionStorage.clear();
+    //         logOutSuccess(true)
+    //     });
+    //     $('#get-accounts-btn').on('click', function(e) {
+    //         if ($('#get-button-data').is(':visible') && buttonValue == "account") {
+    //             buttonValue = "";
+    //             return $('#get-button-data').slideUp();
+    //         }
+    //         $.post('/accounts', {
+    //             token: sessionStorage.token
+    //         }, function(data) {
+    //             buttonValue = "account";
+    //             $('#get-button-data').slideUp(function() {
+    //                 var html = '';
+    //                 data.accounts.forEach(function(account, idx) {
+    //                     html += '<div class="inner">';
+    //                     html += '<strong>' + account.name +
+    //                     ' $' + (account.balances.available != null ? account.balances.available : account.balances.current) + '</strong><br>';
+    //                     html += account.subtype + ' ' + account.mask;
+    //                     html += '</div>';
+    //                 });
+    //                 $(this).html(html).slideDown();
+    //             });
+    //         });
+    //     });
+    //     $('#get-item-btn').on('click', function(e) {
+    //         if ($('#get-button-data').is(':visible') && buttonValue == "item") {
+    //             buttonValue = "";
+    //             return $('#get-button-data').slideUp();
+    //         }
+    //         $.post('/item', {
+    //             token: sessionStorage.token
+    //         }, function(data) {
+    //             buttonValue = "item";
+    //             $('#get-button-data').slideUp(function() {
+    //                 if (data.error) {
+    //                     $(this).html('<p>' + data.error + '</p>').slideDown();
+    //                 } else {
+    //                     var html = '<div class="inner">';
+    //                     // html += '<p><b>BASIC INFORMATION ABOUT YOUR BANK ACCOUNT<b></p> <br>';
+    //                     html += '<p><b>Bank Account</b> ' + data.institution.name + '</p>';
+    //                     // html += '<p>Billed products: ' + data.item.billed_products.join(', ') + '</p>';
+    //                     // html += '<p>Available products: ' + data.item.available_products.join(', ') + '</p>';
+    //                     html += '</div>';
+    //                     $(this).html(html).slideDown();
+    //                 }
+    //             });
+    //         });
+    //     });
+    //     $('#get-transactions-btn').on('click', function(e) {
+    //         if ($('#get-button-data').is(':visible') && buttonValue == "transactions") {
+    //             buttonValue = "";
+    //             return $('#get-button-data').slideUp();
+    //         }
+    //         $.post('/transactions', {
+    //             token: sessionStorage.token
+    //         }, function(data) {
+    //             buttonValue = "transactions";
+    //             if (data.error != null) {
+    //                 // Format the error
+    //                 var errorHtml = '<div class="inner"><p>' +
+    //                 '<strong>' + data.error.error_code + ':</strong> ' +
+    //                 data.error.error_message + '</p></div>';
+    //                 if (data.error.error_code === 'PRODUCT_NOT_READY') {
+    //                     // Add additional context for `PRODUCT_NOT_READY` errors
+    //                     errorHtml += '<div class="inner"><p>The PRODUCT_NOT_READY ' +
+    //                     'error is returned when a request to retrieve Transaction data ' +
+    //                     'is made before Plaid finishes the <a href="https://plaid.com/' +
+    //                     'docs/quickstart/#transaction-data-with-webhooks">initial ' +
+    //                     'transaction pull.</a></p></div>';
+    //                 }
+    //                 // Render the error
+    //                 $('#get-button-data').slideUp(function() {
+    //                     $(this).slideUp(function() {
+    //                         $(this).html(errorHtml).slideDown();
+    //                     });
+    //                 });
+    //             } else {
+    //                 $('#get-button-data').slideUp(function() {
+    //                     var html = '';
+    //                     data.transactions.forEach(function(txn, idx) {
+    //                         //code for displaying category for each transaction
+    //                         html += '<div class="inner">';
+    //                         html += '<strong>' + txn.name + '</strong><br>';
+    //                         html += '<em>' + txn.bucket + '</em><br>';
+    //                         html += '$' + txn.amount + '<br>';
+    //                         html += '<em>' + txn.date + '</em>';
+    //                         html += '</div>';
+    //                     });
+    //                     $(this).slideUp(function() {
+    //                         $(this).html(html).slideDown();
+    //                     });
+    //                 });
+    //             }
+    //         });
+    //     });
+    // })(jQuery);
 </script>
 </body>
 </html>
