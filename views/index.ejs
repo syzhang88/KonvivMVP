@@ -103,7 +103,6 @@
     </div>
 
 
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
 <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
@@ -116,7 +115,6 @@
         location.href="/";
         console.log("currently logged out");
     }
-
     // Initialize Firebase
     var config = {
         apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
@@ -127,11 +125,9 @@
         messagingSenderId: "41760220514"
     };
     firebase.initializeApp(config);
-
     // $.get('/log_in_status', function(data) {
     //     logOutSuccess(!data.login);
     // });
-
     function logOutSuccess(logout) {
         if (logout == true) {
             location.href="/";
@@ -141,9 +137,7 @@
             console.log('token: ' + sessionStorage.token);
         }
     };
-
     var buttonValue = '';
-
     var handler = Plaid.create({
         apiVersion: 'v2',
         clientName: 'Konviv MVP',
@@ -159,7 +153,6 @@
             });
         },
     });
-
     // RESTful call to index.js server using get function
     $.post('/buckets', {
         token: sessionStorage.token
@@ -183,10 +176,8 @@
                 if (data[key]['Total'] > 0) {
                     fillPercent = (data[key]['Spending']/data[key]['Total'])*100
                 }
-
                 bucketSpent = Math.round((data[key]['Total'] - data[key]['Spending'])*100)/100;
                 bucketTotal = Math.round(data[key]['Total']*100)/100;
-
               newPercent = fillPercent;
                  var selector = '[id="' + key + '"]';
                 /* NEW CODE */
@@ -198,18 +189,15 @@
             }
         }
     });
-
     (function($) {
         $('.link-btn').on('click', function(e) {
             handler.open()
         });
-
         $('.logout-btn').on('click', function(e) {
             console.log("logging out...");
             sessionStorage.clear();
             logOutSuccess(true)
         });
-
         $('#get-accounts-btn').on('click', function(e) {
             if ($('#get-button-data').is(':visible') && buttonValue == "account") {
                 buttonValue = "";
@@ -219,7 +207,6 @@
                 token: sessionStorage.token
             }, function(data) {
                 buttonValue = "account";
-
                 $('#get-button-data').slideUp(function() {
                     var html = '';
                     data.accounts.forEach(function(account, idx) {
@@ -229,12 +216,10 @@
                         html += account.subtype + ' ' + account.mask;
                         html += '</div>';
                     });
-
                     $(this).html(html).slideDown();
                 });
             });
         });
-
         $('#get-item-btn').on('click', function(e) {
             if ($('#get-button-data').is(':visible') && buttonValue == "item") {
                 buttonValue = "";
@@ -244,7 +229,6 @@
                 token: sessionStorage.token
             }, function(data) {
                 buttonValue = "item";
-
                 $('#get-button-data').slideUp(function() {
                     if (data.error) {
                         $(this).html('<p>' + data.error + '</p>').slideDown();
@@ -260,7 +244,6 @@
                 });
             });
         });
-
         $('#get-transactions-btn').on('click', function(e) {
             if ($('#get-button-data').is(':visible') && buttonValue == "transactions") {
                 buttonValue = "";
@@ -269,13 +252,12 @@
             $.post('/transactions', {
                 token: sessionStorage.token
             }, function(data) {
-                buttonValue = "transactions
+                buttonValue = "transactions";
                 if (data.error != null) {
                     // Format the error
                     var errorHtml = '<div class="inner"><p>' +
                     '<strong>' + data.error.error_code + ':</strong> ' +
                     data.error.error_message + '</p></div>';
-
                     if (data.error.error_code === 'PRODUCT_NOT_READY') {
                         // Add additional context for `PRODUCT_NOT_READY` errors
                         errorHtml += '<div class="inner"><p>The PRODUCT_NOT_READY ' +
@@ -295,7 +277,6 @@
                         var html = '';
                         data.transactions.forEach(function(txn, idx) {
                             //code for displaying category for each transaction
-
                             html += '<div class="inner">';
                             html += '<strong>' + txn.name + '</strong><br>';
                             html += '<em>' + txn.bucket + '</em><br>';
@@ -303,7 +284,6 @@
                             html += '<em>' + txn.date + '</em>';
                             html += '</div>';
                         });
-
                         $(this).slideUp(function() {
                             $(this).html(html).slideDown();
                         });
