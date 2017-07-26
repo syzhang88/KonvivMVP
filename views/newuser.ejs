@@ -216,8 +216,9 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
             product: ['transactions'],
             key: '9f4ef21fdb37b5c0e3f80290db7716',
             onSuccess: function(public_token) {
-                alert('calling /get_access_token...')
+                // alert('calling /get_access_token...')
                 $.post('/get_access_token', {
+                    token: sessionStorage.getItem("token"),
                     publicToken: public_token,
                     userId: sessionStorage.getItem("userId")
                 }, function() {
@@ -226,7 +227,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
                 });
             },
             onExit: function() {
-                alert('did not call /get_access_token!');
+                // alert('did not call /get_access_token!');
                 sessionStorage.removeItem("userId");
                 location.href="index.ejs";
             }

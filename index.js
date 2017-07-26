@@ -180,7 +180,7 @@ app.post('/sign_up', function(request, response, next) {
 // route middleware to authenticate and check token
 // ---------------------------------------------------------
 apiRoutes.use(function(request, response, next) {
-    // console.log("validating token: " + request.body.token);
+    console.log("validating token: " + request.body.token);
     var token = request.body.token;
 
     if (token) {
