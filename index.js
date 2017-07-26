@@ -37,7 +37,7 @@ admin.initializeApp({
   databaseURL: "https://konvivandroid.firebaseio.com"
 });
 
-// firebase.initializeApp(config);
+firebase.initializeApp(config);
 // Sam: End Firebase setup
 
 // Sam: Begin Plaid code for configuration, initialization, and authentication
@@ -70,10 +70,9 @@ app.use(bodyParser.urlencoded({
   extended: false
 }));
 app.use(bodyParser.json());
-app.set('access token', null);
 app.set('public token', null);
-app.set('item id', null);
-app.set('firebase', firebase.initializeApp(config));
+// app.set('item id', null);
+// app.set('firebase', firebase.initializeApp(config));
 // Sam: End Express setup
 
 // Sam: API routes setup
@@ -93,6 +92,7 @@ app.get('/', function(request, response, next) {
 });
 
 app.get('/index.ejs', function(request, response, next) {
+    console.log(request.body.accessToken);
     response.render('index.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
@@ -108,33 +108,28 @@ app.get('/newuser.ejs', function(request, response, next) {
 
 app.post('/log_in', function(request, response, next) {
     console.log('Attempting log in...');
-
-    var success = {login: false}
+    var success = {
+        login: false
+    }
 
     // gets object to database service
-    var database = app.get('firebase').database();
+    // var database = firebase.database();
     var username = request.body.username;
     var password = request.body.password;
 
-    app.get('firebase').auth().signInWithEmailAndPassword(username, password).then(function() {
-        var user = app.get('firebase').auth().currentUser;
-        // grabs app.get('firebase') session token
+    firebase.auth().signInWithEmailAndPassword(username, password).then(function() {
+        var user = firebase.auth().currentUser;
+        // grabs admin session token
         user.getIdToken().then(function(token) {
             console.log('successfully logged into firebase');
-            // grabs Plaid access token
-            app.get('firebase').database().ref('/users/' + user.uid).once('value', function(snapshot) {
-                if (snapshot.val() && snapshot.val()['user_token']) {
-                    app.set('access token', snapshot.val()['user_token']);
-                    console.log('found existing access token: ' + app.get('access token'));
-                }
-                success = {
-                    login: true,
-                    token: token,
-                    error: null
-                };
-                response.json(success);
-                console.log("LOG IN SUCCEEDED");
-            })
+            success = {
+                login: true,
+                token: token,
+                error: null
+            };
+            firebase.auth().signOut();
+            response.json(success);
+            console.log("LOG IN SUCCEEDED");
         }).catch(function(error) {
             // Handle Errors here.
             var errorCode = error.code;
@@ -158,13 +153,14 @@ app.post('/sign_up', function(request, response, next) {
     console.log('Attempting sign up...');
 
     // gets object to database service
-    var database = app.get('firebase').database();
+    var database = firebase.database();
     var username = request.body.username;
     var password = request.body.password;
-    var promise = app.get('firebase').auth().createUserWithEmailAndPassword(username, password).then(function() {
-        // grabs app.get('firebase') session token
-        var user = app.get('firebase').auth().currentUser;
+    var promise = firebase.auth().createUserWithEmailAndPassword(username, password).then(function() {
+        // grabs admin session token
+        var user = firebase.auth().currentUser;
         user.getIdToken().then(function(token) {
+            firebase.auth().signOut();
             console.log('successfully created user in firebase');
             response.json({
                 login: true,
@@ -185,29 +181,34 @@ app.post('/sign_up', function(request, response, next) {
     promise.catch(e => console.log(e.message));
 });
 
-app.get('/log_out', function(request, response, next) {
-    app.get('firebase').auth().signOut().catch(function(error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        console.log('failed to log out of firebase: ' + errorMessage);
-        response.json({logout: false});
-    }).then(function() {
-        console.log('successfully logged out of firebase');
-        response.json({logout: true});
-    });
-});
+// app.get('/log_out', function(request, response, next) {
+//     if (firebase.auth().currentUser) {
+//         firebase.auth().signOut().then(function() {
+//             console.log('successfully logged out of firebase');
+//             response.json({logout: true});
+//         }, function(error) {
+//             // Handle Errors here.
+//             var errorCode = error.code;
+//             var errorMessage = error.message;
+//             console.log('failed to log out of firebase: ' + errorMessage);
+//             response.json({logout: false});
+//         });
+//     } else {
+//         console.log('successfully logged out of firebase');
+//         response.json({logout: true});
+//     }
+// });
 
-app.get('/log_in_status', function(request, response, next) {
-    var user = app.get('firebase').auth().currentUser;
-    if (user) {
-        console.log('log in status:' + user.uid);
-        response.json({login: true});
-    } else {
-        console.log('log in status: no current user');
-        response.json({login: false});
-    }
-});
+// app.get('/log_in_status', function(request, response, next) {
+//     var user = admin.auth().currentUser;
+//     if (user) {
+//         console.log('log in status:' + user.uid);
+//         response.json({login: true});
+//     } else {
+//         console.log('log in status: no current user');
+//         response.json({login: false});
+//     }
+// });
 
 // ---------------------------------------------------------
 // route middleware to authenticate and check token
@@ -218,24 +219,28 @@ apiRoutes.use(function(request, response, next) {
 
     if (token) {
         admin.auth().verifyIdToken(token).then(function(decodedToken) {
-            request.body.userId = decodedToken.uid;
-            next();
+            // grabs Plaid access token
+            admin.database().ref('/users/' + user.uid).once('value', function(snapshot) {
+                if (snapshot.val() && snapshot.val()['user_token']) {
+                    request.body.accessToken = snapshot.val()['user_token'];
+                    console.log('found existing access token: ' + request.body.accessToken);
+                }
+                request.body.userId = decodedToken.uid;
+
+                console.log("verified token for " + request.body.userId);
+                next();
+            });
         }).catch(function(error) {
+            console.log('Failed to authenticate token.');
             return response.json({
                 error: error,
-                message: 'Failed to authenticate token.' });
+                message: 'Failed to authenticate token.'
+            });
         });
 	} else {
-        app.get('firebase').auth().signOut().catch(function(error) {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            console.log('failed to log out of firebase: ' + errorMessage);
-        }).then(function() {
-            response.render('login.ejs', {
-                PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
-                PLAID_ENV: PLAID_ENV,
-            });
+        return response.json({
+            error: new Error('Failed to find token.'),
+            message: 'Failed to find token.'
         });
 	}
 });
@@ -252,13 +257,13 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
         }
         // Sam: We HAVE to store the access token, so that Plaid does not think the
         // user is a new user logging in each time.
-        app.set('access token', tokenResponse.access_token);
+        // app.set('access token', tokenResponse.access_token);
         // ITEM_ID = tokenResponse.item_id;
 
-        console.log('LOADING Access Token: ' + app.get('access token'));
+        console.log('LOADING Access Token: ' + tokenResponse.access_token);
 
-        app.get('firebase').database().ref('users/' + request.body.userId).set({
-            user_token: app.get('access token'),
+        admin.database().ref('users/' + request.body.userId).set({
+            user_token: tokenResponse.access_token,
             item_id: tokenResponse.item_id
         });
 
@@ -274,7 +279,7 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
 apiRoutes.post('/accounts', function(request, response, next) {
   // Retrieve high-level account information and account and routing numbers
   // for each account associated with the Item.
-  client.getAuth(app.get('access token'), function(error, authResponse) {
+  client.getAuth(request.body.accessToken, function(error, authResponse) {
 
     if (error != null) {
       var msg = 'Unable to pull accounts from the Plaid API.';
@@ -288,14 +293,14 @@ apiRoutes.post('/accounts', function(request, response, next) {
      // [object Object],[object Object],[object Object],[object Object]
      // These are the different checking/cc banking accounts
 
-    // Sam: Begin app.get('firebase') section for updating account info
+    // Sam: Begin admin section for updating account info
     var postData = {
         'accounts': authResponse.accounts
     };
 
-    app.get('firebase').database().ref('users/' + request.body.userId).update(postData);
+    admin.database().ref('users/' + request.body.userId).update(postData);
     console.log('posted item for: ' + request.body.userId);
-    // Sam: End app.get('firebase') section
+    // Sam: End admin section
 
     response.json({
       error: false,
@@ -309,7 +314,7 @@ apiRoutes.post('/accounts', function(request, response, next) {
 apiRoutes.post('/item', function(request, response, next) {
   // Pull the Item - this includes information about available products,
   // billed products, webhook information, and more.
-  client.getItem(app.get('access token'), function(error, itemResponse) {
+  client.getItem(request.body.accessToken, function(error, itemResponse) {
     if (error != null) {
       console.log(JSON.stringify(error));
       return response.json({
@@ -337,12 +342,12 @@ apiRoutes.post('/item', function(request, response, next) {
 
 apiRoutes.post('/transactions', function(request, response, next) {
   // Pull transactions for the Item for the last 30 days to the front-end
-  // Sam: I added a app.get('firebase') section here so that the transactions for the Item
-  // are also added to the app.get('firebase') database
+  // Sam: I added a admin section here so that the transactions for the Item
+  // are also added to the admin database
   var startDate = moment().format('YYYY-MM-DD').substr(0,8) + '01';
   var endDate = moment().format('YYYY-MM-DD');
 
-  client.getTransactions(app.get('access token'), startDate, endDate, {
+  client.getTransactions(request.body.accessToken, startDate, endDate, {
     count: 500,
     offset: 0,
   }, function(error, transactionsResponse) {
@@ -366,7 +371,7 @@ apiRoutes.post('/buckets', function(request, response, next) {
     var bucketsList = {}
     console.log("/buckets has been called");
     updateTransactions(SIX_MONTHS, request.body.userId, function() {
-        app.get('firebase').database().ref('users/' + request.body.userId + '/bucketMoney').once('value', function(snapshot) {
+        admin.database().ref('users/' + request.body.userId + '/bucketMoney').once('value', function(snapshot) {
             console.log("snapshot taken ");
             for (var key in snapshot.val()) {
                 console.log("data is being pulled...");
@@ -395,7 +400,7 @@ function updateTransactions(timePeriod, userId, callbackFunction) {
 
     var startMonth = startDate.substr(0,8) + '01';
 
-    client.getTransactions(app.get('access token'), startMonth, endDate, {
+    client.getTransactions(request.body.accessToken, startMonth, endDate, {
       count: 500,
       offset: 0,
     }, function(error, transactionsResponse) {
@@ -405,13 +410,13 @@ function updateTransactions(timePeriod, userId, callbackFunction) {
 
         var bucketSpending = buckets.clone(buckets.bucketAmounts);
         var bucketTotal = buckets.clone(buckets.bucketAmounts);
-        // Sam: Begin app.get('firebase') section for updating transaction data
+        // Sam: Begin admin section for updating transaction data
         transactionsResponse.transactions.forEach(function(transaction) {
             var bucket = buckets.selectBucket(transaction);
             var newPostKey = transaction.transaction_id;
             var postData = {}
             postData[newPostKey] = transaction;
-            app.get('firebase').database().ref('users/' + userId + "/bucketTransactions/" + bucket).update(postData);
+            admin.database().ref('users/' + userId + "/bucketTransactions/" + bucket).update(postData);
 
             var txnDate = transaction.date;
             var transactionDate = new Date(txnDate.substr(0, 4), txnDate.substr(5, 2), txnDate.substr(8,2));
@@ -424,7 +429,7 @@ function updateTransactions(timePeriod, userId, callbackFunction) {
         });
         //Get Bucket Spending
         for (var bucket in bucketSpending) {
-            app.get('firebase').database().ref('users/' + userId + "/bucketMoney/" +
+            admin.database().ref('users/' + userId + "/bucketMoney/" +
                 bucket).update({
                     Name: buckets.nameBuckets[bucket],
                     Spending: bucketSpending[bucket],

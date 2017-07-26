@@ -160,6 +160,12 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
 
 <script>
+    if (sessionStorage.token) {
+        location.href="/index.ejs";
+    } else {
+        console.log('currently logged out');
+    }
+
     $(document).ready(function() {
         $("#btnLogin").on("click", function(){
              console.log("Clicked");
@@ -167,9 +173,15 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 
         (function() {
             console.log("log in page loaded");
-            $.get('/log_in_status', function(data) {
-                logInSuccess(data.login);
-            });
+            if (sessionStorage.token) {
+                location.href="/index.ejs";
+            } else {
+                console.log('currently logged out');
+            }
+
+            // $.get('/log_in_status', function(data) {
+            //     logInSuccess(data.login);
+            // });
 
             //Get elements
             const txtEmail=document.getElementById('txtEmail')
@@ -211,7 +223,6 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
             console.log('unable to log in');
         }
     };
-
 </script>
 </body>
 </html>
