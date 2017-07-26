@@ -188,8 +188,8 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 
             //Sign up
             console.log('sign up called...');
-            $("body").addClass("showSignUpModal");
-            if (false)
+            // $("body").addClass("showSignUpModal");
+            // if (false)
             $.post('/sign_up', {
                 username: email,
                 password: pass,
@@ -234,16 +234,26 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
                 location.href="index.ejs";
             }
         });
-        $(function () {
-          $(".modalMask .closeBtn, .modalMask").click(function (e) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            e.stopPropagation();
-            $("body").removeClass("showSignUpModal");
-          });
-        });
+
+
+        /* SCRIPT FOR POP UP FUNC */
+        
+        // $(function () {
+        //   $(".modalMask .closeBtn, .modalMask").click(function (e) {
+        //     e.preventDefault();
+        //     e.stopImmediatePropagation();
+        //     e.stopPropagation();
+        //     $("body").removeClass("showSignUpModal");
+        //   });
+        // });
+
+
+
       </script>
-        <div class="modalMask">
+
+      
+
+       <!--  <div class="modalMask">
         <div class="signUpModal">
             <div class="modalHeader">
               <a href="#" class="closeBtn">&times;</a>
@@ -256,9 +266,12 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
             KONVIV does not have access to your banking information at all. The App only retrieves data from Plaid. With Plaid, Konviv uses a secure connection and 256-bit encryption, just like any other Banking Services.
             </div>
         </div>
-    </div>
+    </div> -->
+
     <style>
-        body.showSignUpModal {overflow: hidden;}
+
+    
+  /*      body.showSignUpModal {overflow: hidden;}
         .modalMask {display: none;}
         body.showSignUpModal .modalMask {display: block; position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 9997; background-color: rgba(0,0,0,0.75);}
         body.showSignUpModal .modalMask .signUpModal {text-align: center; position: fixed; left: 50%; top: 50%; transform: translate(-50%,-50%); background-color: #fff; padding-bottom: 25px; box-shadow: 0 0 10px #fff; border-radius: 5px; z-index: 9998; min-height: 150px;}
@@ -281,7 +294,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
            margin: 40px auto;
             text-align: justify;
     text-justify: inter-word;
-        }
+        }*/
 
     </style>
 </body>
