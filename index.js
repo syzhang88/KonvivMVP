@@ -219,8 +219,10 @@ apiRoutes.use(function(request, response, next) {
 
     if (token) {
         admin.auth().verifyIdToken(token).then(function(decodedToken) {
+            console.log('verifying token...');
+
             // grabs Plaid access token
-            admin.database().ref('/users/' + user.uid).once('value', function(snapshot) {
+            admin.database().ref('/users/' + decodedToken.uid).once('value', function(snapshot) {
                 if (snapshot.val() && snapshot.val()['user_token']) {
                     request.body.accessToken = snapshot.val()['user_token'];
                     console.log('found existing access token: ' + request.body.accessToken);
@@ -272,7 +274,7 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
           'error': false
         });
 
-        updateTransactions(SIX_MONTHS, request.body.userId, () => {});
+        updateTransactions(SIX_MONTHS, request.body.accessToken, request.body.userId, () => {});
     });
 });
 
@@ -364,13 +366,13 @@ apiRoutes.post('/transactions', function(request, response, next) {
     response.json(transactionsResponse);
   });
 
-  updateTransactions(SIX_MONTHS, request.body.userId, () => {});
+  updateTransactions(SIX_MONTHS, request.body.accessToken, request.body.userId, () => {});
 });
 
 apiRoutes.post('/buckets', function(request, response, next) {
     var bucketsList = {}
     console.log("/buckets has been called");
-    updateTransactions(SIX_MONTHS, request.body.userId, function() {
+    updateTransactions(SIX_MONTHS, request.body.accessToken, request.body.userId, function() {
         admin.database().ref('users/' + request.body.userId + '/bucketMoney').once('value', function(snapshot) {
             console.log("snapshot taken ");
             for (var key in snapshot.val()) {
@@ -391,7 +393,7 @@ apiRoutes.post('/buckets', function(request, response, next) {
     });
 });
 
-function updateTransactions(timePeriod, userId, callbackFunction) {
+function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
     var startDate = moment().subtract(timePeriod, 'months').format('YYYY-MM-DD');
     var endDate = moment().format('YYYY-MM-DD');
     var updatedTransactions = 'transactions are working';
@@ -400,7 +402,7 @@ function updateTransactions(timePeriod, userId, callbackFunction) {
 
     var startMonth = startDate.substr(0,8) + '01';
 
-    client.getTransactions(request.body.accessToken, startMonth, endDate, {
+    client.getTransactions(accessToken, startMonth, endDate, {
       count: 500,
       offset: 0,
     }, function(error, transactionsResponse) {
