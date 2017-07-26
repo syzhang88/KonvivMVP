@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
+
     <div id="banner">
         <h1> K O N V I V </h1>
         <p id="intro">
@@ -19,12 +20,12 @@
     </div>
 
     <div id="menu">
-        <div class="box">
-            <button id="get-accounts-btn">Get Accounts</button>
-            <button id="get-item-btn">Get Item</button>
-            <button id="get-transactions-btn">Get Transactions</button>
-            <button class="logout-btn">Log Out</button>
-
+       <div class="box">
+            <button class="button2" style="margin:10px 10px 10px 14px;" id="get-accounts-btn"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/geticon.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Accounts</span></button>
+            <button class="button2" style="margin:10px 10px;" id="get-item-btn"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/accounts.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Information</span></button>
+            <button class="button2" style="margin:10px 10px;" id="get-transactions-btn"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/transactions.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Transactions</span></button>
+            <button style="margin:10px 10px;" class="logout-btn button2"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/logout.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Logout</span></button>
+        </div>
             <div id="get-button-data"></div>
         </div>
         <div class="box">
@@ -94,18 +95,49 @@
               </div>
             </div>
         </div>
+      <div id="footer">
         <div class="box">
-            <button class="link-btn">Link New Bank (will replace any old bank)</button>
+                 <button class="link-btn">Link New Bank (will replace any old bank)</button>
+            </div>
         </div>
     </div>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
 <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
 
 <script>
+    if (sessionStorage.token) {
+        console.log('currently logged in');
+        // console.log('token: ' + sessionStorage.token);
+    } else {
+        location.href="/";
+        console.log("currently logged out");
+    }
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
+        authDomain: "konvivandroid.firebaseapp.com",
+        databaseURL: "https://konvivandroid.firebaseio.com",
+        projectId: "konvivandroid",
+        storageBucket: "konvivandroid.appspot.com",
+        messagingSenderId: "41760220514"
+    };
+    firebase.initializeApp(config);
+    // $.get('/log_in_status', function(data) {
+    //     logOutSuccess(!data.login);
+    // });
+    function logOutSuccess(logout) {
+        if (logout == true) {
+            location.href="/";
+            console.log("currently logged out");
+        } else {
+            console.log('unable to log out');
+            console.log('token: ' + sessionStorage.token);
+        }
+    };
     var buttonValue = '';
-
     var handler = Plaid.create({
         apiVersion: 'v2',
         clientName: 'Konviv MVP',
@@ -121,30 +153,15 @@
             });
         },
     });
-
-    $.get('/log_in_status', function(data) {
-        logOutSuccess(!data.login);
-    });
-
-    function logOutSuccess(logout) {
-        if (logout == true) {
-            location.href="/";
-            console.log("currently logged out");
-            // alert("currently logged out");
-        } else {
-            console.log('unable to log out');
-        }
-    };
-
     // RESTful call to index.js server using get function
-    $.get('/buckets', function(data) {
+    $.post('/buckets', {
+        token: sessionStorage.token
+    }, function(data) {
         // Catching error
         console.log(data);
         if (data.error != null) {
             // Format the error
-            var errorHtml = '<div class="inner"><p>' +
-            '<strong>' + data.error.error_code + ':</strong> ' +
-            data.error.error_message + '</p></div>';
+            var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
             // Render the error
             $('#get-button-data').slideUp(function() {
                 $(this).slideUp(function() {
@@ -159,10 +176,8 @@
                 if (data[key]['Total'] > 0) {
                     fillPercent = (data[key]['Spending']/data[key]['Total'])*100
                 }
-
                 bucketSpent = Math.round((data[key]['Total'] - data[key]['Spending'])*100)/100;
                 bucketTotal = Math.round(data[key]['Total']*100)/100;
-
               newPercent = fillPercent;
                  var selector = '[id="' + key + '"]';
                 /* NEW CODE */
@@ -174,27 +189,24 @@
             }
         }
     });
-
     (function($) {
         $('.link-btn').on('click', function(e) {
             handler.open()
         });
-
         $('.logout-btn').on('click', function(e) {
             console.log("logging out...");
-            $.get('/log_out', function(data) {
-                logOutSuccess(data.logout)
-            });
+            sessionStorage.clear();
+            logOutSuccess(true)
         });
-
         $('#get-accounts-btn').on('click', function(e) {
             if ($('#get-button-data').is(':visible') && buttonValue == "account") {
                 buttonValue = "";
                 return $('#get-button-data').slideUp();
             }
-            $.get('/accounts', function(data) {
+            $.post('/accounts', {
+                token: sessionStorage.token
+            }, function(data) {
                 buttonValue = "account";
-
                 $('#get-button-data').slideUp(function() {
                     var html = '';
                     data.accounts.forEach(function(account, idx) {
@@ -204,50 +216,48 @@
                         html += account.subtype + ' ' + account.mask;
                         html += '</div>';
                     });
-
                     $(this).html(html).slideDown();
                 });
             });
         });
-
         $('#get-item-btn').on('click', function(e) {
             if ($('#get-button-data').is(':visible') && buttonValue == "item") {
                 buttonValue = "";
                 return $('#get-button-data').slideUp();
             }
-            $.post('/item', function(data) {
+            $.post('/item', {
+                token: sessionStorage.token
+            }, function(data) {
                 buttonValue = "item";
-
                 $('#get-button-data').slideUp(function() {
                     if (data.error) {
                         $(this).html('<p>' + data.error + '</p>').slideDown();
                     } else {
                         var html = '<div class="inner">';
-                        html += '<p>Here\'s some basic information about your Item:</p>';
-                        html += '<p>Institution name:' + data.institution.name + '</p>';
-                        html += '<p>Billed products: ' + data.item.billed_products.join(', ') + '</p>';
-                        html += '<p>Available products: ' + data.item.available_products.join(', ') + '</p>';
+                        // html += '<p><b>BASIC INFORMATION ABOUT YOUR BANK ACCOUNT<b></p> <br>';
+                        html += '<p><b>Bank Account</b> ' + data.institution.name + '</p>';
+                        // html += '<p>Billed products: ' + data.item.billed_products.join(', ') + '</p>';
+                        // html += '<p>Available products: ' + data.item.available_products.join(', ') + '</p>';
                         html += '</div>';
                         $(this).html(html).slideDown();
                     }
                 });
             });
         });
-
         $('#get-transactions-btn').on('click', function(e) {
             if ($('#get-button-data').is(':visible') && buttonValue == "transactions") {
                 buttonValue = "";
                 return $('#get-button-data').slideUp();
             }
-            $.post('/transactions', function(data) {
+            $.post('/transactions', {
+                token: sessionStorage.token
+            }, function(data) {
                 buttonValue = "transactions";
-
                 if (data.error != null) {
                     // Format the error
                     var errorHtml = '<div class="inner"><p>' +
                     '<strong>' + data.error.error_code + ':</strong> ' +
                     data.error.error_message + '</p></div>';
-
                     if (data.error.error_code === 'PRODUCT_NOT_READY') {
                         // Add additional context for `PRODUCT_NOT_READY` errors
                         errorHtml += '<div class="inner"><p>The PRODUCT_NOT_READY ' +
@@ -267,24 +277,13 @@
                         var html = '';
                         data.transactions.forEach(function(txn, idx) {
                             //code for displaying category for each transaction
-                            var category = '';
-                            if (txn.category) {
-                                category = txn.category[0]
-                                for (var i = 1; i < txn.category.length; i++) {
-                                    category = category + ", " + txn.category[i]
-                                }
-                            }
-                            else {
-                                category = 'Uncategorized'
-                            }
                             html += '<div class="inner">';
                             html += '<strong>' + txn.name + '</strong><br>';
-                            html += '<em>' + category + '</em><br>';
+                            html += '<em>' + txn.bucket + '</em><br>';
                             html += '$' + txn.amount + '<br>';
                             html += '<em>' + txn.date + '</em>';
                             html += '</div>';
                         });
-
                         $(this).slideUp(function() {
                             $(this).html(html).slideDown();
                         });
