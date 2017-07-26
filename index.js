@@ -45,13 +45,7 @@ var APP_PORT = envvar.number('APP_PORT', Number(process.env.PORT || 8000 ));
 var PLAID_CLIENT_ID = envvar.string('PLAID_CLIENT_ID', '593981e0bdc6a401d71d87b5');
 var PLAID_SECRET = envvar.string('PLAID_SECRET', '271426f90259600c6bf365d6b0f0aa');
 var PLAID_PUBLIC_KEY = envvar.string('PLAID_PUBLIC_KEY', '9f4ef21fdb37b5c0e3f80290db7716');
-var PLAID_ENV = envvar.string('PLAID_ENV', 'development');
-
-// We store the access_token in memory - in production, store it in a secure
-// persistent data store
-// var ACCESS_TOKEN = null;
-// var PUBLIC_TOKEN = null;
-// var ITEM_ID = null;
+var PLAID_ENV = envvar.string('PLAID_ENV', 'sandbox');
 
 // Initialize the Plaid client
 var client = new plaid.Client(
@@ -160,13 +154,14 @@ app.post('/sign_up', function(request, response, next) {
         // grabs admin session token
         var user = firebase.auth().currentUser;
         user.getIdToken().then(function(token) {
-            firebase.auth().signOut();
-            console.log('successfully created user in firebase');
             response.json({
                 login: true,
                 token: token,
+                userId: user.uid,
                 error: null
             });
+            firebase.auth().signOut();
+            console.log('successfully created user in firebase: ' + user.uid);
         });
     }).catch(function(error) {
         // Handle Errors here.
@@ -181,35 +176,6 @@ app.post('/sign_up', function(request, response, next) {
     promise.catch(e => console.log(e.message));
 });
 
-// app.get('/log_out', function(request, response, next) {
-//     if (firebase.auth().currentUser) {
-//         firebase.auth().signOut().then(function() {
-//             console.log('successfully logged out of firebase');
-//             response.json({logout: true});
-//         }, function(error) {
-//             // Handle Errors here.
-//             var errorCode = error.code;
-//             var errorMessage = error.message;
-//             console.log('failed to log out of firebase: ' + errorMessage);
-//             response.json({logout: false});
-//         });
-//     } else {
-//         console.log('successfully logged out of firebase');
-//         response.json({logout: true});
-//     }
-// });
-
-// app.get('/log_in_status', function(request, response, next) {
-//     var user = admin.auth().currentUser;
-//     if (user) {
-//         console.log('log in status:' + user.uid);
-//         response.json({login: true});
-//     } else {
-//         console.log('log in status: no current user');
-//         response.json({login: false});
-//     }
-// });
-
 // ---------------------------------------------------------
 // route middleware to authenticate and check token
 // ---------------------------------------------------------
@@ -219,17 +185,17 @@ apiRoutes.use(function(request, response, next) {
 
     if (token) {
         admin.auth().verifyIdToken(token).then(function(decodedToken) {
-            console.log('verified token and now looking for access token...');
+            console.log('verified Firebase token and now looking for Plaid token...');
 
             // grabs Plaid access token
             admin.database().ref('/users/' + decodedToken.uid).once('value', function(snapshot) {
                 if (snapshot.val() && snapshot.val()['user_token']) {
                     request.body.accessToken = snapshot.val()['user_token'];
-                    console.log('found existing access token: ' + request.body.accessToken);
+                    console.log('found existing Plaid token: ' + request.body.accessToken);
                 }
                 request.body.userId = decodedToken.uid;
 
-                console.log("verified token for " + request.body.userId);
+                console.log("verified Firebase token for " + request.body.userId);
                 next();
             });
         }).catch(function(error) {
@@ -248,7 +214,9 @@ apiRoutes.use(function(request, response, next) {
 });
 
 apiRoutes.post('/get_access_token', function(request, response, next) {
-    app.set('public token', request.body.public_token);
+    console.log('Getting access token...');
+
+    app.set('public token', request.body.publicToken);
     client.exchangePublicToken(app.get('public token'), function(error, tokenResponse) {
         if (error != null) {
           var msg = 'Could not exchange public token!';
@@ -259,8 +227,6 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
         }
         // Sam: We HAVE to store the access token, so that Plaid does not think the
         // user is a new user logging in each time.
-        // app.set('access token', tokenResponse.access_token);
-        // ITEM_ID = tokenResponse.item_id;
 
         console.log('LOADING Access Token: ' + tokenResponse.access_token);
 

@@ -165,15 +165,6 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
             }
         });
 
-        // function logInSuccess(success) {
-        //     if (success == true) {
-        //         location.href="index.ejs"
-        //         console.log('currently logged in');
-        //     } else {
-        //         console.log('unable to log in');
-        //     }
-        // };
-
         btnSignup.addEventListener('click', e => {
             var errorCode = null;
             var errorMsg = null;
@@ -212,6 +203,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
                     }
                 } else {
                     sessionStorage.setItem("token", data.token);
+                    sessionStorage.setItem("userId", data.userId);
                     handler.open();
                 }
             });
@@ -220,13 +212,16 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
         var handler = Plaid.create({
             apiVersion: 'v2',
             clientName: 'Konviv MVP',
-            env: 'development',
+            env: 'sandbox',
             product: ['transactions'],
             key: '9f4ef21fdb37b5c0e3f80290db7716',
             onSuccess: function(public_token) {
+                console.log('calling /get_access_token...')
                 $.post('/get_access_token', {
-                    public_token: public_token
+                    publicToken: public_token,
+                    userId: sessionStorage.getItem("userId")
                 }, function() {
+                    sessionStorage.removeItem("userId");
                     location.href="index.ejs";
                 });
             },
@@ -234,55 +229,6 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
                 location.href="index.ejs";
             }
         });
-        // $(function () {
-        //   $(".modalMask .closeBtn, .modalMask").click(function (e) {
-        //     e.preventDefault();
-        //     e.stopImmediatePropagation();
-        //     e.stopPropagation();
-        //     $("body").removeClass("showSignUpModal");
-        //   });
-        // });
-      </script>
-        <!-- <div class="modalMask">
-        <div class="signUpModal">
-            <div class="modalHeader">
-              <a href="#" class="closeBtn">&times;</a>
-              <h1> Welcome To Konviv </h1>
-            </div>
-
-            <div class="modalBody">
-             <br> Security: All your banking transactions go through <a href="https://plaid.com/"> <b>PLAID<b> </a> which is engineered by the big guys who know how to manage your banking securely. <br> <br>
-
-            KONVIV does not have access to your banking information at all. The App only retrieves data from Plaid. With Plaid, Konviv uses a secure connection and 256-bit encryption, just like any other Banking Services.
-            </div>
-        </div>
-    </div>
-    <style>
-        body.showSignUpModal {overflow: hidden;}
-        .modalMask {display: none;}
-        body.showSignUpModal .modalMask {display: block; position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 9997; background-color: rgba(0,0,0,0.75);}
-        body.showSignUpModal .modalMask .signUpModal {text-align: center; position: fixed; left: 50%; top: 50%; transform: translate(-50%,-50%); background-color: #fff; padding-bottom: 25px; box-shadow: 0 0 10px #fff; border-radius: 5px; z-index: 9998; min-height: 150px;}
-        .modalMask .closeBtn {position: absolute; right: -15px; top: -25px; line-height: 1; width: 35px; height: 35px; border-radius: 100%; background-color: #fff; border: 2px solid #fff; color: grey; z-index: 9999; font-size: 15pt; text-decoration: none;}
-        .modalHeader{
-          background: #546E7A;
-          padding: 20px 20px;
-        }
-         .modalHeader h1{
-         font-weight: normal;
-         display: block;
-         color: #ffffff;
-         font-weight: normal;
-         font-size: 20px;
-         text-align: left;
-        }
-        .modalBody {
-           width: 80%;
-           max-width: 600px;
-           margin: 40px auto;
-            text-align: justify;
-    text-justify: inter-word;
-        }
-
-    </style> -->
+    </script>
 </body>
 </html>
