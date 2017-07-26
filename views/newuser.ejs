@@ -188,8 +188,8 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 
             //Sign up
             console.log('sign up called...');
-            $("body").addClass("showSignUpModal");
-            if (false)
+            // $("body").addClass("showSignUpModal");
+            // if (false)
             $.post('/sign_up', {
                 username: email,
                 password: pass,
@@ -234,16 +234,16 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
                 location.href="index.ejs";
             }
         });
-        $(function () {
-          $(".modalMask .closeBtn, .modalMask").click(function (e) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            e.stopPropagation();
-            $("body").removeClass("showSignUpModal");
-          });
-        });
+        // $(function () {
+        //   $(".modalMask .closeBtn, .modalMask").click(function (e) {
+        //     e.preventDefault();
+        //     e.stopImmediatePropagation();
+        //     e.stopPropagation();
+        //     $("body").removeClass("showSignUpModal");
+        //   });
+        // });
       </script>
-        <div class="modalMask">
+        <!-- <div class="modalMask">
         <div class="signUpModal">
             <div class="modalHeader">
               <a href="#" class="closeBtn">&times;</a>
@@ -283,6 +283,6 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     text-justify: inter-word;
         }
 
-    </style>
+    </style> -->
 </body>
 </html>
