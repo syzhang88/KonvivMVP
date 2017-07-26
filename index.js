@@ -219,7 +219,7 @@ apiRoutes.use(function(request, response, next) {
 
     if (token) {
         admin.auth().verifyIdToken(token).then(function(decodedToken) {
-            console.log('verifying token...');
+            console.log('verified token and now looking for access token...');
 
             // grabs Plaid access token
             admin.database().ref('/users/' + decodedToken.uid).once('value', function(snapshot) {
