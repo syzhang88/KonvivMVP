@@ -240,7 +240,7 @@
                 return $('#get-button-data').slideUp();
             }
             $.post('/transactions', function(data) {
-                buttonValue = "transactions";
+                buttonValue = "transactions"; 
 
                 if (data.error != null) {
                     // Format the error
