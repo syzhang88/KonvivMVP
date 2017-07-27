@@ -141,7 +141,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
     <p><a class="back" href="/">< Back</a></p> <br><br>
     <h1 style="font-size:45px;">Create an account</h1>
 
-          <input id="enterEmail" type="email" placeholder="Username" required="required" />
+          <input id="enterEmail" type="email" placeholder="Email" required="required" />
           <input id="enterPassword" type="Password" placeholder="Password" required="required" />
           <input id="checkPassword" type="Password" placeholder="Confirm Password" required="required" />
 
@@ -179,42 +179,42 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 
             //Sign up
             $("body").addClass("showSignUpModal");
-            
-          $(function () {
-          $(".modalMask .closeBtn, .modalMask").click(function (e) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            e.stopPropagation();
-            $("body").removeClass("showSignUpModal");
-           
-            $.post('/sign_up', {
-                username: email,
-                password: pass,
-            }, function(data) {
-                if (data.error != null) {
-                    errorMsg = data.error;
-                }
-                if (errorMsg != null) {
-                    console.log(errorMsg);
-                    // Format the error
-                    if (errorMsg != null) {
-                        var errorHtml = '<div class="inner"><p>' +
-                        '<strong>' + errorMsg + '</strong> ' + '</p></div>';
-                        // Render the error
-                        $('#get-button-data').slideUp(function() {
-                            $(this).slideUp(function() {
-                                $(this).html(errorHtml).slideDown();
-                            });
-                        });
-                    }
-                } else {
-                    sessionStorage.setItem("token", data.token);
-                    sessionStorage.setItem("userId", data.userId);
-                    handler.open();
-                }
+
+            $(function () {
+                $(".modalMask .closeBtn, .modalMask").click(function (e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    e.stopPropagation();
+                    $("body").removeClass("showSignUpModal");
+
+                    $.post('/sign_up', {
+                        username: email,
+                        password: pass,
+                    }, function(data) {
+                        if (data.error != null) {
+                            errorMsg = data.error;
+                        }
+                        if (errorMsg != null) {
+                            console.log(errorMsg);
+                            // Format the error
+                            if (errorMsg != null) {
+                                var errorHtml = '<div class="inner"><p>' +
+                                '<strong>' + errorMsg + '</strong> ' + '</p></div>';
+                                // Render the error
+                                $('#get-button-data').slideUp(function() {
+                                    $(this).slideUp(function() {
+                                        $(this).html(errorHtml).slideDown();
+                                    });
+                                });
+                            }
+                        } else {
+                            sessionStorage.setItem("token", data.token);
+                            sessionStorage.setItem("userId", data.userId);
+                            handler.open();
+                        }
+                    });
+                });
             });
-        });
-    });
        });
         var handler = Plaid.create({
             apiVersion: 'v2',
