@@ -28,7 +28,15 @@
         </div>
             <div id="get-button-data"></div>
         </div>
+          <div id = "demo-help">
+            <div class = "box"> 
+                <button class="demo">demo</button>
+                <button class="help">help</button>
+                
+            </div>
+      </div>
         <div class="box">
+                <h5>  </h5>
             <div class="wrap">
               <div class="circle" id="Income">
                 <div class="perc">
@@ -95,9 +103,11 @@
               </div>
             </div>
         </div>
+
+
       <div id="footer">
         <div class="box">
-                 <button class="link-btn">Link New Bank (will replace any old bank)</button>
+                 <button class="link-btn">Link New Bank (Replaces Old Bank)</button>
             </div>
         </div>
     </div>
@@ -153,6 +163,7 @@
             });
         },
     });
+
     // RESTful call to index.js server using get function
     $.post('/buckets', {
         token: sessionStorage.token

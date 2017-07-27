@@ -163,6 +163,9 @@ button:hover {
   overflow:auto;
 }
 
+#header {
+  font-color: red;
+}
 #buckets {
   display: none;
 }
@@ -178,6 +181,14 @@ button:hover {
   justify-content: space-between;
   background: #09868c;
 }
+
+#demo-help .box{  
+  width: 80px;
+  display: flex;
+  justify-content: space-between;
+  background: #09868c;
+}
+
 #menu textarea {
   /*display: none;*/
   height: 100px;
