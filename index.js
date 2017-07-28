@@ -325,9 +325,7 @@ apiRoutes.post('/transactions', function(request, response, next) {
             error: error});
         }
     transactionsResponse.transactions.forEach(function(txn, idx) {
-        if (txn.category) {
-            txn.bucket = buckets.selectBucket(txn);
-        }
+        txn.bucket = buckets.selectBucket(txn);
     });
     response.json(transactionsResponse);
   });
@@ -365,7 +363,6 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
     var updatedTransactions = 'transactions are working';
 
     var thisMonth = new Date(endDate.substr(0, 4), endDate.substr(5, 2), '01');
-
     var startMonth = startDate.substr(0,8) + '01';
 
     client.getTransactions(accessToken, startMonth, endDate, {
@@ -382,17 +379,17 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
         transactionsResponse.transactions.forEach(function(transaction) {
             var bucket = buckets.selectBucket(transaction);
             var newPostKey = transaction.transaction_id;
-            var postData = {}
+            var postData = {};
             postData[newPostKey] = transaction;
-            admin.database().ref('users/' + userId + "/bucketTransactions/" + bucket).update(postData);
 
             var txnDate = transaction.date;
             var transactionDate = new Date(txnDate.substr(0, 4), txnDate.substr(5, 2), txnDate.substr(8,2));
+            admin.database().ref('users/' + userId + "/bucketTransactions/" + bucket  + "/" + transaction.date.substr(0,7)).update(postData);
 
             if (transactionDate >= thisMonth) {
                 bucketSpending[bucket] += transaction.amount;
             } else {
-                bucketTotal[bucket]+= transaction.amount;
+                bucketTotal[bucket] += transaction.amount;
             }
         });
         //Get Bucket Spending

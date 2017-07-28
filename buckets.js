@@ -20,7 +20,14 @@ var predefinedBuckets = {
     'Subscription': 'Subscriptions'
 };
 
+var billsBuckets = {
+    'Rent': 'Rent',
+    'Utilities': 'Bills',
+    'Subscription': 'Subscriptions'
+}
+
 var nameBuckets = {
+    'Rent': 'Rent',
     'Groceries': 'Groceries',
     'Eating Out': 'Eating Out',
     'Transportation': 'Transportation',
@@ -29,10 +36,11 @@ var nameBuckets = {
     'Bills': 'Bills',
     'Subscriptions': 'Subscriptions',
     'Income': 'Income',
-    'General Spending': 'General Spending'
+    'Other Spending': 'Other Spending'
 }
 
 var bucketAmountsOriginal = {
+    'Rent': 0,
     'Groceries': 0,
     'Eating Out': 0,
     'Transportation': 0,
@@ -41,7 +49,7 @@ var bucketAmountsOriginal = {
     'Bills': 0,
     'Subscriptions': 0,
     'Income': 0,
-    'General Spending': 0
+    'Other Spending': 0
 };
 
 
@@ -79,7 +87,7 @@ exports.selectBuckets = function selectBuckets (transactions) {
 // Classifies which bucket a certain transaction belongs to
 exports.selectBucket = function selectBucket (transaction) {
     // console.log('New Selection:');
-    var bucket = 'General Spending';
+    var bucket = 'Other Spending';
     if (transaction.amount < 0) {
         return 'Income';
     }
@@ -87,7 +95,7 @@ exports.selectBucket = function selectBucket (transaction) {
         return reclassifiedTransactions[transaction.name];
     }
     if (transaction.category ==  null) {
-        return 'General Spending';
+        return 'Other Spending';
     }
     for (i = 0; i < transaction.category.length; i++) {
         var category = transaction.category[i] ;
@@ -99,9 +107,9 @@ exports.selectBucket = function selectBucket (transaction) {
     return bucket
 }
 
+// Deprecated
 // Estimates the size of a bucket given transactions from a given interval of
 // days, which is passed in as estimationPeriod
-
 exports.estimateSize = function estimateSize (transactions, estimationPeriod, totalBalance) {
     console.log("calculating buckets sizes now...");
 
@@ -132,8 +140,8 @@ exports.estimateSize = function estimateSize (transactions, estimationPeriod, to
     console.log("Bucket General Bucket " + ": " + generalBucket);
     console.log("Total Balance " + ": " + totalBalance);
 
-    bucketAmounts['General Spending'] = {'Total': generalBucket,
-        'Spending': 0, 'Name': nameBuckets['General Spending']};
+    bucketAmounts['Other Spending'] = {'Total': generalBucket,
+        'Spending': 0, 'Name': nameBuckets['Other Spending']};
 
     console.log('finished calculating bucket estimations... ');
     console.log(bucketAmounts);
