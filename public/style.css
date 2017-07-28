@@ -99,7 +99,7 @@ a:hover {
   min-width: 280px;
   max-width: 800px;
   margin: 20px auto 0;
-  padding: 20px;
+  padding: 0;
   background: #fff;
   border: 2px solid white;
   border-radius: 2px;
@@ -108,6 +108,11 @@ a:hover {
   /*display: inline-block;*/
   overflow:auto;
 }
+
+#demo-help .box {
+  padding: 20px;
+}
+
 
 #container {
   min-width: 280px;
@@ -121,6 +126,9 @@ a:hover {
   background: #cceff0
 }
 
+h1 + h1 {
+  display:none;
+}
 
 
 #container p {
@@ -261,9 +269,121 @@ button:hover {
     color: black;
 }
 
+/* CSS FOR TEXT */
+
+.head h1{
+font-size:18px;
+font-weight: bold;
+color: white;
+background: #00b7b8;
+border-radius: 5px;
+text-align: center;
+}
+
+h1 {
+  line-height: 2;
+}
+
+
+.box {
+  background: #f9f9f9;
+  border-radius: 7px;
+}
+
+.body{
+  background: #e4e4e4;
+}
+#left-to-spend h1 {
+  margin-top:1px;
+  font-size:45px;
+  color: #74d6f7;
+  text-align: center;
+}
+
+
+#monthly-income h1 {
+    margin-top:1px;
+  font-size:45px;
+  color: #74d6f7;
+  text-align: center;
+
+}
+
+#monthly-fixed-bills h1 {
+    text-align: center;
+      font-size:40px;
+    color: #F06560;
+    border: 0px solid #bdbdbd;
+    margin: 25px;
+    box-shadow: 0 0 7px #fff;
+    border-radius: 5px;
+    overflow: hidden;
 
 
 
+
+}
+
+/**CSS BRO */
+
+
+
+.wrap0 {
+  text-align: center;
+  margin: 0px;
+}
+.wrap0 .circle0 {
+  background-color: #f5f5f5;
+  width: 220px;
+  height: 220px;
+  border-radius: 100%;
+  border: 1px solid #ccc;
+  margin: 30px 20px;
+  display: inline-block;
+  position: relative;
+}
+.wrap0 .circle0 .perc0 {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  left: 50%;
+  top: 50%;
+  background-color:#61cb43;
+  border-radius: 100%;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+}
+.wrap0 .circle0 .perc0 .perc-value0 {
+  position: absolute;
+  content: " ";
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background-color: #fff;
+}
+.wrap0 .circle0 span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0 15px;
+  background-color: transparent;
+  z-index: 2;
+  padding: 5px;
+  border-radius: 3px;
+}
+.wrap0 .circle0 .top0 {
+  top: -38px;
+  font-size:18px;
+  font-weight: bold;
+
+}
+
+.wrap0 .circle0 .bottom0 {
+  bottom: 78px;
+  font-size:30px;
+}
 /* NEW CSS */
 
 
@@ -321,10 +441,12 @@ button:hover {
   font-weight: bold;
 
 }
+
 .wrap .circle .bottom {
   bottom: 78px;
   font-size:30px;
 }
+
 
 #get-button-data {
     display: none;
