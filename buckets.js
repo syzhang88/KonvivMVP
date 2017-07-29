@@ -7,7 +7,7 @@ var trackReclassifications = {}
 
 var reclassifiedTransactions = {}
 
-var predefinedBuckets = {
+var spendingBuckets = {
     'Supermarkets and Groceries': 'Groceries',
     'Food and Drink': 'Eating Out',
     'Travel': 'Transportation',
@@ -20,10 +20,12 @@ var predefinedBuckets = {
     'Subscription': 'Subscriptions'
 };
 
-var billsBuckets = {
-    'Rent': 'Rent',
-    'Utilities': 'Bills',
-    'Subscription': 'Subscriptions'
+var fixedBuckets = {
+    'Rent': 'Rent and Mortgage',
+    'Loan and Mortgages': 'Rent and Mortgage',
+    'Subscription': 'Subscriptions',
+    'Insurance': 'Insurance',
+    'Loan': 'Loans'
 }
 
 var nameBuckets = {
@@ -35,12 +37,34 @@ var nameBuckets = {
     'Shopping': 'Shopping',
     'Bills': 'Bills',
     'Subscriptions': 'Subscriptions',
+    'Rent': 'Rent and Mortgage',
+    'Insurance': 'Insurance',
+    'Loans': 'Loans',
+    'Rent and Mortgage': 'Rent and Mortgage',
     'Income': 'Income',
     'Other Spending': 'Other Spending'
 }
 
-var bucketAmountsOriginal = {
-    'Rent': 0,
+var fixedAmounts = {
+    'Rent and Mortgage': 0,
+    'Subscriptions': 0,
+    'Insurance': 0,
+    'Loans': 0,
+};
+
+var spendingAmounts = {
+    'Groceries': 0,
+    'Eating Out': 0,
+    'Transportation': 0,
+    'Entertainment': 0,
+    'Shopping': 0,
+    'Bills': 0,
+    'Income': 0,
+    'Other Spending': 0
+};
+
+var allAmounts = {
+    'Rent and Mortgage': 0,
     'Groceries': 0,
     'Eating Out': 0,
     'Transportation': 0,
@@ -48,10 +72,11 @@ var bucketAmountsOriginal = {
     'Shopping': 0,
     'Bills': 0,
     'Subscriptions': 0,
+    'Insurance': 0,
+    'Loans': 0,
     'Income': 0,
     'Other Spending': 0
 };
-
 
 function clone(obj) {
     if (null == obj || "object" != typeof obj) return obj;
@@ -64,7 +89,11 @@ function clone(obj) {
 
 exports.clone = clone;
 
-exports.bucketAmounts = clone(bucketAmountsOriginal);
+exports.fixedAmounts = clone(fixedAmounts);
+
+exports.spendingAmounts = clone(spendingAmounts);
+
+exports.allAmounts = clone(allAmounts);
 
 exports.nameBuckets = nameBuckets;
 
@@ -100,8 +129,10 @@ exports.selectBucket = function selectBucket (transaction) {
     for (i = 0; i < transaction.category.length; i++) {
         var category = transaction.category[i] ;
         // console.log(category);
-        if (predefinedBuckets[category]) {
-            bucket = predefinedBuckets[category];
+        if (fixedBuckets[category]) {
+            bucket = [fixedBuckets[category], 'Fixed'];
+        } else if (spendingBuckets[category]) {
+            bucket = [spendingBuckets[category], 'Spending'];
         }
     }
     return bucket

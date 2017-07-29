@@ -190,7 +190,7 @@ button:hover {
   background: #09868c;
 }
 
-#demo-help .box{  
+#demo-help .box{
   width: 80px;
   display: flex;
   justify-content: space-between;
@@ -318,15 +318,9 @@ h1 {
     box-shadow: 0 0 7px #fff;
     border-radius: 5px;
     overflow: hidden;
-
-
-
-
 }
 
 /**CSS BRO */
-
-
 
 .wrap0 {
   text-align: center;
