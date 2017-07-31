@@ -128,9 +128,9 @@ exports.selectBucket = function selectBucket (transaction) {
             bucketClass: 'Income'
         };
     }
-    if (reclassifiedTransactions[transaction.name]) {
-        return reclassifiedTransactions[transaction.name];
-    }
+    // if (reclassifiedTransactions[transaction.name]) {
+    //     return reclassifiedTransactions[transaction.name];
+    // }
     if (transaction.category ==  null) {
         return {
             bucketName: 'Other Spending',
@@ -143,7 +143,7 @@ exports.selectBucket = function selectBucket (transaction) {
         if (fixedBuckets[category]) {
             bucket = {
                 bucketName: fixedBuckets[category],
-                bucketClass: 'Spending'
+                bucketClass: 'Fixed'
             };
         } else if (spendingBuckets[category]) {
             bucket = {
