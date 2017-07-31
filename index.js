@@ -379,13 +379,16 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
 
         var bucketSpending = buckets.clone(buckets.spendingAmounts);
         var bucketFixed = buckets.clone(buckets.fixedAmounts);
+        var bucketIncome = buckets.clone(buckets.incomeAmounts);
         var bucketTotal = buckets.clone(buckets.allAmounts);
         // Sam: Begin admin section for updating transaction data
+
+        console.log(bucketSpending);
         transactionsResponse.transactions.forEach(function(transaction) {
             var bucketSelect = buckets.selectBucket(transaction);
 
-            var bucket = bucketSelect[0];
-            var bucketClass = bucketSelect[1];
+            var bucket = bucketSelect['bucketName'];
+            var bucketClass = bucketSelect['bucketClass'];
             var newPostKey = transaction.transaction_id;
             var postData = {};
             postData[newPostKey] = transaction;
@@ -395,9 +398,11 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
             admin.database().ref('users/' + userId + "/bucketTransactions/" + bucket  + "/" + transaction.date.substr(0,7)).update(postData);
 
             if (transactionDate >= thisMonth) {
-                if (bucketClass == "Fixed") {
+                if (bucketClass == "Income") {
+                    bucketIncome[bucket] += transaction.amount;
+                } else if (bucketClass == "Fixed") {
                     bucketFixed[bucket] += transaction.amount;
-                } else {
+                } else if (bucketClass == "Spending") {
                     bucketSpending[bucket] += transaction.amount;
                 }
             } else {
@@ -405,21 +410,31 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
             }
         });
         //Get Bucket Spending
-        console.log("updateTransactions: " + bucketTotal[bucket] + "/" + timePeriod);
-
+        console.log(bucketSpending);
         for (var bucket in bucketSpending) {
-            admin.database().ref('users/' + userId + "/bucketMoney/spending/" +
-                bucket).update({
-                    Name: buckets.nameBuckets[bucket],
-                    Spending: bucketSpending[bucket],
-                    Total: bucketTotal[bucket]/timePeriod
-                });
+            if (!isNaN(bucketTotal[bucket])) {
+                console.log("updateTransactions for " + bucket + ": " + bucketTotal[bucket] + "/" + timePeriod);
+                admin.database().ref('users/' + userId + "/bucketMoney/spending/" +
+                    bucket).update({
+                        Name: buckets.nameBuckets[bucket],
+                        Spending: bucketSpending[bucket],
+                        Total: bucketTotal[bucket]/timePeriod
+                    });
+            }
         }
         for (var bucket in bucketFixed) {
             admin.database().ref('users/' + userId + "/bucketMoney/fixed/" +
                 bucket).update({
                     Name: buckets.nameBuckets[bucket],
-                    Spending: bucketSpending[bucket],
+                    Spending: bucketFixed[bucket],
+                    Total: bucketTotal[bucket]/timePeriod
+                });
+        }
+        for (var bucket in bucketIncome) {
+            admin.database().ref('users/' + userId + "/bucketMoney/income/" +
+                bucket).update({
+                    Name: buckets.nameBuckets[bucket],
+                    Spending: bucketIncome[bucket],
                     Total: bucketTotal[bucket]/timePeriod
                 });
         }

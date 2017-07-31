@@ -45,6 +45,10 @@ var nameBuckets = {
     'Other Spending': 'Other Spending'
 }
 
+var incomeAmounts = {
+    'Income': 0
+};
+
 var fixedAmounts = {
     'Rent and Mortgage': 0,
     'Subscriptions': 0,
@@ -59,7 +63,6 @@ var spendingAmounts = {
     'Entertainment': 0,
     'Shopping': 0,
     'Bills': 0,
-    'Income': 0,
     'Other Spending': 0
 };
 
@@ -88,6 +91,8 @@ function clone(obj) {
 }
 
 exports.clone = clone;
+
+exports.incomeAmounts = clone(incomeAmounts);
 
 exports.fixedAmounts = clone(fixedAmounts);
 
@@ -118,21 +123,33 @@ exports.selectBucket = function selectBucket (transaction) {
     // console.log('New Selection:');
     var bucket = 'Other Spending';
     if (transaction.amount < 0) {
-        return 'Income';
+        return {
+            bucketName: 'Income',
+            bucketClass: 'Income'
+        };
     }
     if (reclassifiedTransactions[transaction.name]) {
         return reclassifiedTransactions[transaction.name];
     }
     if (transaction.category ==  null) {
-        return 'Other Spending';
+        return {
+            bucketName: 'Other Spending',
+            bucketClass: 'Spending'
+        };
     }
     for (i = 0; i < transaction.category.length; i++) {
         var category = transaction.category[i] ;
         // console.log(category);
         if (fixedBuckets[category]) {
-            bucket = [fixedBuckets[category], 'Fixed'];
+            bucket = {
+                bucketName: fixedBuckets[category],
+                bucketClass: 'Spending'
+            };
         } else if (spendingBuckets[category]) {
-            bucket = [spendingBuckets[category], 'Spending'];
+            bucket = {
+                bucketName: spendingBuckets[category],
+                bucketClass: 'Spending'
+            };
         }
     }
     return bucket
