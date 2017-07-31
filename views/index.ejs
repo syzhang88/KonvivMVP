@@ -176,7 +176,6 @@
         <script>
             if (sessionStorage.token) {
                 console.log('currently logged in');
-                // console.log('token: ' + sessionStorage.token);
             } else {
                 location.href="/";
                 console.log("currently logged out");
@@ -225,11 +224,12 @@
                 token: sessionStorage.token
             }, function(data) {
                 // Catching error
-                console.log(data);
+
                 if (data.error != null) {
                     // Format the error
                     var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
                     // Render the error
+
                     $('#get-button-data').slideUp(function() {
                         $(this).slideUp(function() {
                             $(this).html(errorHtml).slideDown();
@@ -237,20 +237,27 @@
                     });
                     // Using for loop to pull information for each bucket from data
                 } else {
-                    // var totalBills = 0;
-                    // var totalSpending = 0;
-
+                    console.log("KIKI")
+                    console.log(data)
                     for (var bucketClass in data) {
+                       
                         totalAmount = 0;
-                        for (var key in bucketClass) {
+                        for (var key in data[bucketClass]) {
+                            
                             var fillPercent = 0;
                             // Accounting for divide-by-zero error
-                            if (data[key]['Total'] > 0) {
-                                fillPercent = (data[key]['Spending']/data[key]['Total'])*100
+
+                            if (data[bucketClass][key]['Total'] > 0) {
+                                fillPercent = (data[bucketClass][key]['Spending']/data[bucketClass][key]['Total'])*100
                             }
-                            bucketSpent = Math.round((data[key]['Total'] - data[key]['Spending'])*100)/100;
-                            bucketTotal = Math.round(data[key]['Total']*100)/100;
+
+                            bucketSpent = Math.round((data[bucketClass][key]['Total'] - data[bucketClass][key]['Spending'])*100)/100;
+                            bucketTotal = Math.round(data[bucketClass][key]['Total']*100)/100;
                             newPercent = fillPercent;
+                           
+                            console.log(key)
+                            console.log(bucketSpent)
+                            console.log(bucketTotal)
 
                             console.log(key + ": " + newPercent);
                              var selector = '[id="' + key + '"]';
@@ -258,6 +265,7 @@
                                 .find(".top0").text(key).end()
                                 .find(".bottom0").text("$" + bucketSpent + " / $" + bucketTotal).end()
                                 .find(".perc-value0").css("height", newPercent + "%")
+                                
                                 .find(".top").text(key).end()
                                 .find(".bottom").text("$" + bucketSpent + " / $" + bucketTotal).end()
                                 .find(".perc-value").css("height", newPercent + "%");
