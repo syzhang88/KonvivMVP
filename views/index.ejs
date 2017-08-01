@@ -97,7 +97,7 @@
                 <h1> Monthly Spending Buckets </h1>
             </div>
             <div class="wrap">
-                
+
               <!--   <div class="circle" id="Income">
                     <div class="perc">
                         <div class="perc-value"></div>
@@ -234,30 +234,12 @@
                 } else {
                     console.log(data)
                     for (var bucketClass in data) {
-<<<<<<< HEAD
-                        
-                        totalAmount = 0;
-                        for (var key in data[bucketClass]) {  
-=======
-
                         totalAmount = 0;
                         for (var key in data[bucketClass]) {
                             var bucket = data[bucketClass][key];
-
->>>>>>> ac2883ab5c89663ab8556247551e5de510cf2ee5
                             var fillPercent = 0;
-                            
+
                             // Accounting for divide-by-zero error
-<<<<<<< HEAD
-                            if (data[bucketClass][key]['Total'] > 0) {
-                                fillPercent = (data[bucketClass][key]['Spending']/data[bucketClass][key]['Total'])*100
-                            }
-
-                            bucketSpent = Math.round(((data[bucketClass][key]['Total']) - (data[bucketClass][key]['Spending']))*100)/100;
-                            bucketTotal = Math.round(data[bucketClass][key]['Total']*100)/100;
-                            newPercent = fillPercent;
-=======
-
                             if (bucket['Total'] > 0) {
                                 fillPercent = (bucket['Spending']/bucket['Total'])*100
                             }
@@ -269,44 +251,27 @@
                             console.log(key)
                             console.log(bucketSpent)
                             console.log(bucketTotal)
->>>>>>> ac2883ab5c89663ab8556247551e5de510cf2ee5
 
                              var selector = '[id="' + key + '"]';
-                    
+
                              $(selector)
-<<<<<<< HEAD
-
-
                                 .find(".top0,.top").text(key).end()
                                 .find(".bottom0,.bottom").text("$" + bucketSpent + " of $" + bucketTotal).end()
                                 .find(".perc-value0,.perc-value").css("height", newPercent + "%")
-
 
                                 /* INCOME CLASS */
                                 income = -(data['Income Buckets']['Income']['Total'])
                                 $("#monthly-income").text("Total Income: " + income)
 
-=======
-                                .find(".top0").text(key).end()
-                                .find(".bottom0").text("$" + bucketSpent + " / $" + bucketTotal).end()
-                                .find(".perc-value0").css("height", newPercent + "%")
-                            $(selector)
-                                .find(".top").text(key).end()
-                                .find(".bottom").text("$" + bucketSpent + " / $" + bucketTotal).end()
-                                .find(".perc-value").css("height", newPercent + "%");
->>>>>>> ac2883ab5c89663ab8556247551e5de510cf2ee5
                             totalAmount += bucketTotal;
                             // totalBills += data['Fixed Buckets'][key]['Total']
                             // console.log(totalBills)
                         }
-<<<<<<< HEAD
                        /* LEFT TO SPEND*/
                        $("#left-to-spend").text(totalAmount)
-=======
                         var selector = '[id="' + bucketClass + '"]';
                         // $(selector)
                         //     .find(".text").text(totalBills).end();
->>>>>>> ac2883ab5c89663ab8556247551e5de510cf2ee5
                     }
                 }
             });

@@ -380,33 +380,42 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
         console.log('updated bucket totals for this month:');
         console.log(bucketTotal);
 
+        var allBucketData = {
+            "Spending Buckets": {},
+            "Fixed Buckets": {},
+            "Income Buckets": {}
+        }
+
         for (var bucket in bucketSpending) {
             if (!isNaN(bucketTotal[bucket])) {
                // console.log("updateTransactions for " + bucket + ": " + bucketTotal[bucket] + "/" + timePeriod);
-                admin.database().ref('users/' + userId + "/bucketMoney/Spending Buckets/" +
-                    bucket).update({
+               allBucketData["Spending Buckets"][bucket] = {
                         Name: buckets.nameBuckets[bucket],
                         Spending: bucketSpending[bucket],
                         Total: bucketTotal[bucket]/timePeriod
-                    });
+                    };
             }
         }
         for (var bucket in bucketFixed) {
-            admin.database().ref('users/' + userId + "/bucketMoney/Fixed Buckets/" +
-                bucket).update({
-                    Name: buckets.nameBuckets[bucket],
-                    Spending: bucketFixed[bucket],
-                    Total: bucketTotal[bucket]/timePeriod
-                });
+            if (!isNaN(bucketTotal[bucket])) {
+                allBucketData["Fixed Buckets"][bucket] = {
+                        Name: buckets.nameBuckets[bucket],
+                        Spending: bucketFixed[bucket],
+                        Total: bucketTotal[bucket]/timePeriod
+                    };
+            }
         }
         for (var bucket in bucketIncome) {
-            admin.database().ref('users/' + userId + "/bucketMoney/Income Buckets/" +
-                bucket).update({
-                    Name: buckets.nameBuckets[bucket],
-                    Spending: bucketIncome[bucket],
-                    Total: bucketTotal[bucket]/timePeriod
-                });
+            if (!isNaN(bucketTotal[bucket])) {
+                allBucketData["Income Buckets"][bucket] = {
+                        Name: buckets.nameBuckets[bucket],
+                        Spending: bucketIncome[bucket],
+                        Total: bucketTotal[bucket]/timePeriod
+                    };
+            }
         }
+
+        admin.database().ref("users/" + userId + "/bucketMoney/").set(allBucketData);
 
         callbackFunction();
 
