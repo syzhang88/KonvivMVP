@@ -95,6 +95,20 @@ app.get('/newuser.ejs', function(request, response, next) {
     });
 });
 
+app.get('/guidescreen.ejs', function(request, response, next) {
+    response.render('guidescreen.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+});
+
+app.get('/securityscreen.ejs', function(request, response, next) {
+    response.render('securityscreen.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+});
+
 app.post('/log_in', function(request, response, next) {
     console.log('attempting login...');
     var success = {
