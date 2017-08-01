@@ -121,16 +121,19 @@ exports.selectBuckets = function selectBuckets (transactions) {
 // Classifies which bucket a certain transaction belongs to
 exports.selectBucket = function selectBucket (transaction) {
     // console.log('New Selection:');
-    var bucket = 'Other Spending';
+    var bucket = {
+        bucketName: 'Other Spending',
+        bucketClass: 'Spending'
+    };
+    // if (reclassifiedTransactions[transaction.name]) {
+    //     return reclassifiedTransactions[transaction.name];
+    // }
     if (transaction.amount < 0) {
         return {
             bucketName: 'Income',
             bucketClass: 'Income'
         };
     }
-    // if (reclassifiedTransactions[transaction.name]) {
-    //     return reclassifiedTransactions[transaction.name];
-    // }
     if (transaction.category ==  null) {
         return {
             bucketName: 'Other Spending',
