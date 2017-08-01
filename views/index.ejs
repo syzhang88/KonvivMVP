@@ -235,7 +235,9 @@
                     console.log(data)
                     for (var bucketClass in data) {
                         totalAmount = 0;
+                        totalBills = 0;
                         for (var key in data[bucketClass]) {
+                            
                             var bucket = data[bucketClass][key];
                             var fillPercent = 0;
 
@@ -264,14 +266,10 @@
                                 $("#monthly-income").text("Total Income: " + income)
 
                             totalAmount += bucketTotal;
-                            // totalBills += data['Fixed Buckets'][key]['Total']
-                            // console.log(totalBills)
                         }
                        /* LEFT TO SPEND*/
                        $("#left-to-spend").text(totalAmount)
-                        var selector = '[id="' + bucketClass + '"]';
-                        // $(selector)
-                        //     .find(".text").text(totalBills).end();
+
                     }
                 }
             });
