@@ -201,13 +201,15 @@
                 product: ['transactions'],
                 key: '9f4ef21fdb37b5c0e3f80290db7716',
                 onSuccess: function(public_token) {
+                    // alert('calling /get_access_token...')
                     $.post('/get_access_token', {
-                        public_token: public_token
+                        token: sessionStorage.getItem("token"),
+                        publicToken: public_token,
+                        userId: sessionStorage.getItem("userId")
                     }, function() {
-                        console.log("new bank added!")
                         location.href="index.ejs";
                     });
-                },
+                }
             });
 
             // RESTful call to index.js server using get function
@@ -280,7 +282,7 @@
                 }
             });
             (function($) {
-                $('.get-link-btn').on('click', function(e) {
+                $('#get-link-btn').on('click', function(e) {
                     handler.open()
                 });
                 $('.logout-btn').on('click', function(e) {
