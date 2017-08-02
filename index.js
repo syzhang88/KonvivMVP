@@ -243,7 +243,7 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
           'error': false
         });
 
-        updateAccounts(() => {});
+        updateAccounts(tokenResponse.accessToken, request.body.userId, () => {});
         updateTransactions(SIX_MONTHS, request.body.accessToken, request.body.userId, () => {});
     });
 });
@@ -251,7 +251,9 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
 apiRoutes.post('/accounts', function(request, response, next) {
     // Retrieve high-level account information and account and routing numbers
     // for each account associated with the Item.
-    response.json(updateAccounts(() => {}));
+    updateAccounts(request.body.accessToken, request.body.userId, function(postData) {
+        response.json(postData);
+    });
 });
 
 apiRoutes.post('/transactions', function(request, response, next) {
@@ -287,24 +289,21 @@ apiRoutes.post('/savings', function(request, response, next) {
                 error: msg
             };
         }
-        console.log("authResponse.accounts: " + authResponse.accounts);
 
         var savingsTotal = 0;
         for (var account in authResponse.accounts) {
             if (account['subtype'] == 'savings' &&  account['balances']) {
                 savingsTotal += account['balances']['current'];
             }
-
         }
 
-        // Admin section for updating account info on Firebase
         var postData = {
             'savings': savingsTotal
         };
         response.json(postData);
-    }
+    });
 
-    updateAccounts(() => {});
+    updateAccounts(request.body.accessToken, request.body.userId, () => {});
 });
 
 apiRoutes.post('/buckets', function(request, response, next) {
@@ -319,61 +318,60 @@ apiRoutes.post('/buckets', function(request, response, next) {
     });
 });
 
-function updateAccounts(callbackFunction) {
-    client.getItem(request.body.accessToken, function(error, itemResponse) {
-      if (error != null) {
-        console.log(error);
-        return {
-          error: error
-        };
-      }
-      var item = itemResponse.item;
-
-      // Also pull information about the institution
-      client.getInstitutionById(itemResponse.item.institution_id, function(err, instRes) {
-        if (err != null) {
-          var msg = 'Unable to pull institution information from the Plaid API.';
-          console.log(msg + '\n' + error);
-          return {
-            error: msg
-          };
-        }
-        var institution = instRes.institution;
-
-        client.getAuth(request.body.accessToken, function(error, authResponse) {
-
-          if (error != null) {
-            var msg = 'Unable to pull accounts from the Plaid API.';
-            console.log(msg + '\n' + error);
+function updateAccounts(accessToken, userId, jsonFunction) {
+    client.getItem(accessToken, function(error, itemResponse) {
+        if (error != null) {
+            console.log(error);
             return {
-              error: msg
+                error: error
             };
-          }
+        }
+        var item = itemResponse.item;
+        console.log('getItem');
 
-          console.log("authResponse.accounts: " + authResponse.accounts);
-           // [object Object],[object Object],[object Object],[object Object]
-           // These are the different checking/cc banking accounts
+        // Also pull information about the institution
+        client.getInstitutionById(itemResponse.item.institution_id, function(err, instRes) {
+            if (err != null) {
+                var msg = 'Unable to pull institution information from the Plaid API.';
+                console.log(msg + '\n' + error);
+                return {
+                    error: msg
+                };
+            }
+            var institution = instRes.institution;
+            console.log('getInstitutionById');
 
-          // Admin section for updating account info on Firebase
-          var postData = {
-              'accounts': authResponse.accounts,
-              'institution': institution,
-              'item': item
-          };
-          admin.database().ref('users/' + request.body.userId).update(postData);
-          console.log('posted item for: ' + request.body.userId);
+            client.getAuth(accessToken, function(error, authResponse) {
+                if (error != null) {
+                    var msg = 'Unable to pull accounts from the Plaid API.';
+                    console.log(msg + '\n' + error);
+                    return {
+                        error: msg
+                    };
+                }
 
-          callbackFunction();
+                console.log("getAuth: " + authResponse.accounts);
+                // [object Object],[object Object],[object Object],[object Object]
+                // These are the different checking/cc banking accounts
 
-          return {
-            error: false,
-            accounts: authResponse.accounts,
-            numbers: authResponse.numbers,
-            institution: institution,
-            item: item
-          };
+                // Admin section for updating account info on Firebase
+                var postData = {
+                    'accounts': authResponse.accounts,
+                    'institution': institution,
+                    'item': item
+                };
+                admin.database().ref('users/' + userId).update(postData);
+                console.log('posted item for: ' + userId);
+
+                jsonFunction({
+                    error: false,
+                    accounts: authResponse.accounts,
+                    numbers: authResponse.numbers,
+                    institution: institution,
+                    item: item
+                });
+            });
         });
-      });
     });
 }
 
