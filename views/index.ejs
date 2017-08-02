@@ -234,10 +234,8 @@
                 } else {
                     console.log(data)
                     for (var bucketClass in data) {
-                        totalAmount = 0;
-                        totalBills = 0;
+                        totalAmount=0;
                         for (var key in data[bucketClass]) {
-                            
                             var bucket = data[bucketClass][key];
                             var fillPercent = 0;
 
@@ -249,10 +247,6 @@
                             bucketSpent = Math.round((bucket['Total'] - bucket['Spending'])*100)/100;
                             bucketTotal = Math.round(bucket['Total']*100)/100;
                             newPercent = fillPercent;
-
-                            console.log(key)
-                            console.log(bucketSpent)
-                            console.log(bucketTotal)
 
                              var selector = '[id="' + key + '"]';
 
@@ -266,11 +260,17 @@
                                 $("#monthly-income").text("Total Income: " + income)
 
                             totalAmount += bucketTotal;
+
+                            
+
+                            // if (data[bucketClass] == 'Fixed Buckets'){ 
+                            //     console.log(data[bucketClass])
+                            // totalBills += data['Fixed Buckets'][key]['Total']
+                            // }
                         }
                        /* LEFT TO SPEND*/
                        $("#left-to-spend").text(totalAmount)
-
-                    }
+                       }
                 }
             });
             (function($) {
