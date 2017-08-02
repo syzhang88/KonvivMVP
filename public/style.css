@@ -312,7 +312,7 @@ h1 {
   padding-bottom:7px;
   font-size:30px;
   color: black;
-
+  font-weight:bold;
    &:hover
   color: red;
 }
