@@ -272,9 +272,14 @@
                                 totalSpending += data[bucketClass][key]['Total'];
                             }
 
+
+
                         }
                        /* LEFT TO SPEND*/
-                       $("#left-to-spend").text(totalAmount.toFixed(2));
+
+                       var left = income - totalBills - totalSpending;
+                    
+                       $("#left-to-spend").text(left.toFixed(2));
                        $("#total-bills").text("Monthly Fixed Bills: " +totalBills.toFixed(2));
                        $("#total-spending").text("Monthly Spending : " +totalSpending.toFixed(2));
                        }
