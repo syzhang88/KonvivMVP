@@ -68,7 +68,7 @@ td {
 }
 body {
   line-height: 1;
-  
+
 }
 html {
   color: #444;
@@ -159,12 +159,12 @@ button:hover {
   cursor: pointer;
 }
 
-.button2 {
+.headerbutton {
   background:none;
   background-color: white;
   border-width: 0px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 10px 10px;
+  padding: 1px 30px;
   font-size: 28px;
   border-radius: 4px;
   display: inline-block;
@@ -313,8 +313,7 @@ h1 {
 
 }
 
-/*#monthly-fixed-bills h1 */
-#bills{
+#total-bills{
     text-align: center;
     font-size:40px;
     color: #F06560;
@@ -325,6 +324,16 @@ h1 {
     overflow: hidden;
 }
 
+#total-spending{
+    text-align: center;
+    font-size:40px;
+    color: #F06560;
+    border: 0px solid #bdbdbd;
+    margin: 25px;
+    box-shadow: 0 0 7px #fff;
+    border-radius: 5px;
+    overflow: hidden;
+}
 
 
 /**CSS BRO */

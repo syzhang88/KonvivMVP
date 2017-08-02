@@ -250,31 +250,57 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
 apiRoutes.post('/accounts', function(request, response, next) {
   // Retrieve high-level account information and account and routing numbers
   // for each account associated with the Item.
-  client.getAuth(request.body.accessToken, function(error, authResponse) {
-
+  client.getItem(request.body.accessToken, function(error, itemResponse) {
     if (error != null) {
-      var msg = 'Unable to pull accounts from the Plaid API.';
-      console.log(msg + '\n' + error);
+      console.log(JSON.stringify(error));
       return response.json({
-        error: msg
+        error: error
       });
     }
+    var item = itemResponse.item;
 
-    console.log("authResponse.accounts: " + authResponse.accounts);
-     // [object Object],[object Object],[object Object],[object Object]
-     // These are the different checking/cc banking accounts
+    // Also pull information about the institution
+    client.getInstitutionById(itemResponse.item.institution_id, function(err, instRes) {
+      if (err != null) {
+        var msg = 'Unable to pull institution information from the Plaid API.';
+        console.log(msg + '\n' + error);
+        return response.json({
+          error: msg
+        });
+      }
+      var institution = instRes.institution;
 
-    // Admin section for updating account info on Firebase
-    var postData = {
-        'accounts': authResponse.accounts
-    };
-    admin.database().ref('users/' + request.body.userId).update(postData);
-    console.log('posted item for: ' + request.body.userId);
+      client.getAuth(request.body.accessToken, function(error, authResponse) {
 
-    response.json({
-      error: false,
-      accounts: authResponse.accounts,
-      numbers: authResponse.numbers,
+        if (error != null) {
+          var msg = 'Unable to pull accounts from the Plaid API.';
+          console.log(msg + '\n' + error);
+          return response.json({
+            error: msg
+          });
+        }
+
+        console.log("authResponse.accounts: " + authResponse.accounts);
+         // [object Object],[object Object],[object Object],[object Object]
+         // These are the different checking/cc banking accounts
+
+        // Admin section for updating account info on Firebase
+        var postData = {
+            'accounts': authResponse.accounts,
+            'institution': institution,
+            'item': item
+        };
+        admin.database().ref('users/' + request.body.userId).update(postData);
+        console.log('posted item for: ' + request.body.userId);
+
+        response.json({
+          error: false,
+          accounts: authResponse.accounts,
+          numbers: authResponse.numbers,
+          institution: institution,
+          item: item
+        });
+      });
     });
   });
 });

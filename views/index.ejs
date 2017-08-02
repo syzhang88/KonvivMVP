@@ -18,20 +18,20 @@
 
         <div id="menu">
             <div class="box">
-                <button class="button2" style="margin:10px 10px 10px 14px;" id="get-accounts-btn"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/geticon.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Accounts</span></button>
-                <button class="button2" style="margin:10px 10px;" id="get-item-btn"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/accounts.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Information</span></button>
-                <button class="button2" style="margin:10px 10px;" id="get-transactions-btn"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/transactions.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Transactions</span></button>
-                <button style="margin:10px 10px;" class="logout-btn button2"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/logout.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Logout</span></button>
+                <button class="headerbutton" style="margin:10px 10px 10px 14px;" id="get-accounts-btn"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/geticon.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Accounts</span></button>
+                <button class="headerbutton" style="margin:10px 10px;" id="get-transactions-btn"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/accounts.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Transactions</span></button>
+                <button class="headerbutton" style="margin:10px 10px;" id="get-link-btn"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/transactions.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Switch Bank</span></button>
+                <button style="margin:10px 10px;" class="logout-btn headerbutton"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/logout.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Logout</span></button>
             </div>
             <div id="get-button-data"></div>
         </div>
 
-        <div id = "demo-help">
+        <!-- <div id = "demo-help">
             <div class = "box">
                 <button class="demo">demo</button>
                 <button class="help">help</button>
             </div>
-        </div>
+        </div> -->
 
         <div class ="box">
             <div class="head">
@@ -39,7 +39,7 @@
             </div>
             <div class = "body">
                  <div id="left-to-spend">
-                 loading
+                     loading
                  </div>
             </div>
         </div>
@@ -51,10 +51,12 @@
             </div>
             <div class = "body">
                 <div id="monthly-income">
-                  loading
+                    loading
                 </div>
                 <div id = "monthly-fixed-bills">
-                    <div id = "bills"></div>
+                    <div id = "total-bills">
+                        loading
+                    </div>
 
                     <div class="wrap0">
                         <div class="circle0" id="Rent and Mortgage">
@@ -92,76 +94,71 @@
         </div>
 
         <div class="box">
-            <div class = "head">
-                <h1> Monthly Spending Buckets </h1>
-            </div>
-            <div class="wrap">
-
-              <!--   <div class="circle" id="Income">
-                    <div class="perc">
-                        <div class="perc-value"></div>
+            <div class = "body">
+                <div class = "head">
+                    <h1> Monthly Spending Buckets </h1>
+                </div>
+                <div class = "wrap">
+                    <div id = "total-spending">
+                        loading
                     </div>
-                    <span class="top"></span>
-                    <span class="bottom"></span>
-              </div> -->
-
-              <div class="circle" id="Bills">
-                  <div class="perc">
-                      <div class="perc-value"></div>
-                  </div>
-                  <span class="top"></span>
-                  <span class="bottom"></span>
-              </div>
-              <div class="circle" id="Eating Out">
-                  <div class="perc">
-                      <div class="perc-value"></div>
-                  </div>
-                  <span class="top"></span>
-                  <span class="bottom"></span>
-              </div>
-              <div class="circle" id="Entertainment">
-                  <div class="perc">
-                      <div class="perc-value"></div>
-                  </div>
-                  <span class="top"></span>
-                  <span class="bottom"></span>
-              </div>
-              <div class="circle" id="Groceries">
-                  <div class="perc">
-                      <div class="perc-value"></div>
-                  </div>
-                  <span class="top"></span>
-                  <span class="bottom"></span>
-              </div>
-            <div class="circle" id="Other Spending">
-                  <div class="perc">
-                      <div class="perc-value"></div>
-                  </div>
-                  <span class="top"></span>
-                  <span class="bottom"></span>
-              </div>
-            <!-- </div> -->
-              <div class="circle" id="Shopping">
-                  <div class="perc">
-                      <div class="perc-value"></div>
-                  </div>
-                  <span class="top"></span>
-                  <span class="bottom"></span>
-              </div>
-              <div class="circle" id="Transportation">
-                  <div class="perc">
-                      <div class="perc-value"></div>
-                  </div>
-                  <span class="top"></span>
-                  <span class="bottom"></span>
-              </div>
-        </div>
-</div>
-        <div id="footer">
-            <div class="box">
-                <button class="link-btn">Link New Bank (Replaces Old Bank)</button>
+                    <div class="circle" id="Variable Bills">
+                        <div class="perc">
+                            <div class="perc-value"></div>
+                        </div>
+                        <span class="top"></span>
+                        <span class="bottom"></span>
+                    </div>
+                    <div class="circle" id="Eating Out">
+                        <div class="perc">
+                            <div class="perc-value"></div>
+                        </div>
+                        <span class="top"></span>
+                        <span class="bottom"></span>
+                    </div>
+                    <div class="circle" id="Entertainment">
+                        <div class="perc">
+                            <div class="perc-value"></div>
+                        </div>
+                        <span class="top"></span>
+                        <span class="bottom"></span>
+                    </div>
+                    <div class="circle" id="Groceries">
+                        <div class="perc">
+                            <div class="perc-value"></div>
+                        </div>
+                        <span class="top"></span>
+                        <span class="bottom"></span>
+                    </div>
+                    <div class="circle" id="Other Spending">
+                        <div class="perc">
+                            <div class="perc-value"></div>
+                        </div>
+                        <span class="top"></span>
+                        <span class="bottom"></span>
+                    </div>
+                    <div class="circle" id="Shopping">
+                        <div class="perc">
+                            <div class="perc-value"></div>
+                        </div>
+                        <span class="top"></span>
+                        <span class="bottom"></span>
+                    </div>
+                    <div class="circle" id="Transportation">
+                        <div class="perc">
+                            <div class="perc-value"></div>
+                        </div>
+                        <span class="top"></span>
+                        <span class="bottom"></span>
+                    </div>
+                </div>
             </div>
         </div>
+        <!-- <div id="footer">
+            <div class="box">
+                <!-- <button class="link-btn">Link New Bank (Replaces Old Bank)</button> -->
+            </div>
+        </div> -->
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
         <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
@@ -204,13 +201,15 @@
                 product: ['transactions'],
                 key: '9f4ef21fdb37b5c0e3f80290db7716',
                 onSuccess: function(public_token) {
+                    // alert('calling /get_access_token...')
                     $.post('/get_access_token', {
-                        public_token: public_token
+                        token: sessionStorage.getItem("token"),
+                        publicToken: public_token,
+                        userId: sessionStorage.getItem("userId")
                     }, function() {
-                        console.log("new bank added!")
                         location.href="index.ejs";
                     });
-                },
+                }
             });
 
             // RESTful call to index.js server using get function
@@ -232,10 +231,12 @@
                     // Using for loop to pull information for each bucket from data
                 } else {
                     console.log(data)
-                    totalBills=0;
+                    var totalBills = 0;
+                    var totalSpending= 0;
+
                     for (var bucketClass in data) {
                         totalAmount=0;
-                        
+
                         for (var key in data[bucketClass]) {
 
                             var bucket = data[bucketClass][key];
@@ -259,26 +260,34 @@
 
                                 /* INCOME CLASS */
                                 income = -(data['Income Buckets']['Income']['Total'])
-                               
-                                $("#monthly-income").text("Total Income: " + income.toFixed(2))
+
+                                $("#monthly-income").text("Monthly Income: " + income.toFixed(2))
 
                             totalAmount += bucketTotal;
 
 
-                            if (bucketClass == 'Fixed Buckets'){ 
-                                totalBills += data['Fixed Buckets'][key]['Total']
+                            if (bucketClass == 'Fixed Buckets'){
+                                totalBills += data[bucketClass][key]['Total'];
+                            } else if (bucketClass == 'Spending Buckets'){
+                                totalSpending += data[bucketClass][key]['Total'];
                             }
 
                         }
                        /* LEFT TO SPEND*/
 
+<<<<<<< HEAD
                        $("#left-to-spend").text(totalAmount.toFixed(2))
                         $("#bills").text("Fixed Monthly Bills: " +totalBills.toFixed(2))
+=======
+                       $("#left-to-spend").text(totalAmount.toFixed(2));
+                       $("#total-bills").text("Monthly Fixed Bills: " +totalBills.toFixed(2));
+                       $("#total-spending").text("Monthly Spending : " +totalSpending.toFixed(2));
+>>>>>>> c848dcd691651b3427cd2a52ec78d8cc988507f9
                        }
                 }
             });
             (function($) {
-                $('.link-btn').on('click', function(e) {
+                $('#get-link-btn').on('click', function(e) {
                     handler.open()
                 });
                 $('.logout-btn').on('click', function(e) {
@@ -296,14 +305,22 @@
                     }, function(data) {
                         buttonValue = "account";
                         $('#get-button-data').slideUp(function() {
-                            var html = '';
+                            var html = '<div class="inner">';
+                            // html += '<p><b>BASIC INFORMATION ABOUT YOUR BANK ACCOUNT<b></p> <br>';
+                            html += '<p><strong>Bank Account: </strong> ' + data.institution.name + '</p>';
+                            html += '<p>Billed products: ' + data.item.billed_products.join(', ') + '</p>';
+                            html += '<p>Available products: ' + data.item.available_products.join(', ') + '</p>';
+                            html += '<br>';
                             data.accounts.forEach(function(account, idx) {
-                                html += '<div class="inner">';
+                                // html += '<div class="inner">';
                                 html += '<strong>' + account.name +
                                 ' $' + (account.balances.available != null ? account.balances.available : account.balances.current) + '</strong><br>';
                                 html += account.subtype + ' ' + account.mask;
-                                html += '</div>';
+                                // html += '</div>';
+                                html += '<br>';
                             });
+                            html += '</div>';
+
                             $(this).html(html).slideDown();
                         });
                     });

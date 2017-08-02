@@ -16,7 +16,7 @@ var spendingBuckets = {
     'Recreation': 'Entertainment',
     'Personal': 'Entertainment',
     'Shops': 'Shopping',
-    'Utilities': 'Bills',
+    'Utilities': 'Variable Bills',
     'Subscription': 'Subscriptions'
 };
 
@@ -35,7 +35,7 @@ var nameBuckets = {
     'Transportation': 'Transportation',
     'Entertainment': 'Entertainment',
     'Shopping': 'Shopping',
-    'Bills': 'Bills',
+    'Variable Bills': 'Variable Bills',
     'Subscriptions': 'Subscriptions',
     'Rent': 'Rent and Mortgage',
     'Insurance': 'Insurance',
@@ -62,7 +62,7 @@ var spendingAmounts = {
     'Transportation': 0,
     'Entertainment': 0,
     'Shopping': 0,
-    'Bills': 0,
+    'Variable Bills': 0,
     'Other Spending': 0
 };
 
@@ -73,7 +73,7 @@ var allAmounts = {
     'Transportation': 0,
     'Entertainment': 0,
     'Shopping': 0,
-    'Bills': 0,
+    'Variable Bills': 0,
     'Subscriptions': 0,
     'Insurance': 0,
     'Loans': 0,

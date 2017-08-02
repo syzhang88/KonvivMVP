@@ -159,14 +159,14 @@
         <button id="btnSecurity" class="btn btn-secondary btn-block btn-large">S e c u r i t y</button>
 
     <script>
-        $(document).ready(function() {
-            console.log("guide page loaded");
-            if (sessionStorage.token && sessionStorage.userId) {
-                console.log('currently not signing in');
-            } else {
-                location.href="/newuser.ejs";
-            }
-        });
+        // $(document).ready(function() {
+        //     console.log("guide page loaded");
+        //     if (sessionStorage.token && sessionStorage.userId) {
+        //         console.log('currently not signing in');
+        //     } else {
+        //         location.href="/newuser.ejs";
+        //     }
+        // });
 
         btnSecurity.addEventListener('click', e => {
             location.href="securityscreen.ejs";
