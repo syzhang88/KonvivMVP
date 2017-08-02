@@ -323,7 +323,7 @@ apiRoutes.post('/transactions', function(request, response, next) {
             error: error});
         }
     transactionsResponse.transactions.forEach(function(txn, idx) {
-        txn.bucket = buckets.selectBucket(txn)[0];
+        txn.bucket = buckets.selectBucket(txn)['bucketName'];
     });
     response.json(transactionsResponse);
   });
