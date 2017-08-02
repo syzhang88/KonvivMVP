@@ -154,14 +154,14 @@
     <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
 
     <script>
-        $(document).ready(function() {
-            console.log("security page loaded");
-            if (sessionStorage.token && sessionStorage.userId) {
-                console.log('currently not signing in');
-            } else {
-                location.href="/newuser.ejs";
-            }
-        });
+        // $(document).ready(function() {
+        //     console.log("security page loaded");
+        //     if (sessionStorage.token && sessionStorage.userId) {
+        //         console.log('currently not signing in');
+        //     } else {
+        //         location.href="/newuser.ejs";
+        //     }
+        // });
 
 
         btnBank.addEventListener('click', e => {

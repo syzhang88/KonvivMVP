@@ -179,13 +179,13 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
 
             //Sign up
             $(function () {
-                $.post('/sign_up', {
-                    username: email,
-                    password: pass,
-                }, function(data) {
-                    if (data.error != null) {
-                        errorMsg = data.error;
-                    }
+                // $.post('/sign_up', {
+                //     username: email,
+                //     password: pass,
+                // }, function(data) {
+                //     if (data.error != null) {
+                //         errorMsg = data.error;
+                //     }
                     if (errorMsg != null) {
                         console.log(errorMsg);
                         // Format the error
@@ -213,7 +213,7 @@ input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
                         sessionStorage.setItem("token", data.token);
                         sessionStorage.setItem("userId", data.userId);
                     }
-                });
+                // });
             });
        });
         var handler = Plaid.create({
