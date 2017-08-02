@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -75,6 +75,9 @@
             color: #444;
         }
 
+        .container {
+          width: 500px;
+        }
 
         body {
           width: 100%;
@@ -86,28 +89,7 @@
             background: -moz-linear-gradient(#09868c, #00b7b8); /* For Firefox 3.6 to 15 */
             background: linear-gradient(#09868c, #00b7b8);
           }
-
-        .login {
-            position: absolute;
-            top: 30%;
-            left: 50%;
-            bottom: 20%;
-            margin: -150px 0 0 -150px;
-            width:300px;
-            height:300px;
-        }
-
-        .login h1{
-
-        text-align: center;
-        vertical-align: middle;
-        color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3);
-            letter-spacing:1px;
-             font-size: 3em;
-            font-family: 'Montserrat', sans-serif;
-
-        }
-
+        
         .back{
           color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3);
             letter-spacing:1px;
@@ -139,6 +121,7 @@
             <h1> Welcome To Konviv </h1>
         </div>
 
+        <div class = "container">
         <div style="margin-top:300px; text-align:center; margin:10px 5px;">
             <p style="font-size:14px; color:#DDD;">
                 <br> Konviv distributes your money into buckets so that you can see exactly how your spending breaks down.
@@ -146,7 +129,7 @@
                 last six months in that bucket.
                 <br>
             </p>
-                <div style="text-align: center;"><img src="../examplebucket.png" alt = "image not loading!"></div>
+                <div style="text-align: center;"><img src="/examplebucket.png" alt = "image not loading!"></div>
             <p style="font-size:14px; color:#DDD;">
                 <br> As you you use money throughout the budget, the buckets will slowly empty out. This way, you can easily
                 see how much money you have left in each bucket before the end of the month!
@@ -157,7 +140,8 @@
 
 
         <button id="btnSecurity" class="btn btn-secondary btn-block btn-large">S e c u r i t y</button>
-
+        
+        </div>
     <script>
         // $(document).ready(function() {
         //     console.log("guide page loaded");

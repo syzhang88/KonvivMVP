@@ -5,6 +5,9 @@
         <title>Konviv MVP</title>
         <link rel="stylesheet" type="text/css" href="style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+@import url('https://fonts.googleapis.com/css?family=Lato');
+</style>
     </head>
     <body>
         <div id="banner">
@@ -35,12 +38,13 @@
 
         <div class ="box">
             <div class="head">
-                <h1> LEFT TO SPEND <h1>
+                <h1> Amount Left <h1>
             </div>
             <div class = "body">
                  <div id="left-to-spend">
                      loading
                  </div>
+                 <div id="string"> total amount left to spend for the month</div>
             </div>
         </div>
 
@@ -49,47 +53,12 @@
             <div class="head">
                 <h1> Monthly Income <h1>
             </div>
-            <div class = "body">
-                <div id="monthly-income">
+
+            <div class="body">
+               <div id="monthly-income">
                     loading
                 </div>
-                <div id = "monthly-fixed-bills">
-                    <div id = "total-bills">
-                        loading
-                    </div>
-
-                    <div class="wrap0">
-                        <div class="circle0" id="Rent and Mortgage">
-                            <div class="perc0">
-                                <div class="perc-value0"></div>
-                            </div>
-                            <span class="top0">Rent and Mortgage</span>
-                            <span class="bottom0"></span>
-                        </div>
-
-                        <div class="circle0" id="Loans">
-                            <div class="perc0">
-                                <div class="perc-value0"></div>
-                            </div>
-                            <span class="top0">Loans</span>
-                            <span class="bottom0"></span>
-                        </div>
-                        <div class="circle0" id="Insurance">
-                            <div class="perc0">
-                                <div class="perc-value0"></div>
-                            </div>
-                            <span class="top0">Insurance</span>
-                            <span class="bottom0"></span>
-                        </div>
-                        <div class="circle0" id="Subscriptions">
-                            <div class="perc0">
-                                <div class="perc-value0"></div>
-                            </div>
-                            <span class="top0">Subscriptions</span>
-                            <span class="bottom0"></span>
-                        </div>
-                    </div>
-                </div>
+                   <div id="string"> monthly amount of money recieved </div>
             </div>
         </div>
 
@@ -154,6 +123,51 @@
                 </div>
             </div>
         </div>
+
+                <div class ="box">
+            <div class="head">
+                <h1> Monthly Bills</h1>
+            </div>
+            <div class = "body">
+                <div id = "monthly-fixed-bills">
+                    <div id = "total-bills">
+                        loading
+                    </div>
+                    <div class="wrap0">
+                        <div class="circle0" id="Rent and Mortgage">
+                            <div class="perc0">
+                                <div class="perc-value0"></div>
+                            </div>
+                            <span class="top0">Rent and Mortgage</span>
+                            <span class="bottom0"></span>
+                        </div>
+
+                        <div class="circle0" id="Loans">
+                            <div class="perc0">
+                                <div class="perc-value0"></div>
+                            </div>
+                            <span class="top0">Loans</span>
+                            <span class="bottom0"></span>
+                        </div>
+                        <div class="circle0" id="Insurance">
+                            <div class="perc0">
+                                <div class="perc-value0"></div>
+                            </div>
+                            <span class="top0">Insurance</span>
+                            <span class="bottom0"></span>
+                        </div>
+                        <div class="circle0" id="Subscriptions">
+                            <div class="perc0">
+                                <div class="perc-value0"></div>
+                            </div>
+                            <span class="top0">Subscriptions</span>
+                            <span class="bottom0"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- <div id="footer">
             <div class="box">
                 <!-- <button class="link-btn">Link New Bank (Replaces Old Bank)</button> -->
@@ -261,7 +275,7 @@
                                 /* INCOME CLASS */
                                 income = -(data['Income Buckets']['Income']['Total'])
 
-                                $("#monthly-income").text("Monthly Income: " + income.toFixed(2))
+                                $("#monthly-income").text("$" + income.toFixed(2))
 
                             totalAmount += bucketTotal;
 
@@ -273,11 +287,13 @@
                             }
 
                         }
-                       /* LEFT TO SPEND*/
-                       $("#left-to-spend").text(totalAmount.toFixed(2));
-                       $("#total-bills").text("Monthly Fixed Bills: " +totalBills.toFixed(2));
-                       $("#total-spending").text("Monthly Spending : " +totalSpending.toFixed(2));
-                   }
+
+                       var left = income - totalBills - totalSpending;
+
+                       $("#left-to-spend").text("$" + left.toFixed(2));
+                       $("#total-bills").text("Spent: $" +totalBills.toFixed(2));
+                       $("#total-spending").text("Spent: $" +totalSpending.toFixed(2));
+                       }
                 }
             });
             (function($) {
