@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>Konviv App</title>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+
+        <style>
+
+        .btn {
+          background-color: #fba40c;
+          background-image: -webkit-linear-gradient(top, #fba40c, #ffb606);
+          background-image: linear-gradient(to bottom, #fba40c, #ffb606);
+          border-width: 0px;
+          box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 1px 2px rgba(19, 49, 69, 0.2);
+          color: #fff;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          padding: 10px 30px;
+          font-size: 18px;
+          border-radius: 4px;
+          display: inline-block;
+          float: left;
+          overflow:auto;
+          margin:6px 0px;
+            }
+        /*
+        .btn:hover, .btn:active, .btn.active, .btn.disabled, .btn[disabled] { background-color: red; }*/
+
+        .btn-large { padding: 9px 14px; line-height: normal; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; }
+
+        /* SIGNUP word color after hover*/
+        .btn:hover { color: white; text-decoration: none; background-color: #a8a8a8; background-position: 0 -15px; -webkit-transition: background-position 0.1s linear; -moz-transition: background-position 0.1s linear; -ms-transition: background-position 0.1s linear; -o-transition: background-position 0.1s linear; transition: background-position 0.1s linear; }
+        .btn-primary {
+          background-color: #fba40c;
+          background-image: -webkit-linear-gradient(top, #fba40c, #ffb606);
+          background-image: linear-gradient(to bottom, #fba40c, #ffb606);
+          border-width: 0px;
+          box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 1px 2px rgba(19, 49, 69, 0.2);
+          color: #fff;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          padding: 10px 30px;
+          font-size: 18px;
+          border-radius: 4px;
+          display: inline-block;
+          float: left;
+          overflow:auto;
+        }
+        .btn-primary:hover {
+          color: #f1f1f1;
+          cursor: pointer;
+        }
+
+        .btn-primary:hover, .btn-primary:active, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled]
+        { background-color: #a8a8a8; /* COLOR OF LOGIN AFTER HOVER */
+        }
+
+        .btn-block { width: 100%; display:block; }
+
+        * { -webkit-box-sizing:border-box; -moz-box-sizing:border-box; -ms-box-sizing:border-box; -o-box-sizing:border-box; box-sizing:border-box; }
+
+        html { width: 100%; height:100%; overflow:hidden; font-family: 'Montserrat', sans-serif;
+        }
+
+        .back {
+            font-size: 12px;
+            text-decoration: none!important;
+            color: #444;
+        }
+
+
+        body {
+          width: 100%;
+          height:100%;
+        font-family: 'Montserrat', sans-serif;
+          background: #00b1b5;
+            background: -webkit-linear-gradient(#09868c, #00b7b8); /* For Safari 5.1 to 6.0 */
+            background: -o-linear-gradient(#09868c, #00b7b8); /* For Opera 11.1 to 12.0 */
+            background: -moz-linear-gradient(#09868c, #00b7b8); /* For Firefox 3.6 to 15 */
+            background: linear-gradient(#09868c, #00b7b8);
+          }
+
+        .login {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            bottom: 20%;
+            margin: -150px 0 0 -150px;
+            width:300px;
+            height:300px;
+        }
+
+        .login h1{
+
+        text-align: center;
+        vertical-align: middle;
+        color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3);
+            letter-spacing:1px;
+             font-size: 3em;
+            font-family: 'Montserrat', sans-serif;
+
+        }
+
+        .back{
+          color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3);
+            letter-spacing:1px;
+        }
+
+        input {
+            width: 100%;
+            margin-bottom: 10px;
+            border:1px solid #EEE;
+            padding: 12px;
+            font-size: 12px;
+            color: #494949;
+            border-radius: 4px;
+        }
+
+        input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+            background-color: black;
+            background-image: none;
+            color: rgb(0, 0, 0);
+
+        input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgba(255,255,255,0.2); }
+
+        </style>
+    </head>
+
+    <body>
+        <div style="margin-top:300px; text-align:center; margin:10px 5px;">
+            <a >&times;</a>
+            <h1> Welcome To Konviv </h1>
+        </div>
+
+        <div style="margin-top:300px; text-align:center; margin:10px 5px;">
+            <p style="font-size:14px; color:#DDD;">
+                <br> Konviv distributes your money into buckets so that you can see exactly how your spending breaks down.
+                Your budget for each bucket, or category, is initially created using the average of your spending for the
+                last six months in that bucket.
+                <br>
+            </p>
+                <div style="text-align: center;"><img src="../examplebucket.png" alt = "image not loading!"></div>
+            <p style="font-size:14px; color:#DDD;">
+                <br> As you you use money throughout the budget, the buckets will slowly empty out. This way, you can easily
+                see how much money you have left in each bucket before the end of the month!
+                <br>
+                <br> Next, click to learn about our security (spoiler: it's real good).
+            </p>
+        </div>
+
+
+        <button id="btnSecurity" class="btn btn-secondary btn-block btn-large">S e c u r i t y</button>
+
+    <script>
+        $(document).ready(function() {
+            console.log("guide page loaded");
+            if (sessionStorage.token && sessionStorage.userId) {
+                console.log('currently not signing in');
+            } else {
+                location.href="/newuser.ejs";
+            }
+        });
+
+        btnSecurity.addEventListener('click', e => {
+            location.href="securityscreen.ejs";
+        });
+
+        //Sign up
+        </script>
+    </body>
+</html>
