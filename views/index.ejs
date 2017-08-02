@@ -286,12 +286,10 @@
                                 totalSpending += data[bucketClass][key]['Total'];
                             }
 
-
-
                         }
 
                        var left = income - totalBills - totalSpending;
-                    
+
                        $("#left-to-spend").text("$" + left.toFixed(2));
                        $("#total-bills").text("Total Bills: $" +totalBills.toFixed(2));
                        $("#total-spending").text("Total Spending: $" +totalSpending.toFixed(2));
@@ -312,9 +310,12 @@
                         buttonValue = "";
                         return $('#get-button-data').slideUp();
                     }
+                    console.log('accounts called...')
+
                     $.post('/accounts', {
                         token: sessionStorage.token
                     }, function(data) {
+                        console.log("Account info: " + data)
                         buttonValue = "account";
                         $('#get-button-data').slideUp(function() {
                             var html = '<div class="inner">';
