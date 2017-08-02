@@ -292,10 +292,17 @@
 
                        var left = income - totalBills - totalSpending;
                     
+<<<<<<< HEAD
                        $("#left-to-spend").text("$" + left.toFixed(2));
                        $("#total-bills").text("Spent: $" +totalBills.toFixed(2));
                        $("#total-spending").text("Spent: $" +totalSpending.toFixed(2));
                        }
+=======
+                       $("#left-to-spend").text(left.toFixed(2));
+                       $("#total-bills").text("Monthly Fixed Bills: " +totalBills.toFixed(2));
+                       $("#total-spending").text("Monthly Spending : " +totalSpending.toFixed(2));
+                   }
+>>>>>>> 268a957dc4bf66613006a43dfbbe3a008c17b6a4
                 }
             });
             (function($) {

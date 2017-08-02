@@ -243,118 +243,68 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
           'error': false
         });
 
+        updateAccounts(() => {});
         updateTransactions(SIX_MONTHS, request.body.accessToken, request.body.userId, () => {});
     });
 });
 
 apiRoutes.post('/accounts', function(request, response, next) {
-  // Retrieve high-level account information and account and routing numbers
-  // for each account associated with the Item.
-  client.getItem(request.body.accessToken, function(error, itemResponse) {
-    if (error != null) {
-      console.log(JSON.stringify(error));
-      return response.json({
-        error: error
-      });
-    }
-    var item = itemResponse.item;
-
-    // Also pull information about the institution
-    client.getInstitutionById(itemResponse.item.institution_id, function(err, instRes) {
-      if (err != null) {
-        var msg = 'Unable to pull institution information from the Plaid API.';
-        console.log(msg + '\n' + error);
-        return response.json({
-          error: msg
-        });
-      }
-      var institution = instRes.institution;
-
-      client.getAuth(request.body.accessToken, function(error, authResponse) {
-
-        if (error != null) {
-          var msg = 'Unable to pull accounts from the Plaid API.';
-          console.log(msg + '\n' + error);
-          return response.json({
-            error: msg
-          });
-        }
-
-        console.log("authResponse.accounts: " + authResponse.accounts);
-         // [object Object],[object Object],[object Object],[object Object]
-         // These are the different checking/cc banking accounts
-
-        // Admin section for updating account info on Firebase
-        var postData = {
-            'accounts': authResponse.accounts,
-            'institution': institution,
-            'item': item
-        };
-        admin.database().ref('users/' + request.body.userId).update(postData);
-        console.log('posted item for: ' + request.body.userId);
-
-        response.json({
-          error: false,
-          accounts: authResponse.accounts,
-          numbers: authResponse.numbers,
-          institution: institution,
-          item: item
-        });
-      });
-    });
-  });
-});
-
-apiRoutes.post('/item', function(request, response, next) {
-  // Pull the Item - this includes information about available products,
-  // billed products, webhook information, and more.
-  client.getItem(request.body.accessToken, function(error, itemResponse) {
-    if (error != null) {
-      console.log(JSON.stringify(error));
-      return response.json({
-        error: error
-      });
-    }
-
-    // Also pull information about the institution
-    client.getInstitutionById(itemResponse.item.institution_id, function(err, instRes) {
-      if (err != null) {
-        var msg = 'Unable to pull institution information from the Plaid API.';
-        console.log(msg + '\n' + error);
-        return response.json({
-          error: msg
-        });
-      } else {
-        response.json({
-          item: itemResponse.item,
-          institution: instRes.institution,
-        });
-      }
-    });
-  });
+    // Retrieve high-level account information and account and routing numbers
+    // for each account associated with the Item.
+    response.json(updateAccounts(() => {}));
 });
 
 apiRoutes.post('/transactions', function(request, response, next) {
-  // Pull transactions for the Item for the last 30 days to the front-end
-  var startDate = moment().format('YYYY-MM-DD').substr(0,8) + '01';
-  var endDate = moment().format('YYYY-MM-DD');
+    // Pull transactions for the Item for the last 30 days to the front-end
+    var startDate = moment().format('YYYY-MM-DD').substr(0,8) + '01';
+    var endDate = moment().format('YYYY-MM-DD');
 
-  client.getTransactions(request.body.accessToken, startDate, endDate, {
-    count: 500,
-    offset: 0,
-  }, function(error, transactionsResponse) {
-    if (error != null) {
-        console.log(JSON.stringify(error));
-        return response.json({
-            error: error});
+    client.getTransactions(request.body.accessToken, startDate, endDate, {
+        count: 500,
+        offset: 0,
+    }, function(error, transactionsResponse) {
+        if (error != null) {
+            console.log(JSON.stringify(error));
+            return response.json({
+                error: error
+            });
         }
-    transactionsResponse.transactions.forEach(function(txn, idx) {
-        txn.bucket = buckets.selectBucket(txn)['bucketName'];
+        transactionsResponse.transactions.forEach(function(txn, idx) {
+            txn.bucket = buckets.selectBucket(txn)['bucketName'];
+        });
+        response.json(transactionsResponse);
     });
-    response.json(transactionsResponse);
-  });
 
-  updateTransactions(SIX_MONTHS, request.body.accessToken, request.body.userId, () => {});
+    updateTransactions(SIX_MONTHS, request.body.accessToken, request.body.userId, () => {});
+});
+
+apiRoutes.post('/savings', function(request, response, next) {
+    client.getAuth(request.body.accessToken, function(error, authResponse) {
+        if (error != null) {
+            var msg = 'Unable to pull accounts from the Plaid API.';
+            console.log(msg + '\n' + error);
+            return {
+                error: msg
+            };
+        }
+        console.log("authResponse.accounts: " + authResponse.accounts);
+
+        var savingsTotal = 0;
+        for (var account in authResponse.accounts) {
+            if (account['subtype'] == 'savings' &&  account['balances']) {
+                savingsTotal += account['balances']['current'];
+            }
+
+        }
+
+        // Admin section for updating account info on Firebase
+        var postData = {
+            'savings': savingsTotal
+        };
+        response.json(postData);
+    }
+
+    updateAccounts(() => {});
 });
 
 apiRoutes.post('/buckets', function(request, response, next) {
@@ -368,6 +318,64 @@ apiRoutes.post('/buckets', function(request, response, next) {
         })
     });
 });
+
+function updateAccounts(callbackFunction) {
+    client.getItem(request.body.accessToken, function(error, itemResponse) {
+      if (error != null) {
+        console.log(error);
+        return {
+          error: error
+        };
+      }
+      var item = itemResponse.item;
+
+      // Also pull information about the institution
+      client.getInstitutionById(itemResponse.item.institution_id, function(err, instRes) {
+        if (err != null) {
+          var msg = 'Unable to pull institution information from the Plaid API.';
+          console.log(msg + '\n' + error);
+          return {
+            error: msg
+          };
+        }
+        var institution = instRes.institution;
+
+        client.getAuth(request.body.accessToken, function(error, authResponse) {
+
+          if (error != null) {
+            var msg = 'Unable to pull accounts from the Plaid API.';
+            console.log(msg + '\n' + error);
+            return {
+              error: msg
+            };
+          }
+
+          console.log("authResponse.accounts: " + authResponse.accounts);
+           // [object Object],[object Object],[object Object],[object Object]
+           // These are the different checking/cc banking accounts
+
+          // Admin section for updating account info on Firebase
+          var postData = {
+              'accounts': authResponse.accounts,
+              'institution': institution,
+              'item': item
+          };
+          admin.database().ref('users/' + request.body.userId).update(postData);
+          console.log('posted item for: ' + request.body.userId);
+
+          callbackFunction();
+
+          return {
+            error: false,
+            accounts: authResponse.accounts,
+            numbers: authResponse.numbers,
+            institution: institution,
+            item: item
+          };
+        });
+      });
+    });
+}
 
 function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
     var startDate = moment().subtract(timePeriod, 'months').format('YYYY-MM-DD');
