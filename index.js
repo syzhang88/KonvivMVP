@@ -302,7 +302,7 @@ apiRoutes.post('/savings', function(request, response, next) {
             'savings': savingsTotal
         };
         response.json(postData);
-    }
+    });
 
     updateAccounts(() => {});
 });
