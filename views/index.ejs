@@ -54,7 +54,6 @@
                   loading
                 </div>
                 <div id = "monthly-fixed-bills">
-                    <h1> Monthly Fixed Bills: -$600</h1>
                     <div id = "bills"></div>
 
                     <div class="wrap0">
@@ -233,13 +232,12 @@
                     // Using for loop to pull information for each bucket from data
                 } else {
                     console.log(data)
+                    totalBills=0;
                     for (var bucketClass in data) {
                         totalAmount=0;
+                        
                         for (var key in data[bucketClass]) {
-<<<<<<< HEAD
-=======
 
->>>>>>> 9e0621a2a6284a619f7dffea0155e7340597d7dc
                             var bucket = data[bucketClass][key];
                             var fillPercent = 0;
 
@@ -261,19 +259,22 @@
 
                                 /* INCOME CLASS */
                                 income = -(data['Income Buckets']['Income']['Total'])
-                                $("#monthly-income").text("Total Income: " + income)
+                               
+                                $("#monthly-income").text("Total Income: " + income.toFixed(2))
 
                             totalAmount += bucketTotal;
 
-                            
 
-                            // if (data[bucketClass] == 'Fixed Buckets'){ 
-                            //     console.log(data[bucketClass])
-                            // totalBills += data['Fixed Buckets'][key]['Total']
-                            // }
+                            if (bucketClass == 'Fixed Buckets'){ 
+                                totalBills += data['Fixed Buckets'][key]['Total']
+                            }
+
                         }
                        /* LEFT TO SPEND*/
-                       $("#left-to-spend").text(totalAmount)
+
+                       $("#left-to-spend").text(totalAmount.toFixed(2))
+                        $("#bills").text("Fixed Monthly Bills: " +totalBills.toFixed(2))
+
                        }
                 }
             });

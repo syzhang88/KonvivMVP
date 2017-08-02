@@ -313,7 +313,8 @@ h1 {
 
 }
 
-#monthly-fixed-bills h1 {
+/*#monthly-fixed-bills h1 */
+#bills{
     text-align: center;
     font-size:40px;
     color: #F06560;
