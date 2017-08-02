@@ -277,8 +277,8 @@
 
                                 $("#monthly-income").text("$" + income.toFixed(2))
 
-                            totalAmount += bucketTotal;
-
+                            totalAmount += bucketSpent;
+                            /*edit: bucketTotal*/
 
                             if (bucketClass == 'Fixed Buckets'){
                                 totalBills += data[bucketClass][key]['Total'];
@@ -293,8 +293,8 @@
                        var left = income - totalBills - totalSpending;
                     
                        $("#left-to-spend").text("$" + left.toFixed(2));
-                       $("#total-bills").text("Spent: $" +totalBills.toFixed(2));
-                       $("#total-spending").text("Spent: $" +totalSpending.toFixed(2));
+                       $("#total-bills").text("Total Bills: $" +totalBills.toFixed(2));
+                       $("#total-spending").text("Total Spending: $" +totalSpending.toFixed(2));
                        }
                 }
             });
