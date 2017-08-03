@@ -485,7 +485,7 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
         }
 
 
-        admin.database().ref("users/" + userId + "/bucketMoney/").set(allBucketData);
+        admin.database().ref("users/" + userId + "/bucketMoney/").update(allBucketData);
 
         callbackFunction();
 

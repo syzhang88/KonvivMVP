@@ -41,7 +41,7 @@
                 <h1> Emergency Savings Goal </h1>
             </div>
             <div class = "body">
-                <div id = "savings-bucket">
+                <div id = "Savings Account">
                     <div class="wrap-savings">
                         <div class="circle-savings" id="Emergency Savings">
                             <div class="perc-savings">
@@ -275,10 +275,10 @@
                     bucketTotal = Math.round(bucket['Total']*100)/100;
                     newPercent = fillPercent;
 
-                    var selector = "[id=savings-bucket]";
+                    var selector = "[id='Savings Account']";
 
                     $(selector)
-                        .find(".top-savings").text("savings-bucket").end()
+                        .find(".top-savings").text("Savings Account").end()
                         .find(".bottom-savings").text("$" + bucketSavings + " of $" + bucketTotal).end()
                         .find(".perc-value-savings").css("height", newPercent + "%")
                 }
