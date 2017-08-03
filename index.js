@@ -238,8 +238,8 @@ apiRoutes.post('/rename_bucket',function(request,response,next){
     console.log(request.body.token)
     console.log(bucket)
     console.log("USER ID IS :"+user_id)
-    var bucket_path_1='users/'+user_id+'/bucketTransactions/'+bucket'
-    var bucket_path_2='users/'+user_id+'/bucketMoney/Spending Buckets/'+bucket'
+    var bucket_path_1='users/'+user_id+'/bucketTransactions/'+bucket
+    var bucket_path_2='users/'+user_id+'/bucketMoney/Spending Buckets/'+bucket
     buckets.renameBucket(bucket_path_1,bucket_path_2,"NEW NAME")
 });
 
