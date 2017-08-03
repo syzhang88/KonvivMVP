@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Konviv App</title>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+
+</head>
+
+    <body>
+
+    <div class="login">
+    <p><a class="back" href="/">< Back</a></p> <br><br>
+    <h1 style="font-size:45px;">Edit Bucket</h1>
+          <input id="editName" placeholder="New Bucket Name" />
+          <button id="btnName" class="btn btn-secondary btn-block btn-large">Edit Name</button>
+
+          <input id="editSize" placeholder="New Bucket Size" />
+          <button id="btnSize" class="btn btn-secondary btn-block btn-large">Edit Size</button>
+
+          <input id="moveTransaction" placeholder="New Transaction" />
+          <button id="btnMove" class="btn btn-secondary btn-block btn-large">Move Transaction</button>
+
+          <br/>
+
+           <div id='get-button-data'> </div>
+        <br /><br /><br /><br /><br /><br /><br /><br />
+           <div style="margin-top:300px; text-align:center; margin:10px 5px;"><p style="font-size:14px; color:#DDD;">Konviv uses a secure connection and 256-bit encryption just like your bank!</p></div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            console.log("bucket page loaded");
+            if (sessionStorage.token) {
+                location.href="/index.ejs";
+            } else {
+                console.log('currently logged out');
+            }
+        });
+
+        btnName.addEventListener('click', e => {
+            var errorCode = null;
+            var errorMsg = null;
+
+            //Sign up
+            $(function () {
+                
+            });
+       });
+    </script>
+</body>
+</html>

@@ -109,6 +109,13 @@ app.get('/securityscreen.ejs', function(request, response, next) {
     });
 });
 
+app.get('/bucketpage.ejs', function(request, response, next) {
+    response.render('bucketpage.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+});
+
 app.post('/log_in', function(request, response, next) {
     console.log('attempting login...');
     var success = {
