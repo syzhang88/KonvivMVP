@@ -290,18 +290,37 @@ apiRoutes.post('/savings', function(request, response, next) {
             };
         }
 
-        var savingsTotal = 0;
+        var savingsAccount = 0;
         for (var account in authResponse.accounts) {
-            if (account['subtype'] == 'savings' &&  account['balances']) {
-                savingsTotal += account['balances']['current'];
+            if (account['subtype'] == 'savings' &&  authResponse.accounts[account]['balances'] != null) {
+                savingsAccount += account['balances']['current'];
+                // console.log(savingsAccount);
             }
         }
 
-        var postData = {
-            'savings': savingsTotal
-        };
-        response.json(postData);
+        admin.database().ref('users/' + request.body.userId + '/bucketMoney').once('value', function(snapshot) {
+            var savingsTotal = 0;
+            for (var bucketClass in snapshot.val()) {
+                if (bucketClass != "Savings Buckets" && bucketClass != "Income Buckets" ) {
+                    for (var bucketName in snapshot.val()[bucketClass]) {
+                        // console.log("savingsTotal: " + bucketName + " " +
+                        //     snapshot.val()[bucketClass][bucketName]['Total']);
+                        savingsTotal += snapshot.val()[bucketClass][bucketName]['Total'];
+                    }
+                }
+            }
+            var postData = {
+                'Savings': savingsAccount,
+                'Total': savingsTotal * request.body.months
+            };
+            admin.database().ref('users/' + request.body.userId + '/bucketMoney/Savings Buckets/').set(postData);
+            response.json(postData);
+        });
+
+
     });
+
+
 
     updateAccounts(request.body.accessToken, request.body.userId, () => {});
 });
@@ -314,7 +333,7 @@ apiRoutes.post('/buckets', function(request, response, next) {
             console.log( "INSIDE BUCKETS IN INDEX.JS SENDING SNAPSHOT")
             //console.log(snapshot.val());
             response.json(snapshot.val());
-        })
+        });
     });
 });
 
@@ -394,6 +413,7 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
         var bucketSpending = buckets.clone(buckets.spendingAmounts);
         var bucketFixed = buckets.clone(buckets.fixedAmounts);
         var bucketIncome = buckets.clone(buckets.incomeAmounts);
+        var bucketSavings = buckets.clone(buckets.savingsAmounts);
         var bucketTotal = buckets.clone(buckets.allAmounts);
         // Sam: Begin admin section for updating transaction data
 
@@ -432,6 +452,7 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
             "Income Buckets": {}
         }
 
+
         for (var bucket in bucketSpending) {
             if (!isNaN(bucketTotal[bucket])) {
                // console.log("updateTransactions for " + bucket + ": " + bucketTotal[bucket] + "/" + timePeriod);
@@ -441,6 +462,7 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
                         Total: bucketTotal[bucket]/timePeriod
                     };
             }
+            // bucketSavings += allBucketData["Spending Buckets"][bucket][Total];
         }
         for (var bucket in bucketFixed) {
             if (!isNaN(bucketTotal[bucket])) {
@@ -450,6 +472,7 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
                         Total: bucketTotal[bucket]/timePeriod
                     };
             }
+            // bucketSavings += allBucketData["Fixed Buckets"][bucket][Total];
         }
         for (var bucket in bucketIncome) {
             if (!isNaN(bucketTotal[bucket])) {
@@ -460,6 +483,7 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
                     };
             }
         }
+
 
         admin.database().ref("users/" + userId + "/bucketMoney/").set(allBucketData);
 

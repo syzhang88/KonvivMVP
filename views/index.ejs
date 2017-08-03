@@ -38,6 +38,26 @@
 
         <div class ="box">
             <div class="head">
+                <h1> Emergency Savings Goal </h1>
+            </div>
+            <div class = "body">
+                <div id = "savings-bucket">
+                    <div class="wrap-savings">
+                        <div class="circle-savings" id="Emergency Savings">
+                            <div class="perc-savings">
+                                <div class="perc-value-savings"></div>
+                            </div>
+                            <span class="top-savings"></span>
+                            <span class="bottom-savings"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class ="box">
+            <div class="head">
                 <h1> Amount Left <h1>
             </div>
             <div class = "body">
@@ -55,10 +75,12 @@
             </div>
 
             <div class="body">
-               <div id="monthly-income">
+                <div id="monthly-income">
                     loading
                 </div>
-                   <div id="string"> monthly amount of money recieved </div>
+                <div id="string">
+                    monthly amount of money recieved
+                </div>
             </div>
         </div>
 
@@ -124,7 +146,7 @@
             </div>
         </div>
 
-                <div class ="box">
+        <div class ="box">
             <div class="head">
                 <h1> Monthly Bills</h1>
             </div>
@@ -133,52 +155,48 @@
                     <div id = "total-bills">
                         loading
                     </div>
-                    <div class="wrap0">
-                        <div class="circle0" id="Rent and Mortgage">
-                            <div class="perc0">
-                                <div class="perc-value0"></div>
+                    <div class="wrap-bills">
+                        <div class="circle-bills" id="Rent and Mortgage">
+                            <div class="perc-bills">
+                                <div class="perc-value-bills"></div>
                             </div>
-                            <span class="top0">Rent and Mortgage</span>
-                            <span class="bottom0"></span>
+                            <span class="top-bills">Rent and Mortgage</span>
+                            <span class="bottom-bills"></span>
                         </div>
 
-                        <div class="circle0" id="Loans">
-                            <div class="perc0">
-                                <div class="perc-value0"></div>
+                        <div class="circle-bills" id="Loans">
+                            <div class="perc-bills">
+                                <div class="perc-value-bills"></div>
                             </div>
-                            <span class="top0">Loans</span>
-                            <span class="bottom0"></span>
+                            <span class="top-bills">Loans</span>
+                            <span class="bottom-bills"></span>
                         </div>
-                        <div class="circle0" id="Insurance">
-                            <div class="perc0">
-                                <div class="perc-value0"></div>
+                        <div class="circle-bills" id="Insurance">
+                            <div class="perc-bills">
+                                <div class="perc-value-bills"></div>
                             </div>
-                            <span class="top0">Insurance</span>
-                            <span class="bottom0"></span>
+                            <span class="top-bills">Insurance</span>
+                            <span class="bottom-bills"></span>
                         </div>
-                        <div class="circle0" id="Subscriptions">
-                            <div class="perc0">
-                                <div class="perc-value0"></div>
+                        <div class="circle-bills" id="Subscriptions">
+                            <div class="perc-bills">
+                                <div class="perc-value-bills"></div>
                             </div>
-                            <span class="top0">Subscriptions</span>
-                            <span class="bottom0"></span>
+                            <span class="top-bills">Subscriptions</span>
+                            <span class="bottom-bills"></span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- <div id="footer">
-            <div class="box">
-                <!-- <button class="link-btn">Link New Bank (Replaces Old Bank)</button> -->
-            </div>
-        </div> -->
-
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
         <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
         <script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
 
         <script>
+            var testTimePeriod = 6;
+
             if (sessionStorage.token) {
                 console.log('currently logged in');
             } else {
@@ -226,7 +244,46 @@
                 }
             });
 
-            // RESTful call to index.js server using get function
+            // RESTful calls to index.js server using post function
+            $.post('/savings', {
+                token: sessionStorage.token,
+                months: testTimePeriod
+            }, function(data) {
+                // Catching error
+
+                if (data.error != null) {
+                    // Format the error
+                    var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
+                    // Render the error
+
+                    $('#get-button-data').slideUp(function() {
+                        $(this).slideUp(function() {
+                            $(this).html(errorHtml).slideDown();
+                        });
+                    });
+                    // Using for loop to pull information for each bucket from data
+                } else {
+                    console.log(data)
+                    var bucket = data;
+                    var fillPercent = 0;
+
+                    // Accounting for divide-by-zero error
+                    if (bucket['Total'] > 0) {
+                        fillPercent = (bucket['Savings']/bucket['Total'])*100
+                    }
+                    bucketSavings = Math.round(bucket['Savings']*100)/100;
+                    bucketTotal = Math.round(bucket['Total']*100)/100;
+                    newPercent = fillPercent;
+
+                    var selector = "[id=savings-bucket]";
+
+                    $(selector)
+                        .find(".top-savings").text("savings-bucket").end()
+                        .find(".bottom-savings").text("$" + bucketSavings + " of $" + bucketTotal).end()
+                        .find(".perc-value-savings").css("height", newPercent + "%")
+                }
+            });
+
             $.post('/buckets', {
                 token: sessionStorage.token
             }, function(data) {
@@ -268,9 +325,9 @@
                              var selector = '[id="' + key + '"]';
 
                              $(selector)
-                                .find(".top0,.top").text(key).end()
-                                .find(".bottom0,.bottom").text("$" + bucketSpent + " of $" + bucketTotal).end()
-                                .find(".perc-value0,.perc-value").css("height", newPercent + "%")
+                                .find(".top-bills,.top").text(key).end()
+                                .find(".bottom-bills,.bottom").text("$" + bucketSpent + " of $" + bucketTotal).end()
+                                .find(".perc-value-bills,.perc-value").css("height", newPercent + "%")
 
                                 /* INCOME CLASS */
                                 income = -(data['Income Buckets']['Income']['Total'])
@@ -296,6 +353,7 @@
                        }
                 }
             });
+
             (function($) {
                 $('#get-link-btn').on('click', function(e) {
                     handler.open()
