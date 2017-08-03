@@ -342,59 +342,6 @@ h1 {
 
 /**CSS BRO */
 
-.wrap-savings {
-  text-align: center;
-  margin: 0px;
-}
-.wrap-savings .circle-savings {
-  background-color: #daa520;
-  width: 220px;
-  height: 220px;
-  border-radius: 100%;
-  border: 10px solid white;
-  margin: 30px 20px;
-  display: inline-block;
-  position: relative;
-}
-.wrap-savings .circle-savings .perc-savings {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: #61cb43;
-  border-radius: 100%;
- overflow: hidden;
-}
-.wrap-savings .circle-savings .perc-savings .perc-value-savings {
-  position: absolute;
-  content: " ";
-  height: 100%;
-  width: 100%;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  background-color: #fff;
-}
-.wrap-savings .circle-savings span {
-  position: absolute;
-  left: 0;
-  right: 0;
-  margin: 0 15px;
-  background-color: transparent;
-  z-index: 2;
-  padding: 5px;
-  border-radius: 3px;
-}
-.wrap-savings .circle-savings .top-savings {
-    top: -38px;
-    font-size:18px;
-    font-weight: bold;
-}
-
-.wrap-savings .circle-savings .bottom-savings {
-    bottom: 78px;
-    font-size:30px;
-}
-
 .wrap-bills {
   text-align: center;
   margin: 0px;
@@ -454,6 +401,62 @@ h1 {
 * {
   margin: 0; padding: 0; list-style: none; line-height: 1;
 }
+
+.wrap-savings {
+    text-align: center;
+    margin: 15px;
+}
+.wrap-savings .circle-savings {
+  background-color: #cceff0;
+  width: 220px;
+  height: 220px;
+  border-radius: 100%;
+  border: 1px solid #ccc;
+  margin: 30px 20px;
+  display: inline-block;
+  position: relative;
+}
+.wrap-savings .circle-savings .perc-savings {
+    position: absolute;
+    width: 200px; /*200*/
+    height: 200px;
+    left: 50%;
+    top: 50%;
+    background-color:#61cb43;
+    border-radius: 100%;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+}
+.wrap-savings .circle-savings .perc-savings .perc-value-savings {
+    position: absolute;
+    content: " ";
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background-color: #fff;
+}
+.wrap-savings .circle-savings span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 15px;
+    background-color: transparent;
+    z-index: 2;
+    padding: 5px;
+    border-radius: 3px;
+}
+.wrap-savings .circle-savings .top-savings {
+    top: -38px;
+    font-size:18px;
+    font-weight: bold;
+}
+.wrap-savings .circle-savings .bottom-savings {
+    bottom: 78px;
+    font-size:30px;
+}
+
 .wrap {
   text-align: center;
   margin: 15px;
@@ -503,14 +506,11 @@ h1 {
   top: -38px;
   font-size:18px;
   font-weight: bold;
-
 }
-
 .wrap .circle .bottom {
   bottom: 78px;
   font-size:30px;
 }
-
 
 #get-button-data {
     display: none;
@@ -523,6 +523,4 @@ h1 {
 #footer .box{
   background: #e4e4e4;
   margin-bottom: 30px;
-
-
 }
