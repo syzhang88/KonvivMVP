@@ -269,7 +269,7 @@
 
                     // Accounting for divide-by-zero error
                     if (bucket['Total'] > 0) {
-                        fillPercent = (bucket['Savings']/bucket['Total'])*100
+                        fillPercent = 100 - (bucket['Savings']/bucket['Total'])*100
                     }
                     bucketSavings = Math.round(bucket['Savings']*100)/100;
                     bucketTotal = Math.round(bucket['Total']*100)/100;
