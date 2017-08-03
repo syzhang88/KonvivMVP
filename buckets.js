@@ -1,4 +1,6 @@
+var admin = require("firebase-admin");
 var firebase = require("firebase");
+var serviceAccount = require("./konvivandroid-firebase-adminsdk-re0l3-f09e6af5d7.json");
 
 const MONTH_PERIOD = 30;
 
@@ -276,3 +278,19 @@ exports.renameBucket = function renameBucket (newName, oldName) {
         }
     }
 }
+
+exports.bucketInfo=function bucketInfo(bucketpath){
+    admin.database().ref(bucketpath).once('value').then(function(snapshot) {
+        console.log(bucketpath)
+        var bucket_transactions=snapshot.val()
+        for (var key in bucket_transactions){
+            if(bucket_transactions.hasOwnProperty(key)){
+                console.log('Transaction Name: '+bucket_transactions[key]['name'])
+                console.log('Amount: '+bucket_transactions[key]['amount'])
+                console.log('Date: '+bucket_transactions[key]['date'])
+            }
+        }
+     });
+}
+
+
