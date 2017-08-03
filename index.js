@@ -225,6 +225,32 @@ apiRoutes.use(function(request, response, next) {
 	}
 });
 
+//BUCKET FUNCTIONALITIES HERE ...
+
+apiRoutes.post('/get_info',function(request,response,next){
+    console.log("RECIEVED")
+    var user_id = request.body.userId
+    var bucket=request.body.which_bucket
+    console.log(request.body.token)
+    console.log(bucket)
+    console.log("USER ID IS :"+user_id)
+    var bucket_path='users/'+user_id+'/bucketTransactions/'+bucket+'/2017-07'
+    buckets.bucketInfo(bucket_path)
+});
+
+apiRoutes.post('/rename_bucket',function(request,response,next){
+    console.log("RECIEVED")
+    var user_id = request.body.userId
+    var bucket=request.body.which_bucket
+    console.log(request.body.token)
+    console.log(bucket)
+    console.log("USER ID IS :"+user_id)
+    var bucket_path_1='users/'+user_id+'/bucketTransactions/'+bucket
+    var bucket_path_2='users/'+user_id+'/bucketMoney/Spending Buckets/'+bucket
+    buckets.renameBucket(bucket_path_1,bucket_path_2,"NEW NAME")
+});
+
+
 apiRoutes.post('/get_access_token', function(request, response, next) {
     // We HAVE to store the access token, so that Plaid does not think the
     // user is a new user logging in each time and create duplicate transactions

@@ -93,49 +93,49 @@
                     <div id = "total-spending">
                         loading
                     </div>
-                    <div class="circle" id="Variable Bills">
+                    <div class="circle" id="Variable Bills" onclick="get_details('Variable Bills')" style="cursor: pointer;">
                         <div class="perc">
                             <div class="perc-value"></div>
                         </div>
                         <span class="top"></span>
                         <span class="bottom"></span>
                     </div>
-                    <div class="circle" id="Eating Out">
+                    <div class="circle" id="Eating Out" onclick="get_details('Eating Out')" style="cursor: pointer;">
                         <div class="perc">
                             <div class="perc-value"></div>
                         </div>
                         <span class="top"></span>
                         <span class="bottom"></span>
                     </div>
-                    <div class="circle" id="Entertainment">
+                    <div class="circle" id="Entertainment" onclick="get_details('Entertainment')" style="cursor: pointer;">
                         <div class="perc">
                             <div class="perc-value"></div>
                         </div>
                         <span class="top"></span>
                         <span class="bottom"></span>
                     </div>
-                    <div class="circle" id="Groceries">
+                    <div class="circle" id="Groceries" onclick="get_details('Groceries')" style="cursor: pointer;">
                         <div class="perc">
                             <div class="perc-value"></div>
                         </div>
                         <span class="top"></span>
                         <span class="bottom"></span>
                     </div>
-                    <div class="circle" id="Other Spending">
+                    <div class="circle" id="Other Spending" onclick="get_details('Other Spending')" style="cursor: pointer;">
                         <div class="perc">
                             <div class="perc-value"></div>
                         </div>
                         <span class="top"></span>
                         <span class="bottom"></span>
                     </div>
-                    <div class="circle" id="Shopping">
+                    <div class="circle" id="Shopping" onclick="get_details('Shopping')" style="cursor: pointer;">
                         <div class="perc">
                             <div class="perc-value"></div>
                         </div>
                         <span class="top"></span>
                         <span class="bottom"></span>
                     </div>
-                    <div class="circle" id="Transportation">
+                    <div class="circle" id="Transportation" onclick="get_details('Transportation')" style="cursor: pointer;">
                         <div class="perc">
                             <div class="perc-value"></div>
                         </div>
@@ -243,6 +243,28 @@
                     });
                 }
             });
+            
+            //Bucket Functionalities START here...
+            
+             function get_details(bucket_name){
+                console.log(bucket_name)
+                //modal.style.display = "block";
+                $.post('/get_info',{
+                    which_bucket:bucket_name,
+                    token: sessionStorage.token
+                });
+             }
+             
+              function rename_bucket(bucket_name){
+                console.log(bucket_name)
+                //modal.style.display = "block";
+                $.post('/rename_bucket',{
+                    which_bucket:bucket_name,
+                    token: sessionStorage.token
+                });
+             }
+             
+             // Bucket Functionalities END here...
 
             // RESTful calls to index.js server using post function
             $.post('/savings', {
