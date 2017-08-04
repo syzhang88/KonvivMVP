@@ -270,13 +270,13 @@ exports.moveMoney = function moveMoney (amount, oldBucketPath, newBucketPath) {
 
 // Each bucket has a key named 'Name' in its hashtable (dictionary) underneath
 // the branch /bucketMoney on Firebase. You can change this name here
-exports.renameBucket = function renameBucket (newName, oldName) {
-    for (var key in nameBuckets) {
-        if (nameBuckets[key] == oldName) {
-            nameBuckets[key] = newName;
-            console.log('bucket ' + oldName + ' has been named ' + newName);
-        }
-    }
+exports.renameBucket = function renameBucket (path_1,path_2,newName) {
+     var db=admin.database()
+     var ref_2=db.ref(path_2)
+     ref_2.update({
+        "Name":newName
+    })
+    
 }
 
 exports.bucketInfo=function bucketInfo(bucketpath){

@@ -72,26 +72,34 @@
 
             var selector = "[id='page title']";
 
-            $(selector).text("Edit "  + sessionStorage.bucketPage + " Bucket").end();
+            $(selector).text("Edit "  + sessionStorage.getItem("bucketPage") + " Bucket").end();
 
-        function get_details(bucket_name){
+        function get_details(){
            console.log(bucket_name)
            //modal.style.display = "block";
            $.post('/get_info',{
-               which_bucket:bucket_name,
+               which_bucket:sessionStorage.getItem("bucketPage"),
                token: sessionStorage.token
            });
         }
 
-         function rename_bucket(bucket_name){
+         function rename_bucket(){
            console.log(bucket_name)
            //modal.style.display = "block";
            $.post('/rename_bucket',{
-               which_bucket:bucket_name,
+               which_bucket:sessionStorage.getItem("bucketPage"),
+               new_name:editName.value,
                token: sessionStorage.token
            });
         }
-
+         function change_size(){
+            $.post('/change_size',{
+                amount:editSizeAmount.value,
+                from_bucket:sessionStorage.getItem("bucketPage"),
+                to_bucket:editSizeBucket.value
+                token: sessionStorage.token
+            })
+         }
         btnName.addEventListener('click', e => {
             var errorCode = null;
             var errorMsg = null;
