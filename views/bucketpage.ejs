@@ -83,7 +83,8 @@
            $.post('/get_info',{
                which_bucket:sessionStorage.getItem("bucketPage"),
                token: sessionStorage.token
-           });
+           }, callResult(data));
+
         }
 
          function rename_bucket(){
@@ -96,7 +97,7 @@
                   which_bucket:sessionStorage.getItem("bucketPage"),
                   new_name:editName.value,
                   token: sessionStorage.token
-              });
+              }, callResult(data));
            }
         }
          function change_size(){
@@ -105,8 +106,37 @@
                 from_bucket:sessionStorage.getItem("bucketPage"),
                 to_bucket:editSizeBucket.value,
                 token: sessionStorage.token
-            })
+            }, callResult(data));
          }
+
+         function callResult(data) {
+             if (data.error != null) {
+                 if (data.message == 'Failed to authenticate token.') {
+                     sessionStorage.clear();
+                     location.href = '/';
+                 }
+                 // Format the error
+                 var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
+                 // Render the error
+
+                 $('#get-button-data').slideUp(function() {
+                     $(this).slideUp(function() {
+                         $(this).html(errorHtml).slideDown();
+                     });
+                 });
+                 // Using for loop to pull information for each bucket from data
+             } else {
+                 var successHtml = '<div class="inner"><p><strong> Edit Success! </strong></p></div>';
+                 // Render the error
+
+                 $('#get-button-data').slideUp(function() {
+                     $(this).slideUp(function() {
+                         $(this).html(successHtml).slideDown();
+                     });
+                 });
+             }
+         });
+
         btnName.addEventListener('click', e => {
             var errorCode = null;
             var errorMsg = null;
