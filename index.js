@@ -251,14 +251,26 @@ apiRoutes.post('/rename_bucket',function(request,response,next){
     console.log("RECIEVED")
     var user_id = request.body.userId
     var bucket=request.body.which_bucket
+    var new_name=request.body.new_name
     //console.log(request.body.token)
     console.log(bucket)
     console.log("USER ID IS :"+user_id)
-    var bucket_path_1='users/'+user_id+'/bucketTransactions/'+bucket
-    var bucket_path_2='users/'+user_id+'/bucketMoney/Spending Buckets/'+bucket
-    buckets.renameBucket(bucket_path_1,bucket_path_2,"NEW NAME")
+    var bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+bucket
+    buckets.renameBucket(bucket_path,new_name)
 });
 
+apiRoutes.post('/change_size',function(request,response,next){
+    console.log("RECIEVED")
+    var from_bucket=request.body.from_bucket
+    var to_bucket=request.body.to_bucket
+    var amount=request.body.amount
+    //console.log(request.body.token)
+    console.log(bucket)
+    console.log("USER ID IS :"+user_id)
+    var from_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+from_bucket
+    var to_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+to_bucket
+    buckets.changeBucketsize(from_bucket_path,to_bucket_path,amount)
+});
 
 apiRoutes.post('/get_access_token', function(request, response, next) {
     // We HAVE to store the access token, so that Plaid does not think the
