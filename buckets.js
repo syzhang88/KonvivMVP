@@ -265,7 +265,7 @@ exports.changeBucketsize = function changeBucketsize (from_bucket_path,to_bucket
         admin.database().ref(to_bucket_path).update(newBucket);
         console.log(newBucket['Total'])
     });
-    
+
 
     return true;
 }
@@ -281,7 +281,7 @@ exports.renameBucket = function renameBucket (path, newName) {
 
 }
 
-exports.bucketInfo=function bucketInfo(bucketpath){
+exports.bucketInfo = function bucketInfo(bucketpath){
     admin.database().ref(bucketpath).once('value').then(function(snapshot) {
         console.log(bucketpath)
         var bucket_transactions=snapshot.val()
@@ -292,5 +292,12 @@ exports.bucketInfo=function bucketInfo(bucketpath){
                 console.log('Date: '+bucket_transactions[key]['date'])
             }
         }
-     });
-}
+    }).catch(function(error) {
+        var errorMessage = error.message;
+        console.log('failed to call bucketInfo: ' + errorMessage);
+        return {
+            error: error,
+            error: errorMessage
+        };
+    });
+};

@@ -259,9 +259,9 @@ apiRoutes.post('/get_info',function(request,response,next){
     var bucket=request.body.which_bucket
     //console.log(request.body.token)
     console.log(bucket)
-    console.log("USER ID IS :"+user_id)
-    var bucket_path='users/'+user_id+'/bucketTransactions/'+bucket+'/2017-07'
-    buckets.bucketInfo(bucket_path)
+    console.log("USER ID IS : "+user_id)
+    var bucket_path = 'users/'+user_id+'/bucketTransactions/'+bucket+'/' + moment().format('YYYY-MM-DD').substr(0,7)
+    response.json(buckets.bucketInfo(bucket_path));
 });
 
 apiRoutes.post('/rename_bucket',function(request,response,next){
@@ -303,7 +303,7 @@ apiRoutes.post('/change_size',function(request,response,next){
     var from_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+from_bucket
     var to_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+to_bucket
     buckets.changeBucketsize(from_bucket_path,to_bucket_path,amount)
-}
+});
 
 
 apiRoutes.post('/get_access_token', function(request, response, next) {
@@ -399,9 +399,7 @@ apiRoutes.post('/savings', function(request, response, next) {
                     for (var bucketName in snapshot.val()[bucketClass]) {
                         // console.log("savingsTotal: " + bucketName + " " +
                         //     snapshot.val()[bucketClass][bucketName]['Total']);
-                        savingsTotal += snapshot.val()[bucketClass][bucketName]['Total'];
-                        // console.log(savingsTotal);
-
+                        savingsTotal += parseInt(snapshot.val()[bucketClass][bucketName]['Total']);
                     }
                 }
             }

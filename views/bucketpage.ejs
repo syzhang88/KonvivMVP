@@ -83,7 +83,7 @@
            $.post('/get_info',{
                which_bucket:sessionStorage.getItem("bucketPage"),
                token: sessionStorage.token
-           }, callResult(data));
+           }, callResult);
 
         }
 
@@ -97,7 +97,7 @@
                   which_bucket:sessionStorage.getItem("bucketPage"),
                   new_name:editName.value,
                   token: sessionStorage.token
-              }, callResult(data));
+              }, callResult);
            }
         }
          function change_size(){
@@ -106,7 +106,7 @@
                 from_bucket:sessionStorage.getItem("bucketPage"),
                 to_bucket:editSizeBucket.value,
                 token: sessionStorage.token
-            }, callResult(data));
+            }, callResult);
          }
 
          function callResult(data) {
@@ -135,18 +135,18 @@
                      });
                  });
              }
+         };
+
+         btnName.addEventListener('click', e => {
+             var errorCode = null;
+             var errorMsg = null;
+
+             //Sign up
+             $(function () {
+
+             });
          });
-
-        btnName.addEventListener('click', e => {
-            var errorCode = null;
-            var errorMsg = null;
-
-            //Sign up
-            $(function () {
-
-            });
-       });
-   });
-    </script>
+     });
+     </script>
 </body>
 </html>
