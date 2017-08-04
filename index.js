@@ -119,6 +119,7 @@ app.get('/securityscreen.ejs', function(request, response, next) {
 });
 
 app.get('/bucketpage.ejs', function(request, response, next) {
+    console.log('/bucketpage.ejs called');
     response.render('bucketpage.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
@@ -175,6 +176,11 @@ app.post('/sign_up', function(request, response, next) {
         // grabs admin session token
         var user = firebase.auth().currentUser;
         user.getIdToken().then(function(token) {
+            for (var key in buckets.nameBuckets) {
+                admin.database().ref("users/" + user.uid + "/bucketNames/" + key).set({'name': buckets.nameBuckets[key]}).catch(
+                    console.log("error with names")
+                );
+            }
             response.json({
                 login: true,
                 token: token,
@@ -183,6 +189,17 @@ app.post('/sign_up', function(request, response, next) {
             });
             firebase.auth().signOut();
             console.log('successfully created user in Firebase: ' + user.uid);
+        }).catch(function(error) {
+            // Handle Errors here.
+            user.delete();
+            firebase.auth().signOut();
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log('failed to create user in Firebase: ' + errorMessage);
+            return response.json({
+                login: false,
+                error: errorMessage
+            });
         });
     }).catch(function(error) {
         // Handle Errors here.
@@ -250,13 +267,30 @@ apiRoutes.post('/get_info',function(request,response,next){
 apiRoutes.post('/rename_bucket',function(request,response,next){
     console.log("RECIEVED")
     var user_id = request.body.userId
+    var bucket = request.body.which_bucket
+    var new_name = request.body.new_name
+    console.log(request.body.token)
+    console.log(bucket)
+    console.log("USER ID IS: "+user_id)
+    var bucket_path = 'users/'+user_id+'/bucketNames/' + bucket
+    admin.database().ref(bucket_path).update({name: new_name});
+    // buckets.renameBucket(bucket_path, new_name)
+});
+
+apiRoutes.post('/names',function(request,response,next){
+    console.log("RECIEVED")
+    var user_id = request.body.userId
     var bucket=request.body.which_bucket
-    var new_name=request.body.new_name
     //console.log(request.body.token)
     console.log(bucket)
     console.log("USER ID IS :"+user_id)
-    var bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+bucket
-    buckets.renameBucket(bucket_path,new_name)
+
+    admin.database().ref('users/' + request.body.userId + '/bucketNames').once('value', function(snapshot) {
+
+        console.log( "INSIDE NAMES IN INDEX.JS SENDING SNAPSHOT")
+        //console.log(snapshot.val());
+        response.json(snapshot.val());
+    });
 });
 
 apiRoutes.post('/change_size',function(request,response,next){
@@ -269,7 +303,8 @@ apiRoutes.post('/change_size',function(request,response,next){
     var from_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+from_bucket
     var to_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+to_bucket
     buckets.changeBucketsize(from_bucket_path,to_bucket_path,amount)
-});
+}
+
 
 apiRoutes.post('/get_access_token', function(request, response, next) {
     // We HAVE to store the access token, so that Plaid does not think the
@@ -334,6 +369,12 @@ apiRoutes.post('/transactions', function(request, response, next) {
 });
 
 apiRoutes.post('/savings', function(request, response, next) {
+    // for (var key in buckets.nameBuckets) {
+    //     admin.database().ref("users/" + request.body.userId + "/bucketNames/" + key).set({'name': buckets.nameBuckets[key]}).catch(
+    //         console.log("error with names")
+    //     );
+    // }
+
     client.getAuth(request.body.accessToken, function(error, authResponse) {
         if (error != null) {
             var msg = 'Unable to pull accounts from the Plaid API.';
@@ -359,21 +400,20 @@ apiRoutes.post('/savings', function(request, response, next) {
                         // console.log("savingsTotal: " + bucketName + " " +
                         //     snapshot.val()[bucketClass][bucketName]['Total']);
                         savingsTotal += snapshot.val()[bucketClass][bucketName]['Total'];
+                        // console.log(savingsTotal);
+
                     }
                 }
             }
+            // console.log(savingsTotal * request.body.months);
             var postData = {
                 'Savings': savingsAccount,
                 'Total': savingsTotal * request.body.months
             };
-            admin.database().ref('users/' + request.body.userId + '/bucketMoney/Savings Buckets/').set(postData);
+            admin.database().ref('users/' + request.body.userId + '/bucketSavings/').set(postData);
             response.json(postData);
         });
-
-
     });
-
-
 
     updateAccounts(request.body.accessToken, request.body.userId, () => {});
 });
@@ -510,7 +550,6 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
             if (!isNaN(bucketTotal[bucket])) {
                // console.log("updateTransactions for " + bucket + ": " + bucketTotal[bucket] + "/" + timePeriod);
                allBucketData["Spending Buckets"][bucket] = {
-                        Name: buckets.nameBuckets[bucket],
                         Spending: bucketSpending[bucket],
                         Total: bucketTotal[bucket]/timePeriod
                     };
@@ -520,7 +559,6 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
         for (var bucket in bucketFixed) {
             if (!isNaN(bucketTotal[bucket])) {
                 allBucketData["Fixed Buckets"][bucket] = {
-                        Name: buckets.nameBuckets[bucket],
                         Spending: bucketFixed[bucket],
                         Total: bucketTotal[bucket]/timePeriod
                     };
@@ -530,7 +568,6 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
         for (var bucket in bucketIncome) {
             if (!isNaN(bucketTotal[bucket])) {
                 allBucketData["Income Buckets"][bucket] = {
-                        Name: buckets.nameBuckets[bucket],
                         Spending: bucketIncome[bucket],
                         Total: bucketTotal[bucket]/timePeriod
                     };
@@ -538,7 +575,7 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
         }
 
 
-        admin.database().ref("users/" + userId + "/bucketMoney/").update(allBucketData);
+        admin.database().ref("users/" + userId + "/bucketMoney/").set(allBucketData);
 
         callbackFunction();
 

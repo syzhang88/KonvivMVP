@@ -31,7 +31,6 @@ var fixedBuckets = {
 }
 
 var nameBuckets = {
-    'Rent': 'Rent',
     'Groceries': 'Groceries',
     'Eating Out': 'Eating Out',
     'Transportation': 'Transportation',
@@ -273,13 +272,13 @@ exports.changeBucketsize = function changeBucketsize (from_bucket_path,to_bucket
 
 // Each bucket has a key named 'Name' in its hashtable (dictionary) underneath
 // the branch /bucketMoney on Firebase. You can change this name here
-exports.renameBucket = function renameBucket (bucket_path,newName) {
+exports.renameBucket = function renameBucket (path, newName) {
      var db=admin.database()
-     var ref=db.ref(bucket_path)
+     var ref=db.ref(path)
      ref.update({
         "Name":newName
     })
-    
+
 }
 
 exports.bucketInfo=function bucketInfo(bucketpath){
@@ -295,5 +294,3 @@ exports.bucketInfo=function bucketInfo(bucketpath){
         }
      });
 }
-
-
