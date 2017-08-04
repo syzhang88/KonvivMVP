@@ -250,11 +250,11 @@
             });
 
             //Bucket Functionalities START here...
-            function openBucketPage(bucketName) {
-                console.log(bucketName);
+            function openBucketPage(bucketPage) {
+                console.log(bucketPage);
                 return function () {
-                    console.log(bucketName);
-                    sessionStorage.setItem('bucketPage', bucketName);
+                    console.log(bucketPage);
+                    sessionStorage.setItem('bucketPage', bucketPage);
                     location.href = '/bucketpage.ejs';
                 }
             }
@@ -328,10 +328,10 @@
                     });
                     // Using for loo
                 } else {
-                    console.log('updating bucket names');
                     for (var key in data) {
                         var selector = '[id="' + key + '"]';
-                        $(selector).find('.top-bills,.top').text(data[key]).end();
+                        $(selector).find('.top-bills,.top').text(data[key]['name']).end();
+                        sessionStorage.setItem(key, data[key]['name']);
                     }
                 }
             });

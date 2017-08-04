@@ -39,7 +39,7 @@
 
             <div class="template">
 
-                <input id="editName" placeholder="New Bucket Name" style="cursor: pointer;"/>
+                <input id="editName" placeholder="New Bucket Name"/>
                 <button id="btnName" class="btn btn-secondary btn-block btn-large">Edit Name</button>
                 <br/>
                 <input id="editSizeAmount" placeholder="Bucket Amount to Move" />
@@ -64,8 +64,8 @@
 
     <script>
         $(document).ready(function() {
-            if (sessionStorage.token && sessionStorage.bucketPage) {
-                console.log("bucket page loaded for " + sessionStorage.bucketPage );
+            if (sessionStorage.getItem("token") && sessionStorage.getItem("bucketPage")) {
+                console.log("bucket page loaded for " + sessionStorage.getItem(sessionStorage.getItem("bucketPage")));
             } else {
                 location.href="/login.ejs";
             }
@@ -76,7 +76,7 @@
 
             var selector = "[id='page title']";
 
-            $(selector).text("Edit "  + sessionStorage.getItem("bucketPage") + " Bucket").end();
+            $(selector).text("Edit "  + sessionStorage.getItem(sessionStorage.getItem("bucketPage")) + " Bucket").end();
 
         function get_details(){
            //modal.style.display = "block";
@@ -89,7 +89,7 @@
          function rename_bucket(){
            //modal.style.display = "block";
            if (editName.value===''){
-               console.log("Enter a Valid Bucket Name")
+               $('[id=get-button-data]').text("Enter a Valid Bucket Name");
            }
            else{
               $.post('/rename_bucket',{

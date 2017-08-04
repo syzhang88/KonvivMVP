@@ -176,7 +176,11 @@ app.post('/sign_up', function(request, response, next) {
         // grabs admin session token
         var user = firebase.auth().currentUser;
         user.getIdToken().then(function(token) {
-            admin.database().ref("users/" + user.uid + "/bucketNames/").set(buckets.nameBuckets);
+            for (var key in buckets.nameBuckets) {
+                admin.database().ref("users/" + user.uid + "/bucketNames/" + key).set({'name': buckets.nameBuckets[key]}).catch(
+                    console.log("error with names")
+                );
+            }
             response.json({
                 login: true,
                 token: token,
@@ -267,8 +271,9 @@ apiRoutes.post('/rename_bucket',function(request,response,next){
     var new_name = request.body.new_name
     console.log(request.body.token)
     console.log(bucket)
-    console.log("USER ID IS :"+user_id)
-    var bucket_path = 'users/'+user_id+'/bucketNames/'+ {bucket: new_name}
+    console.log("USER ID IS: "+user_id)
+    var bucket_path = 'users/'+user_id+'/bucketNames/' + bucket
+    admin.database().ref(bucket_path).update({name: new_name});
     // buckets.renameBucket(bucket_path, new_name)
 });
 
@@ -351,6 +356,12 @@ apiRoutes.post('/transactions', function(request, response, next) {
 });
 
 apiRoutes.post('/savings', function(request, response, next) {
+    for (var key in buckets.nameBuckets) {
+        admin.database().ref("users/" + request.body.userId + "/bucketNames/" + key).set({'name': buckets.nameBuckets[key]}).catch(
+            console.log("error with names")
+        );
+    }
+
     client.getAuth(request.body.accessToken, function(error, authResponse) {
         if (error != null) {
             var msg = 'Unable to pull accounts from the Plaid API.';
