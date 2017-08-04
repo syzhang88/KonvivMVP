@@ -160,7 +160,7 @@
     <script>
         $(document).ready(function() {
             if (sessionStorage.token && sessionStorage.bucketPage) {
-                console.log("bucket page loaded");
+                console.log("bucket page loaded for " + sessionStorage.bucketPage );
             } else {
                 location.href="/login.ejs";
             }

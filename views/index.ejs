@@ -199,10 +199,11 @@
         <script>
             var defaultTimePeriod = 6;
 
-            if (sessionStorage.bucketPage) {
+            if (sessionStorage.getItem('bucketPage')) {
+                console.log('not on specific bucket page');
                 sessionStorage.removeItem('bucketPage');
             }
-            if (sessionStorage.token) {
+            if (sessionStorage.getItem('token')) {
                 console.log('currently logged in');
             } else {
                 location.href='/';
@@ -226,7 +227,7 @@
                     console.log('currently logged out');
                 } else {
                     console.log('unable to log out');
-                    console.log('token: ' + sessionStorage.token);
+                    console.log('token: ' + sessionStorage.getItem('token'));
                 }
             };
             var buttonValue = '';
@@ -249,16 +250,19 @@
             });
 
             //Bucket Functionalities START here...
-            // function openBucketPage(bucketName) {
-            //     sessionStorage.bucketPage = bucketName;
-            //     location.href = '/bucketpage.ejs';
-            // }
-             // Bucket Functionalities END here...
+            function openBucketPage(bucketName) {
+                console.log(bucketName);
+                return function () {
+                    sessionStorage.setItem('bucketPage', bucketName);
+                    location.href = '/bucketpage.ejs';
+                }
+            }
+            //  Bucket Functionalities END here...
 
             // RESTful calls to index.js server using post function
             function savingsCall(timePeriod) {
                 $.post('/savings', {
-                    token: sessionStorage.token,
+                    token: sessionStorage.getItem('token'),
                     months: timePeriod
                 }, function(data) {
                     // Catching error
@@ -293,7 +297,7 @@
                             .find(".bottom-savings").text("$" + bucketSavings + " of $" + bucketTotal).end()
                             .find(".perc-value-savings").css("height", newPercent + "%")
 
-                        $(monthNumber).text("Estimated Savings Goal for " + timePeriod + " Months of Living Expenses");
+                        $(monthNumber).text("emergency savings goal for " + timePeriod + " months of living expenses");
                         // document.getElementById('Savings Account').setAttribute("onclick", "location.href='bucketpage.ejs'");
                     }
                 });
@@ -302,7 +306,7 @@
             savingsCall(defaultTimePeriod);
 
             $.post('/buckets', {
-                token: sessionStorage.token
+                token: sessionStorage.getItem('token')
             }, function(data) {
                 // Catching error
 
@@ -346,11 +350,7 @@
                                     .find(".bottom-bills,.bottom").text("$" + bucketSpent + " of $" + bucketTotal).end()
                                     .find(".perc-value-bills,.perc-value").css("height", newPercent + "%")
                                 $(selector)
-                                    .on('click', function () {
-                                        console.log('bucket-specific page called...')
-                                        sessionStorage.bucketPage = key;
-                                        location.href = '/bucketpage.ejs';
-                                    });
+                                    .on('click', openBucketPage(key));
 
                                 /*edit: bucketTotal*/
                                 totalAmount += bucketSpent;
@@ -406,7 +406,7 @@
                     console.log('accounts called...')
 
                     $.post('/accounts', {
-                        token: sessionStorage.token
+                        token: sessionStorage.getItem('token')
                     }, function(data) {
                         console.log("Account info: " + data)
                         buttonValue = "account";
@@ -437,7 +437,7 @@
                         return $('#get-button-data').slideUp();
                     }
                     $.post('/item', {
-                        token: sessionStorage.token
+                        token: sessionStorage.getItem('token')
                     }, function(data) {
                         buttonValue = "item";
                         $('#get-button-data').slideUp(function() {
@@ -461,7 +461,7 @@
                         return $('#get-button-data').slideUp();
                     }
                     $.post('/transactions', {
-                        token: sessionStorage.token
+                        token: sessionStorage.getItem('token')
                     }, function(data) {
                         buttonValue = "transactions";
                         if (data.error != null) {
