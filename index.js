@@ -240,7 +240,7 @@ apiRoutes.post('/get_info',function(request,response,next){
     console.log("RECIEVED")
     var user_id = request.body.userId
     var bucket=request.body.which_bucket
-    console.log(request.body.token)
+    //console.log(request.body.token)
     console.log(bucket)
     console.log("USER ID IS :"+user_id)
     var bucket_path='users/'+user_id+'/bucketTransactions/'+bucket+'/2017-07'
