@@ -30,13 +30,6 @@
             <div id="get-button-data"></div>
         </div>
 
-        <!-- <div id = "demo-help">
-            <div class = "box">
-                <button class="demo">demo</button>
-                <button class="help">help</button>
-            </div>
-        </div> -->
-
         <div class ="box">
             <div class="head">
                 <h1> Emergency Savings Goal </h1>
@@ -54,8 +47,17 @@
                     </div>
                 </div>
             </div>
+            <div class = "monthNumber" id="string"> </div>
         </div>
 
+        <div id="menu">
+            <div class="box">
+                <button class="headerbutton" style="margin:10px 10px 10px 14px;" id="threeMonths"><span style="font-size:18px; color:#222;">3 Months</span></button>
+                <button class="headerbutton" style="margin:10px 10px;" id="sixMonths"><span style="font-size:18px; color:#222;">6 Months</span></button>
+                <button class="headerbutton" style="margin:10px 10px;" id="nineMonths"><span style="font-size:18px; color:#222;">9 Months</span></button>
+                <button class="headerbutton" style="margin:10px 10px;" id="twelveMonths"><span style="font-size:18px; color:#222;">12 Months</span></button>
+            </div>
+        </div>
 
         <div class ="box">
             <div class="head">
@@ -94,49 +96,49 @@
                     <div id = "total-spending">
                         loading
                     </div>
-                    <div class="circle" id="Variable Bills" onclick="get_details('Variable Bills')" style="cursor: pointer;">
+                    <div class="circle" id="Variable Bills">
                         <div class="perc">
                             <div class="perc-value"></div>
                         </div>
                         <span class="top"></span>
                         <span class="bottom"></span>
                     </div>
-                    <div class="circle" id="Eating Out" onclick="get_details('Eating Out')" style="cursor: pointer;">
+                    <div class="circle" id="Eating Out">
                         <div class="perc">
                             <div class="perc-value"></div>
                         </div>
                         <span class="top"></span>
                         <span class="bottom"></span>
                     </div>
-                    <div class="circle" id="Entertainment" onclick="get_details('Entertainment')" style="cursor: pointer;">
+                    <div class="circle" id="Entertainment">
                         <div class="perc">
                             <div class="perc-value"></div>
                         </div>
                         <span class="top"></span>
                         <span class="bottom"></span>
                     </div>
-                    <div class="circle" id="Groceries" onclick="get_details('Groceries')" style="cursor: pointer;">
+                    <div class="circle" id="Groceries">
                         <div class="perc">
                             <div class="perc-value"></div>
                         </div>
                         <span class="top"></span>
                         <span class="bottom"></span>
                     </div>
-                    <div class="circle" id="Other Spending" onclick="get_details('Other Spending')" style="cursor: pointer;">
+                    <div class="circle" id="Other Spending">
                         <div class="perc">
                             <div class="perc-value"></div>
                         </div>
                         <span class="top"></span>
                         <span class="bottom"></span>
                     </div>
-                    <div class="circle" id="Shopping" onclick="get_details('Shopping')" style="cursor: pointer;">
+                    <div class="circle" id="Shopping">
                         <div class="perc">
                             <div class="perc-value"></div>
                         </div>
                         <span class="top"></span>
                         <span class="bottom"></span>
                     </div>
-                    <div class="circle" id="Transportation" onclick="get_details('Transportation')" style="cursor: pointer;">
+                    <div class="circle" id="Transportation">
                         <div class="perc">
                             <div class="perc-value"></div>
                         </div>
@@ -196,14 +198,18 @@
         <script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
 
         <script>
-            var testTimePeriod = 6;
+            var defaultTimePeriod = 6;
 
+            if (sessionStorage.bucketPage) {
+                sessionStorage.removeItem('bucketPage');
+            }
             if (sessionStorage.token) {
                 console.log('currently logged in');
             } else {
-                location.href="/";
-                console.log("currently logged out");
+                location.href='/';
+                console.log('currently logged out');
             }
+
             // Initialize Firebase
             var config = {
                 apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
@@ -214,13 +220,11 @@
                 messagingSenderId: "41760220514"
             };
             firebase.initializeApp(config);
-            // $.get('/log_in_status', function(data) {
-            //     logOutSuccess(!data.login);
-            // });
+
             function logOutSuccess(logout) {
                 if (logout == true) {
-                    location.href="/";
-                    console.log("currently logged out");
+                    location.href='/';
+                    console.log('currently logged out');
                 } else {
                     console.log('unable to log out');
                     console.log('token: ' + sessionStorage.token);
@@ -244,68 +248,59 @@
                     });
                 }
             });
-            
+
             //Bucket Functionalities START here...
-            
-             function get_details(bucket_name){
-                console.log(bucket_name)
-                //modal.style.display = "block";
-                $.post('/get_info',{
-                    which_bucket:bucket_name,
-                    token: sessionStorage.token
-                });
-             }
-             
-              function rename_bucket(bucket_name){
-                console.log(bucket_name)
-                //modal.style.display = "block";
-                $.post('/rename_bucket',{
-                    which_bucket:bucket_name,
-                    token: sessionStorage.token
-                });
-             }
-             
+            // function openBucketPage(bucketName) {
+            //     sessionStorage.bucketPage = bucketName;
+            //     location.href = '/bucketpage.ejs';
+            // }
              // Bucket Functionalities END here...
 
             // RESTful calls to index.js server using post function
-            $.post('/savings', {
-                token: sessionStorage.token,
-                months: testTimePeriod
-            }, function(data) {
-                // Catching error
+            function savingsCall(timePeriod) {
+                $.post('/savings', {
+                    token: sessionStorage.token,
+                    months: timePeriod
+                }, function(data) {
+                    // Catching error
+                    if (data.error != null) {
+                        // Format the error
+                        var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
+                        // Render the error
 
-                if (data.error != null) {
-                    // Format the error
-                    var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
-                    // Render the error
-
-                    $('#get-button-data').slideUp(function() {
-                        $(this).slideUp(function() {
-                            $(this).html(errorHtml).slideDown();
+                        $('#get-button-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(errorHtml).slideDown();
+                            });
                         });
-                    });
-                    // Using for loop to pull information for each bucket from data
-                } else {
-                    console.log(data)
-                    var bucket = data;
-                    var fillPercent = 0;
+                        // Using for loop to pull information for each bucket from data
+                    } else {
+                        console.log(data)
+                        var bucket = data;
+                        var fillPercent = 0;
 
-                    // Accounting for divide-by-zero error
-                    if (bucket['Total'] > 0) {
-                        fillPercent = 100 - (bucket['Savings']/bucket['Total'])*100
+                        // Accounting for divide-by-zero error
+                        if (bucket['Total'] > 0) {
+                            fillPercent = 100 - (bucket['Savings']/bucket['Total'])*100
+                        }
+                        bucketSavings = Math.round(bucket['Savings']*100)/100;
+                        bucketTotal = Math.round(bucket['Total']*100)/100;
+                        newPercent = fillPercent;
+
+                        var selector = "[id='Savings Account']";
+
+                        $(selector)
+                            .find(".top-savings").text("Savings Account").end()
+                            .find(".bottom-savings").text("$" + bucketSavings + " of $" + bucketTotal).end()
+                            .find(".perc-value-savings").css("height", newPercent + "%")
+
+                        $(monthNumber).text("Estimated Savings Goal for " + timePeriod + " Months of Living Expenses");
+                        // document.getElementById('Savings Account').setAttribute("onclick", "location.href='bucketpage.ejs'");
                     }
-                    bucketSavings = Math.round(bucket['Savings']*100)/100;
-                    bucketTotal = Math.round(bucket['Total']*100)/100;
-                    newPercent = fillPercent;
+                });
+            }
 
-                    var selector = "[id='Savings Account']";
-
-                    $(selector)
-                        .find(".top-savings").text("Savings Account").end()
-                        .find(".bottom-savings").text("$" + bucketSavings + " of $" + bucketTotal).end()
-                        .find(".perc-value-savings").css("height", newPercent + "%")
-                }
-            });
+            savingsCall(defaultTimePeriod);
 
             $.post('/buckets', {
                 token: sessionStorage.token
@@ -332,52 +327,70 @@
                         totalAmount=0;
 
                         for (var key in data[bucketClass]) {
+                            if (data[bucketClass].hasOwnProperty(key)) {
+                                var bucket = data[bucketClass][key];
+                                var fillPercent = 0;
 
-                            var bucket = data[bucketClass][key];
-                            var fillPercent = 0;
+                                // Accounting for divide-by-zero error
+                                if (bucket['Total'] > 0) {
+                                    fillPercent = (bucket['Spending']/bucket['Total'])*100
+                                }
 
-                            // Accounting for divide-by-zero error
-                            if (bucket['Total'] > 0) {
-                                fillPercent = (bucket['Spending']/bucket['Total'])*100
+                                bucketSpent = Math.round((bucket['Total'] - bucket['Spending'])*100)/100;
+                                bucketTotal = Math.round(bucket['Total']*100)/100;
+                                newPercent = fillPercent;
+
+                                var selector = '[id="' + key + '"]';
+
+                                $(selector)
+                                    .find(".top-bills,.top").text(key).end()
+                                    .find(".bottom-bills,.bottom").text("$" + bucketSpent + " of $" + bucketTotal).end()
+                                    .find(".perc-value-bills,.perc-value").css("height", newPercent + "%")
+                                $(selector)
+                                    .on('click', function () {
+                                        console.log('bucket-specific page called...')
+                                        sessionStorage.bucketPage = key;
+                                        location.href = '/bucketpage.ejs';
+                                    });
+
+                                /*edit: bucketTotal*/
+                                totalAmount += bucketSpent;
+                                if (bucketClass == 'Fixed Buckets'){
+                                    totalBills += data[bucketClass][key]['Total'];
+                                } else if (bucketClass == 'Spending Buckets'){
+                                    totalSpending += data[bucketClass][key]['Total'];
+                                }
                             }
-
-                            bucketSpent = Math.round((bucket['Total'] - bucket['Spending'])*100)/100;
-                            bucketTotal = Math.round(bucket['Total']*100)/100;
-                            newPercent = fillPercent;
-
-                             var selector = '[id="' + key + '"]';
-
-                             $(selector)
-                                .find(".top-bills,.top").text(key).end()
-                                .find(".bottom-bills,.bottom").text("$" + bucketSpent + " of $" + bucketTotal).end()
-                                .find(".perc-value-bills,.perc-value").css("height", newPercent + "%")
-
-                                /* INCOME CLASS */
-                                income = -(data['Income Buckets']['Income']['Total'])
-
-                                $("#monthly-income").text("$" + income.toFixed(2))
-
-                            totalAmount += bucketSpent;
-                            /*edit: bucketTotal*/
-
-                            if (bucketClass == 'Fixed Buckets'){
-                                totalBills += data[bucketClass][key]['Total'];
-                            } else if (bucketClass == 'Spending Buckets'){
-                                totalSpending += data[bucketClass][key]['Total'];
-                            }
-
                         }
+                    }
+                    /* INCOME CLASS */
+                    income = -(data['Income Buckets']['Income']['Total'])
+                    $("#monthly-income").text("$" + income.toFixed(2))
 
-                       var left = income - totalBills - totalSpending;
+                    var Amountleft = income - totalBills - totalSpending;
 
-                       $("#left-to-spend").text("$" + left.toFixed(2));
-                       $("#total-bills").text("Total Bills: $" +totalBills.toFixed(2));
-                       $("#total-spending").text("Total Spending: $" +totalSpending.toFixed(2));
-                   }
-               }
+                    $("#left-to-spend").text("$" + Amountleft.toFixed(2));
+                    $("#total-bills").text("Total Bills: $" +totalBills.toFixed(2));
+                    $("#total-spending").text("Total Spending: $" +totalSpending.toFixed(2));
+                }
            });
 
            (function($) {
+               monthNumber ='[class="monthNumber"]'
+
+               $('#threeMonths').on('click', function(e) {
+                   savingsCall(3);
+               });
+               $('#sixMonths').on('click', function(e) {
+                   savingsCall(6);
+               });
+               $('#nineMonths').on('click', function(e) {
+                   savingsCall(9);
+               });
+               $('#twelveMonths').on('click', function(e) {
+                   savingsCall(12);
+               });
+
                $('#get-link-btn').on('click', function(e) {
                    handler.open()
                });

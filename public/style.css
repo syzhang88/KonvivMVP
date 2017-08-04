@@ -117,11 +117,6 @@ a:hover {
   overflow:auto;
 }
 
-#demo-help .box {
-  padding: 20px;
-}
-
-
 #container {
   min-width: 280px;
   max-width: 800px;
@@ -199,10 +194,19 @@ button:hover {
 }
 
 #demo-help .box{
-  width: 80px;
-  display: flex;
-  justify-content: space-between;
-  background: #09868c;
+    width: 500px;
+    padding: 20px;
+    /*display: flex;*/
+    /*justify-content: space-between;*/
+    text-align:center;
+    background: #09868c;
+
+    /*justify-content: space-between;
+    display: flex;
+    background: #09868c;
+    border-radius: 7px;
+    border-radius: 8px;
+    box-shadow: 0px 10px 30px rgba(70, 0, 0, .3)*/
 }
 
 #menu textarea {
@@ -318,13 +322,13 @@ h1 {
 }
 
 #string{
-      font-size: 14px;
-        line-height: 18px;
-        opacity: .5;
-        text-align: center;
-        justify-content:center;
-        top: -30px;
-        padding-bottom: 30px;
+    font-size: 14px;
+    line-height: 18px;
+    opacity: .5;
+    text-align: center;
+    justify-content:center;
+    top: -30px;
+    padding-bottom: 30px;
 
 }
 
@@ -355,6 +359,7 @@ h1 {
   margin: 30px 20px;
   display: inline-block;
   position: relative;
+  cursor: pointer;
 }
 .wrap-bills .circle-bills .perc-bills {
   position: absolute;
@@ -470,6 +475,7 @@ h1 {
   margin: 30px 20px;
   display: inline-block;
   position: relative;
+  cursor: pointer;
 }
 .wrap .circle .perc {
   position: absolute;

@@ -80,6 +80,15 @@ app.get('/', function(request, response, next) {
     console.log("app loaded");
 });
 
+app.get('/login.ejs', function(request, response, next) {
+    console.log("app loading...");
+    response.render('login.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+    console.log("app loaded");
+});
+
 app.get('/index.ejs', function(request, response, next) {
     console.log(request.body.accessToken);
     response.render('index.ejs', {
@@ -104,6 +113,13 @@ app.get('/guidescreen.ejs', function(request, response, next) {
 
 app.get('/securityscreen.ejs', function(request, response, next) {
     response.render('securityscreen.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+});
+
+app.get('/bucketpage.ejs', function(request, response, next) {
+    response.render('bucketpage.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
     });
