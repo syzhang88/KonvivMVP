@@ -119,7 +119,8 @@ app.get('/securityscreen.ejs', function(request, response, next) {
 });
 
 app.get('/bucketpage.ejs', function(request, response, next) {
-    ('bucketpage.ejs', {
+    console.log('/bucketpage.ejs called');
+    response.render('bucketpage.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
     });
@@ -175,6 +176,7 @@ app.post('/sign_up', function(request, response, next) {
         // grabs admin session token
         var user = firebase.auth().currentUser;
         user.getIdToken().then(function(token) {
+            admin.database().ref("users/" + user.uid + "/bucketNames/").set(buckets.nameBuckets);
             response.json({
                 login: true,
                 token: token,
@@ -183,6 +185,17 @@ app.post('/sign_up', function(request, response, next) {
             });
             firebase.auth().signOut();
             console.log('successfully created user in Firebase: ' + user.uid);
+        }).catch(function(error) {
+            // Handle Errors here.
+            user.delete();
+            firebase.auth().signOut();
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log('failed to create user in Firebase: ' + errorMessage);
+            return response.json({
+                login: false,
+                error: errorMessage
+            });
         });
     }).catch(function(error) {
         // Handle Errors here.
@@ -250,15 +263,30 @@ apiRoutes.post('/get_info',function(request,response,next){
 apiRoutes.post('/rename_bucket',function(request,response,next){
     console.log("RECIEVED")
     var user_id = request.body.userId
-    var bucket=request.body.which_bucket
+    var bucket = request.body.which_bucket
+    var new_name = request.body.new_name
     console.log(request.body.token)
     console.log(bucket)
     console.log("USER ID IS :"+user_id)
-    var bucket_path_1='users/'+user_id+'/bucketTransactions/'+bucket
-    var bucket_path_2='users/'+user_id+'/bucketMoney/Spending Buckets/'+bucket
-    buckets.renameBucket(bucket_path_1,bucket_path_2,"NEW NAME")
+    var bucket_path = 'users/'+user_id+'/bucketNames/'+ {bucket: new_name}
+    // buckets.renameBucket(bucket_path, new_name)
 });
 
+apiRoutes.post('/names',function(request,response,next){
+    console.log("RECIEVED")
+    var user_id = request.body.userId
+    var bucket=request.body.which_bucket
+    //console.log(request.body.token)
+    console.log(bucket)
+    console.log("USER ID IS :"+user_id)
+
+    admin.database().ref('users/' + request.body.userId + '/bucketNames').once('value', function(snapshot) {
+
+        console.log( "INSIDE NAMES IN INDEX.JS SENDING SNAPSHOT")
+        //console.log(snapshot.val());
+        response.json(snapshot.val());
+    });
+});
 
 apiRoutes.post('/get_access_token', function(request, response, next) {
     // We HAVE to store the access token, so that Plaid does not think the
@@ -358,11 +386,7 @@ apiRoutes.post('/savings', function(request, response, next) {
             admin.database().ref('users/' + request.body.userId + '/bucketSavings/').set(postData);
             response.json(postData);
         });
-
-
     });
-
-
 
     updateAccounts(request.body.accessToken, request.body.userId, () => {});
 });
