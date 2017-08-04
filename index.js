@@ -119,7 +119,7 @@ app.get('/securityscreen.ejs', function(request, response, next) {
 });
 
 app.get('/bucketpage.ejs', function(request, response, next) {
-    response.render('bucketpage.ejs', {
+    ('bucketpage.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
     });
@@ -251,26 +251,14 @@ apiRoutes.post('/rename_bucket',function(request,response,next){
     console.log("RECIEVED")
     var user_id = request.body.userId
     var bucket=request.body.which_bucket
-    var new_name=request.body.new_name
-    //console.log(request.body.token)
+    console.log(request.body.token)
     console.log(bucket)
     console.log("USER ID IS :"+user_id)
-    var bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+bucket
-    buckets.renameBucket(bucket_path,new_name)
+    var bucket_path_1='users/'+user_id+'/bucketTransactions/'+bucket
+    var bucket_path_2='users/'+user_id+'/bucketMoney/Spending Buckets/'+bucket
+    buckets.renameBucket(bucket_path_1,bucket_path_2,"NEW NAME")
 });
 
-apiRoutes.post('/change_size',function(request,response,next){
-    console.log("RECIEVED")
-    var from_bucket=request.body.from_bucket
-    var to_bucket=request.body.to_bucket
-    var amount=request.body.amount
-    //console.log(request.body.token)
-    console.log(bucket)
-    console.log("USER ID IS :"+user_id)
-    var from_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+from_bucket
-    var to_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+to_bucket
-    buckets.changeBucketsize(from_bucket_path,to_bucket_path,amount)
-});
 
 apiRoutes.post('/get_access_token', function(request, response, next) {
     // We HAVE to store the access token, so that Plaid does not think the
@@ -367,7 +355,7 @@ apiRoutes.post('/savings', function(request, response, next) {
                 'Savings': savingsAccount,
                 'Total': savingsTotal * request.body.months
             };
-            admin.database().ref('users/' + request.body.userId + '/bucketMoney/Savings Buckets/').set(postData);
+            admin.database().ref('users/' + request.body.userId + '/bucketSavings/').set(postData);
             response.json(postData);
         });
 
@@ -511,7 +499,6 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
             if (!isNaN(bucketTotal[bucket])) {
                // console.log("updateTransactions for " + bucket + ": " + bucketTotal[bucket] + "/" + timePeriod);
                allBucketData["Spending Buckets"][bucket] = {
-                        Name: buckets.nameBuckets[bucket],
                         Spending: bucketSpending[bucket],
                         Total: bucketTotal[bucket]/timePeriod
                     };
@@ -521,7 +508,6 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
         for (var bucket in bucketFixed) {
             if (!isNaN(bucketTotal[bucket])) {
                 allBucketData["Fixed Buckets"][bucket] = {
-                        Name: buckets.nameBuckets[bucket],
                         Spending: bucketFixed[bucket],
                         Total: bucketTotal[bucket]/timePeriod
                     };
@@ -531,7 +517,6 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
         for (var bucket in bucketIncome) {
             if (!isNaN(bucketTotal[bucket])) {
                 allBucketData["Income Buckets"][bucket] = {
-                        Name: buckets.nameBuckets[bucket],
                         Spending: bucketIncome[bucket],
                         Total: bucketTotal[bucket]/timePeriod
                     };
@@ -539,7 +524,7 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
         }
 
 
-        admin.database().ref("users/" + userId + "/bucketMoney/").update(allBucketData);
+        admin.database().ref("users/" + userId + "/bucketMoney/").set(allBucketData);
 
         callbackFunction();
 
