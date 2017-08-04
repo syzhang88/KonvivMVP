@@ -31,7 +31,6 @@ var fixedBuckets = {
 }
 
 var nameBuckets = {
-    'Rent': 'Rent',
     'Groceries': 'Groceries',
     'Eating Out': 'Eating Out',
     'Transportation': 'Transportation',

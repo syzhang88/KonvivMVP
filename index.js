@@ -356,11 +356,11 @@ apiRoutes.post('/transactions', function(request, response, next) {
 });
 
 apiRoutes.post('/savings', function(request, response, next) {
-    for (var key in buckets.nameBuckets) {
-        admin.database().ref("users/" + request.body.userId + "/bucketNames/" + key).set({'name': buckets.nameBuckets[key]}).catch(
-            console.log("error with names")
-        );
-    }
+    // for (var key in buckets.nameBuckets) {
+    //     admin.database().ref("users/" + request.body.userId + "/bucketNames/" + key).set({'name': buckets.nameBuckets[key]}).catch(
+    //         console.log("error with names")
+    //     );
+    // }
 
     client.getAuth(request.body.accessToken, function(error, authResponse) {
         if (error != null) {
@@ -387,9 +387,12 @@ apiRoutes.post('/savings', function(request, response, next) {
                         // console.log("savingsTotal: " + bucketName + " " +
                         //     snapshot.val()[bucketClass][bucketName]['Total']);
                         savingsTotal += snapshot.val()[bucketClass][bucketName]['Total'];
+                        // console.log(savingsTotal);
+
                     }
                 }
             }
+            // console.log(savingsTotal * request.body.months);
             var postData = {
                 'Savings': savingsAccount,
                 'Total': savingsTotal * request.body.months
