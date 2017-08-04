@@ -8,25 +8,142 @@
 
     <title>Konviv App</title>
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
 
-</head>
+    <style>
+
+    .btn {
+      background-color: #fba40c;
+      background-image: -webkit-linear-gradient(top, #fba40c, #ffb606);
+      background-image: linear-gradient(to bottom, #fba40c, #ffb606);
+      border-width: 0px;
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 1px 2px rgba(19, 49, 69, 0.2);
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 10px 30px;
+      font-size: 18px;
+      border-radius: 4px;
+      display: inline-block;
+      float: left;
+      overflow:auto;
+      margin:6px 0px;
+        }
+    /*
+    .btn:hover, .btn:active, .btn.active, .btn.disabled, .btn[disabled] { background-color: red; }*/
+
+    .btn-large { padding: 9px 14px; line-height: normal; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; }
+
+    /* SIGNUP word color after hover*/
+    .btn:hover { color: white; text-decoration: none; background-color: #a8a8a8; background-position: 0 -15px; -webkit-transition: background-position 0.1s linear; -moz-transition: background-position 0.1s linear; -ms-transition: background-position 0.1s linear; -o-transition: background-position 0.1s linear; transition: background-position 0.1s linear; }
+    .btn-primary {
+      background-color: #fba40c;
+      background-image: -webkit-linear-gradient(top, #fba40c, #ffb606);
+      background-image: linear-gradient(to bottom, #fba40c, #ffb606);
+      border-width: 0px;
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 1px 2px rgba(19, 49, 69, 0.2);
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 10px 30px;
+      font-size: 18px;
+      border-radius: 4px;
+      display: inline-block;
+      float: left;
+      overflow:auto;
+    }
+    .btn-primary:hover {
+      color: #f1f1f1;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover, .btn-primary:active, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled]
+    { background-color: #a8a8a8; /* COLOR OF LOGIN AFTER HOVER */
+    }
+
+    .btn-block { width: 100%; display:block; }
+
+    * { -webkit-box-sizing:border-box; -moz-box-sizing:border-box; -ms-box-sizing:border-box; -o-box-sizing:border-box; box-sizing:border-box; }
+
+    html { width: 100%; height:100%; overflow:hidden; font-family: 'Montserrat', sans-serif;
+    }
+
+    .back {
+        font-size: 12px;
+        text-decoration: none!important;
+        color: #444;
+    }
+
+
+    body {
+      width: 100%;
+      height:100%;
+    font-family: 'Montserrat', sans-serif;
+      background: #00b1b5;
+        background: -webkit-linear-gradient(#09868c, #00b7b8); /* For Safari 5.1 to 6.0 */
+        background: -o-linear-gradient(#09868c, #00b7b8); /* For Opera 11.1 to 12.0 */
+        background: -moz-linear-gradient(#09868c, #00b7b8); /* For Firefox 3.6 to 15 */
+        background: linear-gradient(#09868c, #00b7b8);
+      }
+
+    .login {
+        position: absolute;
+        top: 30%;
+        left: 50%;
+        bottom: 20%;
+        margin: -150px 0 0 -150px;
+        width:300px;
+        height:300px;
+    }
+
+    .login h1{
+
+    text-align: center;
+    vertical-align: middle;
+    color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3);
+        letter-spacing:1px;
+         font-size: 3em;
+        font-family: 'Montserrat', sans-serif;
+
+    }
+
+    .back{
+      color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3);
+        letter-spacing:1px;
+    }
+
+    input {
+        width: 100%;
+        margin-bottom: 10px;
+        border:1px solid #EEE;
+        padding: 12px;
+        font-size: 12px;
+        color: #494949;
+        border-radius: 4px;
+    }
+
+    input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+        background-color: black;
+        background-image: none;
+        color: rgb(0, 0, 0);
+
+    input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgba(255,255,255,0.2); }
+
+        </style>
+    </head>
 
     <body>
 
     <div class="login">
-    <p><a class="back" href="/">< Back</a></p> <br><br>
+    <p><a class="back" href="/index.ejs">< Back</a></p> <br><br>
     <h1 style="font-size:45px;">Edit Bucket</h1>
           <input id="editName" placeholder="New Bucket Name" />
           <button id="btnName" class="btn btn-secondary btn-block btn-large">Edit Name</button>
-<br>
+          <br>
           <input id="editSizeAmount" placeholder="Bucket Amount to Move" /> <br>
           <input id="editSizeBucket" placeholder="New Bucket for Amount" />
           <button id="btnSize" class="btn btn-secondary btn-block btn-large">Edit Size</button>
-<br>
+          <br>
           <input id="moveTransactionName" placeholder="Transaction to Move" /> <br>
           <input id="moveTransactionBucket" placeholder="New Bucket to Move Transaction" />
           <button id="btnMove" class="btn btn-secondary btn-block btn-large">Move Transaction</button>
@@ -38,15 +155,34 @@
            <div style="margin-top:300px; text-align:center; margin:10px 5px;"><p style="font-size:14px; color:#DDD;">Konviv uses a secure connection and 256-bit encryption just like your bank!</p></div>
     </div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
     <script>
         $(document).ready(function() {
-            console.log("bucket page loaded");
-            if (sessionStorage.token) {
-                location.href="/index.ejs";
+            if (sessionStorage.token && sessionStorage.bucketPage) {
+                console.log("bucket page loaded");
             } else {
-                console.log('currently logged out');
+                location.href="/login.ejs";
             }
         });
+
+        function get_details(bucket_name){
+           console.log(bucket_name)
+           //modal.style.display = "block";
+           $.post('/get_info',{
+               which_bucket:bucket_name,
+               token: sessionStorage.token
+           });
+        }
+
+         function rename_bucket(bucket_name){
+           console.log(bucket_name)
+           //modal.style.display = "block";
+           $.post('/rename_bucket',{
+               which_bucket:bucket_name,
+               token: sessionStorage.token
+           });
+        }
 
         btnName.addEventListener('click', e => {
             var errorCode = null;
