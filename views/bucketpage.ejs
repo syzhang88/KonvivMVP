@@ -138,7 +138,7 @@
     <p><a class="back" href="/index.ejs">< Back</a></p> <br><br>
     <h1 Id ="Bucket Name" style="font-size:45px;">Edit Bucket</h1>
           <input id="editName" placeholder="New Bucket Name" />
-          <button id="btnName" class="btn btn-secondary btn-block btn-large" onclick="rename_bucket()" style="cursor: pointer;">Edit Name</button>
+          <button id="btnName" class="btn btn-secondary btn-block btn-large" style="cursor: pointer;">Edit Name</button>
           <br>
           <input id="editSizeAmount" placeholder="Bucket Amount to Move" /> <br>
           <input id="editSizeBucket" placeholder="New Bucket for Amount" />
@@ -165,12 +165,13 @@
                 location.href="/login.ejs";
             }
 
-            var selector = "[id='Bucket Name']";
-
-            $(selector).text("Edit "  + sessionStorage.getItem("bucketPage") + " Bucket").end();
+            $("[id='Bucket Name']").text("Edit "  + sessionStorage.getItem("bucketPage") + " Bucket").end();
+            
+            get_details()
+            $("[id='btnName']").on("click", rename_bucket);
+            $("[id='btnSize']").on("click", change_size);
 
         function get_details(){
-           console.log(bucket_name)
            //modal.style.display = "block";
            $.post('/get_info',{
                which_bucket:sessionStorage.getItem("bucketPage"),
@@ -179,19 +180,23 @@
         }
 
          function rename_bucket(){
-           console.log(bucket_name)
            //modal.style.display = "block";
-           $.post('/rename_bucket',{
-               which_bucket:sessionStorage.getItem("bucketPage"),
-               new_name:editName.value,
-               token: sessionStorage.token
-           });
+           if (editName.value===''){
+               console.log("Enter a Valid Bucket Name")
+           }
+           else{
+              $.post('/rename_bucket',{
+                  which_bucket:sessionStorage.getItem("bucketPage"),
+                  new_name:editName.value,
+                  token: sessionStorage.token
+              });
+           }
         }
          function change_size(){
             $.post('/change_size',{
                 amount:editSizeAmount.value,
                 from_bucket:sessionStorage.getItem("bucketPage"),
-                to_bucket:editSizeBucket.value
+                to_bucket:editSizeBucket.value,
                 token: sessionStorage.token
             })
          }
