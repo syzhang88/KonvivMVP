@@ -136,7 +136,7 @@
 
     <div class="login">
     <p><a class="back" href="/index.ejs">< Back</a></p> <br><br>
-    <h1 style="font-size:45px;">Edit Bucket</h1>
+    <h1 Id ="Bucket Name" style="font-size:45px;">Edit Bucket</h1>
           <input id="editName" placeholder="New Bucket Name" />
           <button id="btnName" class="btn btn-secondary btn-block btn-large">Edit Name</button>
           <br>
@@ -164,7 +164,10 @@
             } else {
                 location.href="/login.ejs";
             }
-        });
+
+            var selector = "[id='Bucket Name']";
+
+            $(selector).text("Edit "  + sessionStorage.bucketPage + " Bucket").end();
 
         function get_details(bucket_name){
            console.log(bucket_name)
@@ -193,6 +196,7 @@
 
             });
        });
+   });
     </script>
 </body>
 </html>
