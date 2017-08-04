@@ -261,12 +261,11 @@ apiRoutes.post('/rename_bucket',function(request,response,next){
 
 apiRoutes.post('/change_size',function(request,response,next){
     console.log("RECIEVED")
+    var user_id = request.body.userId
     var from_bucket=request.body.from_bucket
     var to_bucket=request.body.to_bucket
     var amount=request.body.amount
     //console.log(request.body.token)
-    console.log(bucket)
-    console.log("USER ID IS :"+user_id)
     var from_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+from_bucket
     var to_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+to_bucket
     buckets.changeBucketsize(from_bucket_path,to_bucket_path,amount)

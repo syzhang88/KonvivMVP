@@ -242,28 +242,31 @@ exports.moveTransaction = function moveTransaction (transaction, oldBucketPath, 
 
 // moveMoney returns false IF you subtract more money from a bucket than you
 // have remaining in it
-exports.moveMoney = function moveMoney (amount, oldBucketPath, newBucketPath) {
-    var newPostKey = transaction.transaction_id;
+exports.changeBucketsize = function changeBucketsize (from_bucket_path,to_bucket_path,amount) {
     var oldBucket = {}
     var newBucket = {}
-
+    console.log("NOW HERE")
     //subtract from this bucket
-    firebase.database().ref(oldBucketPath).once('value').then(function(snapshot) {
-        if (snapshot.val()['Remaining'] - amount > 0) {
-            oldBucket['Remaining'] = snapshot.val()['Remaining'] - amount;
+    admin.database().ref(from_bucket_path).once('value').then(function(snapshot) {
+        console.log(amount)
+        console.log(snapshot.val()['Total'])
+        if (snapshot.val()['Total'] - amount > 0) {
             oldBucket['Total'] = snapshot.val()['Total'] - amount;
         } else {
             return false;
         }
+        console.log(oldBucket['Total'])
+        console.log("YOOOOOO!!!")
+        admin.database().ref(from_bucket_path).update(oldBucket);
     });
-    firebase.database().ref(oldBucketPath).update(oldBucket);
 
     //add to that bucket
-    firebase.database().ref(newBucketPath).once('value').then(function(snapshot) {
-        newBucket['Remaining'] = snapshot.val()['Remaining'] + amount;
+    admin.database().ref(to_bucket_path).once('value').then(function(snapshot) {
         newBucket['Total'] = snapshot.val()['Total'] + amount;
+        admin.database().ref(to_bucket_path).update(newBucket);
+        console.log(newBucket['Total'])
     });
-    firebase.database().ref(newBucketPath).update(newBucket);
+    
 
     return true;
 }
