@@ -235,7 +235,7 @@ apiRoutes.post('/rename_bucket',function(request,response,next){
     console.log("RECIEVED")
     var user_id = request.body.userId
     var bucket=request.body.which_bucket
-    console.log(request.body.token)
+    //console.log(request.body.token)
     console.log(bucket)
     console.log("USER ID IS :"+user_id)
     var bucket_path_1='users/'+user_id+'/bucketTransactions/'+bucket
