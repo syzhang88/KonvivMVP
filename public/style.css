@@ -73,8 +73,6 @@ td {
 
 body {
   line-height: 1;
-
-
 }
 html {
   color: #444;
@@ -83,11 +81,7 @@ html {
   margin: 0;
   font-family: "Lato";
   text-align: center;
-  background: #00b1b5;
-    background: -webkit-linear-gradient(#09868c, #00b7b8); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(#09868c, #00b7b8); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(#09868c, #00b7b8); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(#09868c, #00b7b8);
+  background: white;
 }
 body {
   padding: 0px;
@@ -190,7 +184,7 @@ button:hover {
 #menu .box {
   display: flex;
   justify-content: space-between;
-  background: #09868c;
+  background: white;
 }
 
 #demo-help .box{
@@ -286,7 +280,6 @@ font-size:18px;
 font-weight: bold;
 color: white;
 background: #00b7b8;
-border-radius: 5px;
 text-align: center;
 }
 
@@ -294,19 +287,17 @@ h1 {
   line-height: 2;
 }
 
+
 /*MONTHLY*/
 
 .box {
   background: #e4e4e4;
-  border-radius: 7px;
-  border-radius: 8px;
   box-shadow: 0px 10px 30px rgba(70, 0, 0, .3)
 }
 
 .body{
-  background: #e4e4e4;
+  background:white;
 }
-
 
 #left-to-spend, #monthly-income  {
   margin-top:1px;
@@ -329,18 +320,15 @@ h1 {
     justify-content:center;
     top: -30px;
     padding-bottom: 30px;
-
 }
 
 #total-bills, #total-spending{
     text-align: center;
-    font-size:30px;
-    color: #F06560;
+    font-size:14px;
+    color: #888;
     border: 0px solid #bdbdbd;
     margin: 35px;
     padding:10px;
-    box-shadow: 0 0 10px #fff;
-    border-radius: 10px;
     overflow: hidden;
 }
 
@@ -401,7 +389,6 @@ h1 {
   font-size:1em;
 }
 /* NEW CSS */
-
 
 * {
   margin: 0; padding: 0; list-style: none; line-height: 1;
@@ -509,7 +496,8 @@ h1 {
   border-radius: 3px;
 }
 .wrap .circle .top {
-  top: -38px;
+  top: -52px;
+  padding-top:20px;
   font-size:18px;
   font-weight: bold;
 }

@@ -261,6 +261,8 @@ apiRoutes.post('/get_info',function(request,response,next){
     console.log(bucket)
     console.log("USER ID IS : "+user_id)
     var bucket_path = 'users/'+user_id+'/bucketTransactions/'+bucket+'/' + moment().format('YYYY-MM-DD').substr(0,7)
+    console.log(buckets.bucketInfo(bucket_path));
+
     response.json(buckets.bucketInfo(bucket_path));
 });
 

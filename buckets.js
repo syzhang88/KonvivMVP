@@ -284,14 +284,16 @@ exports.renameBucket = function renameBucket (path, newName) {
 exports.bucketInfo = function bucketInfo(bucketpath){
     admin.database().ref(bucketpath).once('value').then(function(snapshot) {
         console.log(bucketpath)
-        var bucket_transactions=snapshot.val()
-        for (var key in bucket_transactions){
-            if(bucket_transactions.hasOwnProperty(key)){
-                console.log('Transaction Name: '+bucket_transactions[key]['name'])
-                console.log('Amount: '+bucket_transactions[key]['amount'])
-                console.log('Date: '+bucket_transactions[key]['date'])
-            }
-        }
+        var bucket_transactions=snapshot.val();
+        return bucket_transactions
+        // for (var key in bucket_transactions){
+        //     if(bucket_transactions.hasOwnProperty(key)){
+        //         return
+        //         console.log('Transaction Name: '+bucket_transactions[key]['name'])
+        //         console.log('Amount: '+bucket_transactions[key]['amount'])
+        //         console.log('Date: '+bucket_transactions[key]['date'])
+        //     }
+        // }
     }).catch(function(error) {
         var errorMessage = error.message;
         console.log('failed to call bucketInfo: ' + errorMessage);
