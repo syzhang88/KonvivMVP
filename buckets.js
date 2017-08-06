@@ -283,8 +283,10 @@ exports.renameBucket = function renameBucket (path, newName) {
 
 exports.bucketInfo = function bucketInfo(bucketpath){
     admin.database().ref(bucketpath).once('value').then(function(snapshot) {
-        console.log(bucketpath)
-        var bucket_transactions=snapshot.val();
+        console.log("Bucket Info called")
+        var bucket_transactions = snapshot.val();
+        console.log(bucket_transactions)
+
         return bucket_transactions
         // for (var key in bucket_transactions){
         //     if(bucket_transactions.hasOwnProperty(key)){
