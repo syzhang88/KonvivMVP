@@ -549,8 +549,8 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
         console.log('updated bucket totals for this month:');
         console.log(bucketTotal);
 
-        admin.database().ref('users/' + userId + '/lastRefresh').once('value', function(snapshot) {
-            if (snapshot.val() && thisMonth <= snapshot.val()["Date"]) {
+        admin.database().ref('users/' + userId + '/lastEstimateUpdate').once('value', function(snapshot) {
+            if (snapshot.val() && thisMonth <= snapshot.val()["Month"]) {
                 return;
             }
             var allBucketData = {
@@ -587,12 +587,11 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
             }
 
             admin.database().ref("users/" + userId + "/bucketMoney/").set(allBucketData);
-            admin.database().ref('users/' + userId + "/lastRefresh/").set({
-                "Date": thisMonth
+            admin.database().ref('users/' + userId + "/lastEstimateUpdate/").update({
+                "Month": thisMonth
             });
-            console.log('updated bucket estimates');
+            // console.log("updated bucket estimates: " + thisMonth <= snapshot.val()["Date"]);
         });
-
 
         callbackFunction();
 
