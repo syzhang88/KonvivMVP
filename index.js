@@ -303,7 +303,7 @@ apiRoutes.post('/change_size',function(request,response,next){
     var from_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+from_bucket
     var to_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+to_bucket
     buckets.changeBucketsize(from_bucket_path,to_bucket_path,amount)
-}
+});
 
 
 apiRoutes.post('/get_access_token', function(request, response, next) {
