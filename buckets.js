@@ -249,23 +249,26 @@ exports.changeBucketsize = function changeBucketsize (from_bucket_path,to_bucket
     admin.database().ref(from_bucket_path).once('value').then(function(snapshot) {
         console.log(amount)
         console.log(snapshot.val()['Total'])
-        if (snapshot.val()['Total'] - amount > 0) {
+        if (snapshot.val()['Total'] - amount >=0) {
             oldBucket['Total'] = snapshot.val()['Total'] - amount;
         } else {
+            console.log("Not Enough Money in the Bucket")
             return false;
         }
         console.log(oldBucket['Total'])
         console.log("YOOOOOO!!!")
         admin.database().ref(from_bucket_path).update(oldBucket);
-    });
 
     //add to that bucket
-    admin.database().ref(to_bucket_path).once('value').then(function(snapshot) {
-        newBucket['Total'] = snapshot.val()['Total'] + amount;
-        admin.database().ref(to_bucket_path).update(newBucket);
-        console.log(newBucket['Total'])
+        admin.database().ref(to_bucket_path).once('value').then(function(snapshot) {
+            console.log(amount)
+            console.log(snapshot.val()['Total'])
+            newBucket['Total'] = parseFloat(snapshot.val()['Total']) +parseFloat(amount);
+            console.log(newBucket['Total'])
+            admin.database().ref(to_bucket_path).update(newBucket);
+            
+        });
     });
-
 
     return true;
 }

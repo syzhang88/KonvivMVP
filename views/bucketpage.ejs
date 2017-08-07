@@ -147,12 +147,17 @@
         }
 
         function change_size(){
-            $.post('/change_size',{
-                amount:editSizeAmount.value,
-                from_bucket:sessionStorage.getItem("bucketPage"),
-                to_bucket:editSizeBucket.value,
-                token: sessionStorage.token
-            }, callResult);
+            if (sessionStorage.getItem("bucketPage")===editSizeBucket.value){
+                console.log("Cannot Change Size of Same Bucket!!")
+            }
+            else{
+                $.post('/change_size',{
+                    amount:editSizeAmount.value,
+                    from_bucket:sessionStorage.getItem("bucketPage"),
+                    to_bucket:editSizeBucket.value,
+                    token: sessionStorage.token
+                }, callResult);
+            }
         }
 
         function callResult(data) {
