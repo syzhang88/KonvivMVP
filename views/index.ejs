@@ -396,7 +396,7 @@
                         }
                     }
                     /* INCOME CLASS */
-                    income = -(data['Income Buckets']['Income']['Total'])
+                    income = -(data['Income Buckets']['Income']['Spending'])
                     $("#monthly-income").text("$" + income.toFixed(2))
                     $("#monthly-income").on('click', openBucketPage('Income'));
 

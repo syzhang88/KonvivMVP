@@ -11,7 +11,7 @@ var admin = require("firebase-admin");
 var firebase = require("firebase");
 var serviceAccount = require("./konvivandroid-firebase-adminsdk-re0l3-f09e6af5d7.json");
 
-const SIX_MONTHS = 8;
+const SIX_MONTHS = 6;
 const ONE_MONTH = 1;
 
 /*** SETTING UP FIREBASE, PLAID, AND EXPRESS ***/
@@ -549,46 +549,54 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
         console.log('updated bucket totals for this month:');
         console.log(bucketTotal);
 
-        var allBucketData = {
-            "Spending Buckets": {},
-            "Fixed Buckets": {},
-            "Income Buckets": {}
-        }
+        admin.database().ref('users/' + userId + '/lastRefresh').once('value', function(snapshot) {
+            if (snapshot.val() && thisMonth <= snapshot.val()["Date"]) {
+                return;
+            }
+            var allBucketData = {
+                "Spending Buckets": {},
+                "Fixed Buckets": {},
+                "Income Buckets": {}
+            }
+            for (var bucket in bucketSpending) {
+                if (!isNaN(bucketTotal[bucket])) {
+                   // console.log("updateTransactions for " + bucket + ": " + bucketTotal[bucket] + "/" + timePeriod);
+                   allBucketData["Spending Buckets"][bucket] = {
+                            Spending: bucketSpending[bucket],
+                            Total: bucketTotal[bucket]/timePeriod
+                        };
+                }
+                // bucketSavings += allBucketData["Spending Buckets"][bucket][Total];
+            }
+            for (var bucket in bucketFixed) {
+                if (!isNaN(bucketTotal[bucket])) {
+                    allBucketData["Fixed Buckets"][bucket] = {
+                            Spending: bucketFixed[bucket],
+                            Total: bucketTotal[bucket]/timePeriod
+                        };
+                }
+                // bucketSavings += allBucketData["Fixed Buckets"][bucket][Total];
+            }
+            for (var bucket in bucketIncome) {
+                if (!isNaN(bucketTotal[bucket])) {
+                    allBucketData["Income Buckets"][bucket] = {
+                            Spending: bucketIncome[bucket],
+                            Total: bucketTotal[bucket]/timePeriod
+                        };
+                }
+            }
 
-        for (var bucket in bucketSpending) {
-            if (!isNaN(bucketTotal[bucket])) {
-               // console.log("updateTransactions for " + bucket + ": " + bucketTotal[bucket] + "/" + timePeriod);
-               allBucketData["Spending Buckets"][bucket] = {
-                        Spending: bucketSpending[bucket],
-                        Total: bucketTotal[bucket]/timePeriod
-                    };
-            }
-            // bucketSavings += allBucketData["Spending Buckets"][bucket][Total];
-        }
-        for (var bucket in bucketFixed) {
-            if (!isNaN(bucketTotal[bucket])) {
-                allBucketData["Fixed Buckets"][bucket] = {
-                        Spending: bucketFixed[bucket],
-                        Total: bucketTotal[bucket]/timePeriod
-                    };
-            }
-            // bucketSavings += allBucketData["Fixed Buckets"][bucket][Total];
-        }
-        for (var bucket in bucketIncome) {
-            if (!isNaN(bucketTotal[bucket])) {
-                allBucketData["Income Buckets"][bucket] = {
-                        Spending: bucketIncome[bucket],
-                        Total: bucketTotal[bucket]/timePeriod
-                    };
-            }
-        }
+            admin.database().ref("users/" + userId + "/bucketMoney/").set(allBucketData);
+            admin.database().ref('users/' + userId + "/lastRefresh/").set({
+                "Date": thisMonth
+            });
+            console.log('updated bucket estimates');
+        });
 
-        admin.database().ref("users/" + userId + "/bucketMoney/").set(allBucketData);
 
         callbackFunction();
 
         console.log('saved ' + transactionsResponse.transactions.length + ' transactions under ' + userId);
-        updatedTransactions = buckets.clone(transactionsResponse);
     });
 }
 
