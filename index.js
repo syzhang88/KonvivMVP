@@ -380,11 +380,11 @@ apiRoutes.post('/transactions', function(request, response, next) {
 });
 
 apiRoutes.post('/savings', function(request, response, next) {
-    // for (var key in buckets.nameBuckets) {
-    //     admin.database().ref("users/" + request.body.userId + "/bucketNames/" + key).set({'name': buckets.nameBuckets[key]}).catch(
-    //         console.log("error with names")
-    //     );
-    // }
+    for (var key in buckets.nameBuckets) {
+        admin.database().ref("users/" + request.body.userId + "/bucketNames/" + key).set({'name': buckets.nameBuckets[key]}).catch(
+            console.log("error with names")
+        );
+    }
 
     client.getAuth(request.body.accessToken, function(error, authResponse) {
         if (error != null) {
@@ -546,13 +546,16 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
                 bucketTotal[bucketName] += transaction.amount;
             }
         });
-        console.log('updated bucket totals for this month:');
-        console.log(bucketTotal);
 
         admin.database().ref('users/' + userId + '/lastEstimateUpdate').once('value', function(snapshot) {
-            if (snapshot.val() && thisMonth <= snapshot.val()["Month"]) {
-                return;
+            if (snapshot.val()["lastEstimateUpdate"] && snapshot.val()["bucketMoney"]) {
+                if (thisMonth <= Date.parse(snapshot.val()["lastEstimateUpdate"]["Month"])){
+                    return;
+                }
             }
+            console.log('updated bucket totals for this month:');
+            console.log(bucketTotal);
+
             var allBucketData = {
                 "Spending Buckets": {},
                 "Fixed Buckets": {},
@@ -590,7 +593,7 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
             admin.database().ref('users/' + userId + "/lastEstimateUpdate/").update({
                 "Month": thisMonth
             });
-            // console.log("updated bucket estimates: " + thisMonth <= snapshot.val()["Date"]);
+            console.log("updated bucket estimates: " );
         });
 
         callbackFunction();

@@ -23,8 +23,8 @@ var spendingBuckets = {
 };
 
 var fixedBuckets = {
-    'Rent': 'Rent and Mortgage',
-    'Loan and Mortgages': 'Rent and Mortgage',
+    'Rent': 'Housing',
+    'Loan and Mortgages': 'Housing',
     'Subscription': 'Subscriptions',
     'Insurance': 'Insurance',
     'Loan': 'Loans'
@@ -38,10 +38,10 @@ var nameBuckets = {
     'Shopping': 'Shopping',
     'Variable Bills': 'Variable Bills',
     'Subscriptions': 'Subscriptions',
-    'Rent': 'Rent and Mortgage',
+    'Rent': 'Housing',
     'Insurance': 'Insurance',
     'Loans': 'Loans',
-    'Rent and Mortgage': 'Rent and Mortgage',
+    'Housing': 'Housing',
     'Income': 'Income',
     'Other Spending': 'Other Spending'
 }
@@ -51,7 +51,7 @@ var incomeAmounts = {
 };
 
 var fixedAmounts = {
-    'Rent and Mortgage': 0,
+    'Housing': 0,
     'Subscriptions': 0,
     'Insurance': 0,
     'Loans': 0,
@@ -68,7 +68,7 @@ var spendingAmounts = {
 };
 
 var allAmounts = {
-    'Rent and Mortgage': 0,
+    'Housing': 0,
     'Groceries': 0,
     'Eating Out': 0,
     'Transportation': 0,
@@ -266,7 +266,7 @@ exports.changeBucketsize = function changeBucketsize (from_bucket_path,to_bucket
             newBucket['Total'] = parseFloat(snapshot.val()['Total']) +parseFloat(amount);
             console.log(newBucket['Total'])
             admin.database().ref(to_bucket_path).update(newBucket);
-            
+
         });
     });
 

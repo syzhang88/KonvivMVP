@@ -6,28 +6,110 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
-            @import url('https://fonts.googleapis.com/css?family=Lato');
+        @import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+        body {
+         font-family: 'Open Sans', sans-serif;
+           background-image: url('https://github.com/Konviv/konviv.github.io/blob/master/img/white.jpg?raw=true');
+           background-position: center;
+           /* Set a specific height */
+           height: 500px;
+
+           /* Create the parallax scrolling effect */
+           background-attachment: fixed;
+           background-position: center;
+           background-repeat: no-repeat;
+           background-size: cover;
+        }
+
         </style>
     </head>
     <body>
-        <div id="banner">
-            <h1> K O N V I V </h1>
-            <p id="intro"> </p>
-    <!--     <p id="steps">
-          Great - you just created an Item! The server was successfully able to exchange the public_token for an access_token.
-          Below are a few options - you can get account data, retrieve information about the Item itself, or pull transaction data.
-        </p> -->
-        </div>
 
         <div id="menu">
-            <div class="box">
-                <button class="headerbutton" style="margin:10px 10px 10px 14px;" id="get-accounts-btn"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/geticon.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Accounts</span></button>
-                <button class="headerbutton" style="margin:10px 10px;" id="get-transactions-btn"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/accounts.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Transactions</span></button>
-                <button class="headerbutton" style="margin:10px 10px;" id="get-link-btn"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/transactions.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Switch Bank</span></button>
-                <button style="margin:10px 10px;" class="logout-btn headerbutton"><img src="https://raw.githubusercontent.com/DattaUSC/apichackers/master/logout.png" alt="Transactions" desc="Transactions" style="width:40px;"><br /><span style="font-size:10px; color:#222;">Logout</span></button>
-            </div>
-            <div id="get-button-data"></div>
-        </div>
+                   <div class="box">
+                       <button class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.png?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br />
+                       <p style="margin-top:-5px; font-size:10px; color:#222;">Accounts</p></button>
+                       <button class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.png?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222;">Transactions</p></button>
+                       <button class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.png?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222;">Edit Bank</p></button>
+                       <button class="logout-btn headerbutton"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.png?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222;">Logout</p></button>
+                   </div>
+                   <div id="get-button-data"></div>
+               </div>
+
+               <div class ="box" style="background-color:white;">
+                   <div class="head">
+                       <h1> Amount Left <h1>
+                   </div>
+                   <div class = "body">
+                        <div id="left-to-spend">
+                            loading
+                        </div>
+                        <div id="string"> total amount left to spend for the month</div>
+                   </div>
+               </div>
+
+               <div class="box">
+                   <div class = "body">
+                       <div class = "head">
+                           <h1> Monthly Spending Buckets </h1>
+                       </div>
+                       <div class = "wrap">
+                           <div id = "total-spending">
+                               loading
+                           </div>
+                           <div class="circle" id="Variable Bills">
+                               <div class="perc">
+                                   <div class="perc-value"></div>
+                               </div>
+                               <span class="top"></span>
+                               <span class="bottom"></span>
+                           </div>
+                           <div class="circle" id="Eating Out">
+                               <div class="perc">
+                                   <div class="perc-value"></div>
+                               </div>
+                               <span class="top"></span>
+                               <span class="bottom"></span>
+                           </div>
+                           <div class="circle" id="Entertainment">
+                               <div class="perc">
+                                   <div class="perc-value"></div>
+                               </div>
+                               <span class="top"></span>
+                               <span class="bottom"></span>
+                           </div>
+                           <div class="circle" id="Groceries">
+                               <div class="perc">
+                                   <div class="perc-value"></div>
+                               </div>
+                               <span class="top"></span>
+                               <span class="bottom"></span>
+                           </div>
+                           <div class="circle" id="Other Spending">
+                               <div class="perc">
+                                   <div class="perc-value"></div>
+                               </div>
+                               <span class="top"></span>
+                               <span class="bottom"></span>
+                           </div>
+                           <div class="circle" id="Shopping">
+                               <div class="perc">
+                                   <div class="perc-value"></div>
+                               </div>
+                               <span class="top"></span>
+                               <span class="bottom"></span>
+                           </div>
+                           <div class="circle" id="Transportation">
+                               <div class="perc">
+                                   <div class="perc-value"></div>
+                               </div>
+                               <span class="top"></span>
+                               <span class="bottom"></span>
+                           </div>
+                       </div>
+                   </div>
+               </div>
 
         <div class ="box">
             <div class="head">
@@ -60,95 +142,6 @@
 
         <div class ="box">
             <div class="head">
-                <h1> Amount Left <h1>
-            </div>
-            <div class = "body">
-                 <div id="left-to-spend">
-                     loading
-                 </div>
-                 <div id="string"> total amount left to spend for the month</div>
-            </div>
-        </div>
-
-        <div class ="box">
-            <div class="head">
-                <h1> Monthly Income <h1>
-            </div>
-
-            <div class="body">
-                <div id="monthly-income" style="cursor: pointer;">
-                    loading
-                </div>
-                <div id="string">
-                    amount of money received this month so far
-                </div>
-            </div>
-        </div>
-
-        <div class="box">
-            <div class = "body">
-                <div class = "head">
-                    <h1> Monthly Spending Buckets </h1>
-                </div>
-                <div class = "wrap">
-                    <div id = "total-spending">
-                        loading
-                    </div>
-                    <div class="circle" id="Variable Bills">
-                        <div class="perc">
-                            <div class="perc-value"></div>
-                        </div>
-                        <span class="top"></span>
-                        <span class="bottom"></span>
-                    </div>
-                    <div class="circle" id="Eating Out">
-                        <div class="perc">
-                            <div class="perc-value"></div>
-                        </div>
-                        <span class="top"></span>
-                        <span class="bottom"></span>
-                    </div>
-                    <div class="circle" id="Entertainment">
-                        <div class="perc">
-                            <div class="perc-value"></div>
-                        </div>
-                        <span class="top"></span>
-                        <span class="bottom"></span>
-                    </div>
-                    <div class="circle" id="Groceries">
-                        <div class="perc">
-                            <div class="perc-value"></div>
-                        </div>
-                        <span class="top"></span>
-                        <span class="bottom"></span>
-                    </div>
-                    <div class="circle" id="Other Spending">
-                        <div class="perc">
-                            <div class="perc-value"></div>
-                        </div>
-                        <span class="top"></span>
-                        <span class="bottom"></span>
-                    </div>
-                    <div class="circle" id="Shopping">
-                        <div class="perc">
-                            <div class="perc-value"></div>
-                        </div>
-                        <span class="top"></span>
-                        <span class="bottom"></span>
-                    </div>
-                    <div class="circle" id="Transportation">
-                        <div class="perc">
-                            <div class="perc-value"></div>
-                        </div>
-                        <span class="top"></span>
-                        <span class="bottom"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class ="box">
-            <div class="head">
                 <h1> Monthly Fixed Bills</h1>
             </div>
             <div class = "body">
@@ -157,11 +150,11 @@
                         loading
                     </div>
                     <div class="wrap-bills">
-                        <div class="circle-bills" id="Rent and Mortgage">
+                        <div class="circle-bills" id="Housing">
                             <div class="perc-bills">
                                 <div class="perc-value-bills"></div>
                             </div>
-                            <span class="top-bills">Rent and Mortgage</span>
+                            <span class="top-bills">Housing</span>
                             <span class="bottom-bills"></span>
                         </div>
 
@@ -190,6 +183,22 @@
                 </div>
             </div>
         </div>
+
+        <div class ="box">
+            <div class="head">
+                <h1> Monthly Income <h1>
+            </div>
+
+            <div class="body">
+                <div id="monthly-income" style="cursor: pointer;">
+                    loading
+                </div>
+                <div id="string">
+                    amount of money received this month so far
+                </div>
+            </div>
+        </div>
+
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
         <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
