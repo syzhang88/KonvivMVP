@@ -11,7 +11,7 @@ var admin = require("firebase-admin");
 var firebase = require("firebase");
 var serviceAccount = require("./konvivandroid-firebase-adminsdk-re0l3-f09e6af5d7.json");
 
-const SIX_MONTHS = 6;
+const SIX_MONTHS = 8;
 const ONE_MONTH = 1;
 
 /*** SETTING UP FIREBASE, PLAID, AND EXPRESS ***/
@@ -253,15 +253,26 @@ apiRoutes.use(function(request, response, next) {
 
 //BUCKET FUNCTIONALITIES HERE ...
 
-apiRoutes.post('/get_info',function(request,response,next){
-    console.log("RECIEVED")
+apiRoutes.post('/transactions_for_bucket',function(request,response,next){
+    console.log("Grabbing Transactions")
     var user_id = request.body.userId
     var bucket=request.body.which_bucket
-    //console.log(request.body.token)
-    console.log(bucket)
-    console.log("USER ID IS :"+user_id)
-    var bucket_path='users/'+user_id+'/bucketTransactions/'+bucket+'/2017-07'
-    buckets.bucketInfo(bucket_path)
+    var bucket_path = 'users/'+user_id+'/bucketTransactions/'+bucket
+
+    admin.database().ref(bucket_path).once('value').then(function(snapshot) {
+        console.log("Bucket Info called")
+        var bucket_transactions = snapshot.val();
+        console.log(bucket_transactions)
+
+        response.json(bucket_transactions);
+    }).catch(function(error) {
+        var errorMessage = error.message;
+        console.log('failed to call bucketInfo: ' + errorMessage);
+        response.json({
+            error: error,
+            error: errorMessage
+        });
+    });
 });
 
 apiRoutes.post('/rename_bucket',function(request,response,next){
@@ -399,9 +410,7 @@ apiRoutes.post('/savings', function(request, response, next) {
                     for (var bucketName in snapshot.val()[bucketClass]) {
                         // console.log("savingsTotal: " + bucketName + " " +
                         //     snapshot.val()[bucketClass][bucketName]['Total']);
-                        savingsTotal += snapshot.val()[bucketClass][bucketName]['Total'];
-                        // console.log(savingsTotal);
-
+                        savingsTotal += parseInt(snapshot.val()[bucketClass][bucketName]['Total']);
                     }
                 }
             }
@@ -513,11 +522,12 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
         // console.log(bucketTotal);
         transactionsResponse.transactions.forEach(function(transaction) {
             var bucketSelect = buckets.selectBucket(transaction);
-
             var bucketName = bucketSelect['bucketName'];
             var bucketClass = bucketSelect['bucketClass'];
             var newPostKey = transaction.transaction_id;
             var postData = {};
+
+            transaction.bucket = bucketName;
             postData[newPostKey] = transaction;
 
             var txnDate = transaction.date;
@@ -544,7 +554,6 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
             "Fixed Buckets": {},
             "Income Buckets": {}
         }
-
 
         for (var bucket in bucketSpending) {
             if (!isNaN(bucketTotal[bucket])) {
@@ -573,7 +582,6 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
                     };
             }
         }
-
 
         admin.database().ref("users/" + userId + "/bucketMoney/").set(allBucketData);
 

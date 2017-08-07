@@ -265,7 +265,7 @@ exports.changeBucketsize = function changeBucketsize (from_bucket_path,to_bucket
         admin.database().ref(to_bucket_path).update(newBucket);
         console.log(newBucket['Total'])
     });
-    
+
 
     return true;
 }
@@ -281,16 +281,27 @@ exports.renameBucket = function renameBucket (path, newName) {
 
 }
 
-exports.bucketInfo=function bucketInfo(bucketpath){
+exports.bucketInfo = function bucketInfo(bucketpath){
     admin.database().ref(bucketpath).once('value').then(function(snapshot) {
-        console.log(bucketpath)
-        var bucket_transactions=snapshot.val()
-        for (var key in bucket_transactions){
-            if(bucket_transactions.hasOwnProperty(key)){
-                console.log('Transaction Name: '+bucket_transactions[key]['name'])
-                console.log('Amount: '+bucket_transactions[key]['amount'])
-                console.log('Date: '+bucket_transactions[key]['date'])
-            }
-        }
-     });
-}
+        console.log("Bucket Info called")
+        var bucket_transactions = snapshot.val();
+        console.log(bucket_transactions)
+
+        return bucket_transactions
+        // for (var key in bucket_transactions){
+        //     if(bucket_transactions.hasOwnProperty(key)){
+        //         return
+        //         console.log('Transaction Name: '+bucket_transactions[key]['name'])
+        //         console.log('Amount: '+bucket_transactions[key]['amount'])
+        //         console.log('Date: '+bucket_transactions[key]['date'])
+        //     }
+        // }
+    }).catch(function(error) {
+        var errorMessage = error.message;
+        console.log('failed to call bucketInfo: ' + errorMessage);
+        return {
+            error: error,
+            error: errorMessage
+        };
+    });
+};

@@ -70,14 +70,13 @@
             </div>
         </div>
 
-
         <div class ="box">
             <div class="head">
                 <h1> Monthly Income <h1>
             </div>
 
             <div class="body">
-                <div id="monthly-income">
+                <div id="monthly-income" style="cursor: pointer;">
                     loading
                 </div>
                 <div id="string">
@@ -399,6 +398,7 @@
                     /* INCOME CLASS */
                     income = -(data['Income Buckets']['Income']['Total'])
                     $("#monthly-income").text("$" + income.toFixed(2))
+                    $("#monthly-income").on('click', openBucketPage('Income'));
 
                     var Amountleft = income - totalBills - totalSpending;
 
