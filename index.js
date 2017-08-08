@@ -547,7 +547,7 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
             }
         });
 
-        admin.database().ref('users/' + userId + '/lastEstimateUpdate').once('value', function(snapshot) {
+        admin.database().ref('users/' + userId + '/').once('value', function(snapshot) {
             if (snapshot.val()["lastEstimateUpdate"] && snapshot.val()["bucketMoney"]) {
                 if (thisMonth <= Date.parse(snapshot.val()["lastEstimateUpdate"]["Month"])){
                     return;
