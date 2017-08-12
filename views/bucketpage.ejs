@@ -31,7 +31,7 @@
         <div class ="box">
 
             <div class="head">
-                <h1 id= "page title" style="font-size:35px;"> </h1>
+                <h1 id= "pageTitle" style="font-size:35px;"> </h1>
             </div>
 
             <p><a class="back" style="font-size:25px;" href="/index.ejs">< Back</a></p> <br><br>
@@ -62,146 +62,199 @@
             </div>
         </div>
 
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
 
     <script>
-        if (sessionStorage.getItem("token") && sessionStorage.getItem("bucketPage")) {
-            console.log("bucket page loaded for " + sessionStorage.getItem(sessionStorage.getItem("bucketPage")));
-        } else {
-            sessionStorage.clear();
-            location.href="/";
-        }
-
         $(document).ready(function() {
+            if (sessionStorage.getItem("token") && sessionStorage.getItem("bucketPage")) {
+                console.log("bucket page loaded for " + sessionStorage.getItem(sessionStorage.getItem("bucketPage")));
+            } else {
+                location.href("/index.ejs");
+            }
+
+            // Initialize Firebase
+            var firebaseConfig = {
+                apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
+                authDomain: "konvivandroid.firebaseapp.com",
+                databaseURL: "https://konvivandroid.firebaseio.com",
+                projectId: "konvivandroid",
+                storageBucket: "konvivandroid.appspot.com",
+                messagingSenderId: "41760220514"
+            };
+
+            firebase.initializeApp(firebaseConfig);
+            checkLoginStatus();
             get_details();
 
             $("[id='btnName']").on("click", rename_bucket);
             $("[id='btnSize']").on("click", change_size);
 
-            var selector = "[id='page title']";
 
-            $(selector).text("Edit "  + sessionStorage.getItem(sessionStorage.getItem("bucketPage")) + " Bucket").end();
+            $("[id='pageTitle']").text("Edit "  + sessionStorage.getItem(sessionStorage.getItem("bucketPage")) + " Bucket").end();
 
-        function get_details() {
-            console.log("grabbing transactions...");
-            $.post('/transactions_for_bucket',{
-                which_bucket: sessionStorage.getItem("bucketPage"),
-                token: sessionStorage.token
-            }, function(data) {
+            function checkLoginStatus() {
+                console.log("refresh check");
+                firebase.auth().onAuthStateChanged(function(user) {
+                    if (!user) {
+                        sessionStorage.clear();
+                        location.href="/";
+                    }
+                });
+            }
+
+            function checkTokenStatus(success) {
+                if (success) {
+                    user.getIdToken(true).then(function(token) {
+                        sessionStorage.setItem('firebaseAccessToken', token);
+                    })
+                } else {
+                    firebase.auth().signOut();
+                    sessionStorage.clear();
+                    location.href="/";
+                }
+            }
+
+            function moveBucketPopUp() {
+                alert("Modal should show up here");
+            };
+
+            function get_details() {
+                // console.log("grabbing transactions...");
+                $.post('/transactions_for_bucket',{
+                    which_bucket: sessionStorage.getItem("bucketPage"),
+                    token: sessionStorage.token
+                }, function(data) {
+                    if (data.error != null) {
+                        if (|| data.message == 'Failed to authenticate token.') {
+                            checkTokenStatus(false);
+                        }
+                        // Format the error
+                        var errorHtml = '<div class="inner"><p>' +
+                        '<strong>' + data.error.error_code + ':</strong> ' +
+                        data.error.error_message + '</p></div>';
+                        if (data.error.error_code === 'PRODUCT_NOT_READY') {
+                            // Add additional context for `PRODUCT_NOT_READY` errors
+                            errorHtml += '<div class="inner"><p>The PRODUCT_NOT_READY ' +
+                            'error is returned when a request to retrieve Transaction data ' +
+                            'is made before Plaid finishes the <a href="https://plaid.com/' +
+                            'docs/quickstart/#transaction-data-with-webhooks">initial ' +
+                            'transaction pull.</a></p></div>';
+                        }
+                        // Render the error
+                        $('#get-button-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(errorHtml).slideDown();
+                            });
+                        });
+                    } else {
+                        checkTokenStatus(true);
+                        $('#get-button-data').slideUp(function() {
+                            var html = '';
+                            for (var month in data){
+                                html += '<div class="inner">';
+                                html += '<strong>' + month + '</strong><br>';
+                                for (var txnId in data[month]) {
+                                    // console.log(txnId)
+                                    if(data[month].hasOwnProperty(txnId)){
+                                        txn = data[month][txnId];
+                                        html += '<div id='clickTransaction '><br>';
+                                        html += '<strong>' + txn.name + '</strong><br>';
+                                        html += '$' + txn.amount + '<br>';
+                                        html += '<em>' + txn.date + '</em><br></div>';
+                                    }
+                                }
+                                html += '</div>';
+                                $(this).slideUp(function() {
+                                    $(this).html(html).slideDown();
+                                    var allTxns = document.getElementsByClassName("clickTransaction")
+                                    for (var txn in allTxns) {
+                                        allTxns[txn].onclick = moveBucketPopUp;
+                                        // txn.addEventListener("click", moveBucketPopUp, false);
+                                    }
+                                });
+                            }
+                        });
+                    };
+                });
+            };
+
+            function rename_bucket(){
+                //modal.style.display = "block";
+                if (editName.value===''){
+                    $('[id=get-button-data]').text("Enter a Valid Bucket Name");
+                } else{
+                    $.post('/rename_bucket',{
+                        which_bucket:sessionStorage.getItem("bucketPage"),
+                        new_name:editName.value,
+                        token: sessionStorage.token
+                    }, callResult);
+                }
+            }
+
+            function change_size(){
+                if (sessionStorage.getItem("bucketPage")===editSizeBucket.value){
+                    console.log("Cannot Change Size of Same Bucket!!")
+                }
+                else{
+                    $.post('/change_bucket_size',{
+                        amount:editSizeAmount.value,
+                        from_bucket:sessionStorage.getItem("bucketPage"),
+                        to_bucket:editSizeBucket.value,
+                        token: sessionStorage.token
+                    }, callResult);
+                }
+            }
+
+            function callResult(data) {
                 if (data.error != null) {
                     if (data.message == 'Failed to authenticate token.') {
-                        sessionStorage.clear();
-                        location.href = '/';
+                        checkTokenStatus(false);
                     }
                     // Format the error
-                    var errorHtml = '<div class="inner"><p>' +
-                    '<strong>' + data.error.error_code + ':</strong> ' +
-                    data.error.error_message + '</p></div>';
-                    if (data.error.error_code === 'PRODUCT_NOT_READY') {
-                        // Add additional context for `PRODUCT_NOT_READY` errors
-                        errorHtml += '<div class="inner"><p>The PRODUCT_NOT_READY ' +
-                        'error is returned when a request to retrieve Transaction data ' +
-                        'is made before Plaid finishes the <a href="https://plaid.com/' +
-                        'docs/quickstart/#transaction-data-with-webhooks">initial ' +
-                        'transaction pull.</a></p></div>';
-                    }
+                    var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
                     // Render the error
                     $('#get-button-data').slideUp(function() {
                         $(this).slideUp(function() {
                             $(this).html(errorHtml).slideDown();
                         });
                     });
+                    // Using for loop to pull information for each bucket from data
                 } else {
+                    checkTokenStatus(true);
+                    var successHtml = '<div class="inner"><p><strong> Edit Success! </strong></p></div>';
+                    // Render the error
+
                     $('#get-button-data').slideUp(function() {
-                        var html = '';
-                        for (var month in data){
-                            html += '<div class="inner">';
-                            html += '<strong>' + month + '</strong><br>';
-                            for (var txnId in data[month]) {
-                                console.log(txnId)
-                                if(data[month].hasOwnProperty(txnId)){
-                                    txn = data[month][txnId];
-                                    html += '<br>'
-                                    html += '<strong>' + txn.name + '</strong><br>';
-                                    html += '$' + txn.amount + '<br>';
-                                    html += '<em>' + txn.date + '</em><br>';
-                                }
-                            }
-                            html += '</div>';
-                        }
                         $(this).slideUp(function() {
-                            $(this).html(html).slideDown();
+                            $(this).html(successHtml).slideDown();
                         });
                     });
-                };
-            });
-        };
-
-        function rename_bucket(){
-            //modal.style.display = "block";
-            if (editName.value===''){
-                $('[id=get-button-data]').text("Enter a Valid Bucket Name");
-            } else{
-                $.post('/rename_bucket',{
-                    which_bucket:sessionStorage.getItem("bucketPage"),
-                    new_name:editName.value,
-                    token: sessionStorage.token
-                }, callResult);
-            }
-        }
-
-        function change_size(){
-            if (sessionStorage.getItem("bucketPage")===editSizeBucket.value){
-                console.log("Cannot Change Size of Same Bucket!!")
-            }
-            else{
-                $.post('/change_size',{
-                    amount:editSizeAmount.value,
-                    from_bucket:sessionStorage.getItem("bucketPage"),
-                    to_bucket:editSizeBucket.value,
-                    token: sessionStorage.token
-                }, callResult);
-            }
-        }
-
-        function callResult(data) {
-            if (data.error != null) {
-                if (data.message == 'Failed to authenticate token.') {
-                    sessionStorage.clear();
-                    location.href = '/';
                 }
-                // Format the error
-                var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
-                // Render the error
-                $('#get-button-data').slideUp(function() {
-                    $(this).slideUp(function() {
-                        $(this).html(errorHtml).slideDown();
-                    });
-                });
-                // Using for loop to pull information for each bucket from data
-            } else {
-                var successHtml = '<div class="inner"><p><strong> Edit Success! </strong></p></div>';
-                // Render the error
+            };
 
-                $('#get-button-data').slideUp(function() {
-                    $(this).slideUp(function() {
-                        $(this).html(successHtml).slideDown();
-                    });
-                });
-            }
-        };
-
-        // btnName.addEventListener('click', e => {
-        //     var errorCode = null;
-        //     var errorMsg = null;
-        //
-        //     //Sign up
-        //     $(function () {
-        //
-        //     });
-        // });
-     });
+            // btnName.addEventListener('click', e => {
+            //     var errorCode = null;
+            //     var errorMsg = null;
+            //
+            //     //Sign up
+            //     $(function () {
+            //
+            //     });
+            // });
+         });
      </script>
+
+     <style>
+        /*body.showSignUpModal {overflow: hidden;}
+        .modalMask {display: none;}
+        body.showSignUpModal .modalMask {display: block; position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 9997; background-color: rgba(0,0,0,0.75);}
+        body.showSignUpModal .modalMask .signUpModal {text-align: center; position: fixed; left: 50%; top: 50%; transform: translate(-50%,-50%); background-color: #fff; padding-bottom: 25px; box-shadow: 0 0 10px #fff; border-radius: 5px; z-index: 9998; min-height: 150px;}
+        input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
+        margin: 40px auto;
+        text-align: justify;
+        text-justify: inter-word;
+        }*/
+      </style>
 </body>
 </html>
