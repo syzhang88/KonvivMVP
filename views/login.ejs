@@ -1,166 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content="">
-        <meta name="author" content="">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-        <title>Konviv App</title>
+    <title>Konviv App</title>
 
-        <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-        <style>
+<style>
 
-            .btn {
-              background-color: #fba40c;
-              background-image: -webkit-linear-gradient(top, #fba40c, #ffb606);
-              background-image: linear-gradient(to bottom, #fba40c, #ffb606);
-              border-width: 0px;
-              box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 1px 2px rgba(19, 49, 69, 0.2);
-              color: #fff;
-              text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-              padding: 10px 30px;
-              font-size: 18px;
-              border-radius: 4px;
-              display: inline-block;
-              float: left;
-              overflow:auto;
-              margin:6px 0px;
-                }
-            /*
-            .btn:hover, .btn:active, .btn.active, .btn.disabled, .btn[disabled] { background-color: red; }*/
+.btn {
+  background-color: #fba40c;
+  background-image: -webkit-linear-gradient(top, #fba40c, #ffb606);
+  background-image: linear-gradient(to bottom, #fba40c, #ffb606);
+  border-width: 0px;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 1px 2px rgba(19, 49, 69, 0.2);
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px 30px;
+  font-size: 18px;
+  border-radius: 4px;
+  display: inline-block;
+  float: left;
+  overflow:auto;
+  margin:6px 0px;
+    }
+/*
+.btn:hover, .btn:active, .btn.active, .btn.disabled, .btn[disabled] { background-color: red; }*/
 
-            .btn-large { padding: 9px 14px; line-height: normal; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; }
+.btn-large { padding: 9px 14px; line-height: normal; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; }
 
-            /* SIGNUP word color after hover*/
-            .btn:hover { color: white; text-decoration: none; background-color: #a8a8a8; background-position: 0 -15px; -webkit-transition: background-position 0.1s linear; -moz-transition: background-position 0.1s linear; -ms-transition: background-position 0.1s linear; -o-transition: background-position 0.1s linear; transition: background-position 0.1s linear; }
-            .btn-primary {
-              background-color: #fba40c;
-              background-image: -webkit-linear-gradient(top, #fba40c, #ffb606);
-              background-image: linear-gradient(to bottom, #fba40c, #ffb606);
-              border-width: 0px;
-              box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 1px 2px rgba(19, 49, 69, 0.2);
-              color: #fff;
-              text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-              padding: 10px 30px;
-              font-size: 18px;
-              border-radius: 4px;
-              display: inline-block;
-              float: left;
-              overflow:auto;
-            }
-            .btn-primary:hover {
-              color: #f1f1f1;
-              cursor: pointer;
-            }
+/* SIGNUP word color after hover*/
+.btn:hover { color: white; text-decoration: none; background-color: #a8a8a8; background-position: 0 -15px; -webkit-transition: background-position 0.1s linear; -moz-transition: background-position 0.1s linear; -ms-transition: background-position 0.1s linear; -o-transition: background-position 0.1s linear; transition: background-position 0.1s linear; }
+.btn-primary {
+  background-color: #fba40c;
+  background-image: -webkit-linear-gradient(top, #fba40c, #ffb606);
+  background-image: linear-gradient(to bottom, #fba40c, #ffb606);
+  border-width: 0px;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 1px 2px rgba(19, 49, 69, 0.2);
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px 30px;
+  font-size: 18px;
+  border-radius: 4px;
+  display: inline-block;
+  float: left;
+  overflow:auto;
+}
+.btn-primary:hover {
+  color: #f1f1f1;
+  cursor: pointer;
+}
 
-            .btn-primary:hover, .btn-primary:active, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled]
-            { background-color: #a8a8a8; /* COLOR OF LOGIN AFTER HOVER */
-            }
+.btn-primary:hover, .btn-primary:active, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled]
+{ background-color: #a8a8a8; /* COLOR OF LOGIN AFTER HOVER */
+}
 
-            .btn-block { width: 100%; display:block; }
+.btn-block { width: 100%; display:block; }
 
-            * { -webkit-box-sizing:border-box; -moz-box-sizing:border-box; -ms-box-sizing:border-box; -o-box-sizing:border-box; box-sizing:border-box; }
+* { -webkit-box-sizing:border-box; -moz-box-sizing:border-box; -ms-box-sizing:border-box; -o-box-sizing:border-box; box-sizing:border-box; }
 
-            html { width: 100%; height:100%; overflow:hidden; }
+html { width: 100%; height:100%; overflow:hidden; }
 
-            body {
-            	width: 100%;
-            	height:100%;
-              font-family: 'Lato', sans-serif;
-            	background-image: url('https://raw.githubusercontent.com/Konviv/konviv.github.io/master/img/green.jpg');
-              background-position: center;
-            }
-            .login {
-              padding:45px 30px 0px 30px;
-            }
-            .login h1 { color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3);
-                letter-spacing:1px;
-                text-align:center;
-                 font-size: 4em;
-             }
+body {
+	width: 100%;
+	height:100%;
+  font-family: 'Lato', sans-serif;
+	background-image: url('https://raw.githubusercontent.com/Konviv/konviv.github.io/master/img/green.jpg');
+  background-position: center;
+}
+.login {
+  padding:5px 30px 0px 30px;
+}
+.login h1 { color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3);
+    letter-spacing:1px;
+    text-align:center;
+     font-size: 4em;
+ }
 
-            .login h2 { color: #fff;
-                letter-spacing:1px;
-                text-align:center;
-                margin:0px 0px 20px 0px;
-                font-size: 1em;
-                 }
+.login h2 { color: #fff;
+    letter-spacing:1px;
+    text-align:center;
+    margin:0px 0px 20px 0px;
+    font-size: 1em;
+     }
 
-            input {
-            	width: 100%;
-            	margin-bottom: 10px;
-            	border: none;
-            	outline: none;
-            	padding: 12px;
-            	font-size: 12px;
-            	color: #494949;
-            	border-radius: 4px;
-            /*	box-shadow: inset 0 -5px 45px rgba(100,100,100,0.2), 0 1px 1px rgba(255,255,255,0.2);
-            	-webkit-transition: box-shadow .5s ease;
-            	-moz-transition: box-shadow .5s ease;
-            	-o-transition: box-shadow .5s ease;
-            	-ms-transition: box-shadow .5s ease;
-            	transition: box-shadow .5s ease;*/
-            }
+input {
+	width: 100%;
+	margin-bottom: 10px;
+	border: none;
+	outline: none;
+	padding: 12px;
+	font-size: 12px;
+	color: #494949;
+	border-radius: 4px;
+/*	box-shadow: inset 0 -5px 45px rgba(100,100,100,0.2), 0 1px 1px rgba(255,255,255,0.2);
+	-webkit-transition: box-shadow .5s ease;
+	-moz-transition: box-shadow .5s ease;
+	-o-transition: box-shadow .5s ease;
+	-ms-transition: box-shadow .5s ease;
+	transition: box-shadow .5s ease;*/
+}
 
-            input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
-                background-color: black;
-                background-image: none;
-                color: rgb(0, 0, 0);
+input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+    background-color: black;
+    background-image: none;
+    color: rgb(0, 0, 0);
 
-            input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgba(255,255,255,0.2); }
+input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgba(255,255,255,0.2); }
 
-        </style>
-    </head>
+    </style>
 
-    <body>
-        <div class="login">
-            <h1>K O N V I V</h1>
-            <h2>Financial Empowerment for All<h2>
-        <br>
-            <img src="https://raw.githubusercontent.com/Konviv/konviv.github.io/master/img/logo1.png" alt="Konviv Logo" style="height:200px;">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
 
-            <br><br><br>
-        	<input id="txtEmail" type="email" placeholder="Email" required="required" />
-            <input id="txtPassword" type="Password" placeholder="Password" required="required" />
-            <button id="btnLogin" class="btn btn-action btn-primary btn-block btn-large">L o g i n</button>
+</head>
 
-           <br>
-          <!--   <button id="btnLogout" class="btn btn-action btn-primary btn-block btn-large">Logout</button> -->
+<body>
 
-             <button id="btnSignup" class="btn btn-secondary btn-block btn-large">C r e a t e A c c o u n t</button>
-             <div id='get-button-data'> </div>
 
-             <div style="margin-top:300px; text-align:center; margin:10px 5px;"><p style="font-size:14px; color:#DDD; padding-bottom: 30px">Konviv uses a secure connection and 256-bit encryption just like your bank!</p></div>
-        </div>
+  <div class="login">
+    <h1>K O N V I V</h1>
+        <h2>Financial Empowerment for All<h2>
+<br>
+        <img src="https://raw.githubusercontent.com/Konviv/konviv.github.io/master/img/logo1.png" alt="Konviv Logo" style="height:200px;">
 
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script> -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+        <br><br><br>
+    	<input id="txtEmail" type="email" placeholder="Email" required="required" />
+        <input id="txtPassword" type="Password" placeholder="Password" required="required" />
+        <button id="btnLogin" class="btn btn-action btn-primary btn-block btn-large">L o g i n</button>
 
-        <script>
-            $(document).ready(function() {
-                console.log("log in page loaded");
+       <br>
+      <!--   <button id="btnLogout" class="btn btn-action btn-primary btn-block btn-large">Logout</button> -->
 
-                // Initialize Firebase
-                var firebaseConfig = {
-                    apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
-                    authDomain: "konvivandroid.firebaseapp.com",
-                    databaseURL: "https://konvivandroid.firebaseio.com",
-                    projectId: "konvivandroid",
-                    storageBucket: "konvivandroid.appspot.com",
-                    messagingSenderId: "41760220514"
-                };
-                firebase.initializeApp(firebaseConfig);
+         <button id="btnSignup" class="btn btn-secondary btn-block btn-large">S i g n u p</button>
+         <div id='get-button-data'> </div>
 
-                firebase.auth().onAuthStateChanged(function(user) {
-                    if (user) {
-                        location.href="/index.ejs";
-                    } else {
-                        sessionStorage.clear();
+         <div style="margin-top:300px; text-align:center; margin:10px 5px;"><p style="font-size:14px; color:#DDD; padding-bottom: 30px">Konviv uses a secure connection and 256-bit encryption just like your bank!</p></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        if (sessionStorage.bucketPage) {
+            sessionStorage.removeItem('bucketPage');
+        }
+        if (sessionStorage.token) {
+            location.href="/index.ejs";
+        } else {
+            console.log('currently logged out');
+        }
+
+        $("#btnLogin").on("click", function(){
+             console.log("Clicked");
+        });
+
+        (function() {
+            console.log("log in page loaded");
+
+            // $.get('/log_in_status', function(data) {
+            //     logInSuccess(data.login);
+            // });
+
+            //Get elements
+            const txtEmail=document.getElementById('txtEmail')
+            const txtPassword=document.getElementById('txtPassword')
+            const btnLogin=document.getElementById('btnLogin')
+            const btnSignup=document.getElementById('btnSignup')
+            const btnLogout=document.getElementById('btnLogout')
+
+            //Add login event
+            btnLogin.addEventListener('click', e => {
+                const email=txtEmail.value;
+                const pass=txtPassword.value;
+                // const auth=firebase.auth();
+                //Sign in
+                console.log('log in called...');
+
+                $.post('/log_in', {
+                    username: email,
+                    password: pass
+                }, function(data) {
+                    if (data.token) {
+                        sessionStorage.setItem('token', data.token);
                     }
                 });
 
