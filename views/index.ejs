@@ -356,8 +356,16 @@
                     token: sessionStorage.getItem('token')
                 }, function(data) {
                     // Catching error
-
-                    if (data.error != null) {
+                    if (data == null) {
+                        // Format the error
+                        var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
+                        // Render the error
+                        $('#get-button-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(errorHtml).slideDown();
+                            });
+                        });
+                    } else if (data.error != null) {
                         if (data.message == 'Failed to authenticate token.') {
                             checkTokenStatus(false);
                         }

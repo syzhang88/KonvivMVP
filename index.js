@@ -29,15 +29,15 @@ var config = {
   messagingSenderId: "41760220514",
 };
 
-// Initialize ADMIN Firebase plaidClient
+// Initialize ADMIN Firebase client
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://konvivandroid.firebaseio.com"
 });
 
-// // Initialize normal Firebase plaidClient
-// firebase.initializeApp(config);
-// // End Firebase setup
+// Initialize normal Firebase client
+firebase.initializeApp(config);
+// End Firebase setup
 
 // Begin Plaid code for configuration, initialization, and authentication
 var APP_PORT = envvar.number('APP_PORT', Number(process.env.PORT || 8000 ));
@@ -47,7 +47,7 @@ var PLAID_PUBLIC_KEY = envvar.string('PLAID_PUBLIC_KEY', '9f4ef21fdb37b5c0e3f802
 var PLAID_ENV = envvar.string('PLAID_ENV', 'development');
 
 // Initialize Plaid client
-var plaidClient = new plaid.Client(
+var client = new plaid.Client(
   PLAID_CLIENT_ID,
   PLAID_SECRET,
   PLAID_PUBLIC_KEY,
@@ -80,33 +80,6 @@ app.get('/', function(request, response, next) {
     console.log("app loaded");
 });
 
-// app.get('/test.ejs', function(request, response, next) {
-//     console.log("app loading...");
-//     response.render('test.ejs', {
-//         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
-//         PLAID_ENV: PLAID_ENV,
-//     });
-//     console.log("app loaded");
-// });
-
-app.get('/bills.ejs', function(request, response, next) {
-    console.log("app loading...");
-    response.render('bills.ejs', {
-        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
-        PLAID_ENV: PLAID_ENV,
-    });
-    console.log("app loaded");
-});
-
-app.get('/savings.ejs', function(request, response, next) {
-    console.log("app loading...");
-    response.render('savings.ejs', {
-        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
-        PLAID_ENV: PLAID_ENV,
-    });
-    console.log("app loaded");
-});
-
 app.get('/login.ejs', function(request, response, next) {
     console.log("app loading...");
     response.render('login.ejs', {
@@ -114,6 +87,22 @@ app.get('/login.ejs', function(request, response, next) {
         PLAID_ENV: PLAID_ENV,
     });
     console.log("app loaded");
+});
+
+app.get('/bills.ejs', function(request, response, next) {
+    console.log(request.body.accessToken);
+    response.render('bills.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+});
+
+app.get('/savings.ejs', function(request, response, next) {
+    console.log(request.body.accessToken);
+    response.render('savings.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
 });
 
 app.get('/index.ejs', function(request, response, next) {
@@ -153,93 +142,93 @@ app.get('/bucketpage.ejs', function(request, response, next) {
     });
 });
 
-// app.post('/log_in', function(request, response, next) {
-//     console.log('attempting login...');
-//     var success = {
-//         login: false
-//     }
-//     var username = request.body.username;
-//     var password = request.body.password;
-//
-//     firebase.auth().signInWithEmailAndPassword(username, password).then(function() {
-//         var user = firebase.auth().currentUser;
-//         // Grab individual user session token
-//         user.getIdToken().then(function(token) {
-//             success = {
-//                 login: true,
-//                 token: token,
-//                 error: null
-//             };
-//             firebase.auth().signOut();
-//             response.json(success);
-//             console.log('successfully logged into Firebase');
-//         }).catch(function(error) {
-//             // Handle Errors here
-//             var errorCode = error.code;
-//             var errorMessage = error.message;
-//             console.log('failed to create user: ' + errorMessage);
-//             response.json({
-//                 login: false,
-//                 error: errorMessage
-//             });
-//         });
-//     }, function() {
-//         success = {
-//             login: false
-//         };
-//         response.json(success);
-//         console.log("login attempt to Firebase has failed");
-//     });
-// });
-//
-// app.post('/sign_up', function(request, response, next) {
-//     console.log('attempting sign up...');
-//
-//     // gets object to database service
-//     var database = firebase.database();
-//     var username = request.body.username;
-//     var password = request.body.password;
-//     var promise = firebase.auth().createUserWithEmailAndPassword(username, password).then(function() {
-//         // grabs admin session token
-//         var user = firebase.auth().currentUser;
-//         user.getIdToken().then(function(token) {
-//             for (var key in buckets.nameBuckets) {
-//                 admin.database().ref("users/" + user.uid + "/bucketNames/" + key).set({'name': buckets.nameBuckets[key]}).catch(
-//                     console.log("error with names")
-//                 );
-//             }
-//             response.json({
-//                 login: true,
-//                 token: token,
-//                 userId: user.uid,
-//                 error: null
-//             });
-//             firebase.auth().signOut();
-//             console.log('successfully created user in Firebase: ' + user.uid);
-//         }).catch(function(error) {
-//             // Handle Errors here.
-//             user.delete();
-//             firebase.auth().signOut();
-//             var errorCode = error.code;
-//             var errorMessage = error.message;
-//             console.log('failed to create user in Firebase: ' + errorMessage);
-//             return response.json({
-//                 login: false,
-//                 error: errorMessage
-//             });
-//         });
-//     }).catch(function(error) {
-//         // Handle Errors here.
-//         var errorCode = error.code;
-//         var errorMessage = error.message;
-//         console.log('failed to create user in Firebase: ' + errorMessage);
-//         response.json({
-//             login: false,
-//             error: errorMessage
-//         });
-//     });
-//     promise.catch(e => console.log(e.message));
-// });
+app.post('/log_in', function(request, response, next) {
+    console.log('attempting login...');
+    var success = {
+        login: false
+    }
+    var username = request.body.username;
+    var password = request.body.password;
+
+    firebase.auth().signInWithEmailAndPassword(username, password).then(function() {
+        var user = firebase.auth().currentUser;
+        // Grab individual user session token
+        user.getIdToken().then(function(token) {
+            success = {
+                login: true,
+                token: token,
+                error: null
+            };
+            firebase.auth().signOut();
+            response.json(success);
+            console.log('successfully logged into Firebase');
+        }).catch(function(error) {
+            // Handle Errors here
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log('failed to create user: ' + errorMessage);
+            response.json({
+                login: false,
+                error: errorMessage
+            });
+        });
+    }, function() {
+        success = {
+            login: false
+        };
+        response.json(success);
+        console.log("login attempt to Firebase has failed");
+    });
+});
+
+app.post('/sign_up', function(request, response, next) {
+    console.log('attempting sign up...');
+
+    // gets object to database service
+    var database = firebase.database();
+    var username = request.body.username;
+    var password = request.body.password;
+    var promise = firebase.auth().createUserWithEmailAndPassword(username, password).then(function() {
+        // grabs admin session token
+        var user = firebase.auth().currentUser;
+        user.getIdToken().then(function(token) {
+            for (var key in buckets.nameBuckets) {
+                admin.database().ref("users/" + user.uid + "/bucketNames/" + key).set({'name': buckets.nameBuckets[key]}).catch(
+                    console.log("error with names")
+                );
+            }
+            response.json({
+                login: true,
+                token: token,
+                userId: user.uid,
+                error: null
+            });
+            firebase.auth().signOut();
+            console.log('successfully created user in Firebase: ' + user.uid);
+        }).catch(function(error) {
+            // Handle Errors here.
+            user.delete();
+            firebase.auth().signOut();
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log('failed to create user in Firebase: ' + errorMessage);
+            return response.json({
+                login: false,
+                error: errorMessage
+            });
+        });
+    }).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log('failed to create user in Firebase: ' + errorMessage);
+        response.json({
+            login: false,
+            error: errorMessage
+        });
+    });
+    promise.catch(e => console.log(e.message));
+});
 
 // ---------------------------------------------------------
 // route middleware to authenticate and check token
@@ -250,21 +239,18 @@ apiRoutes.use(function(request, response, next) {
 
     if (token) {
         admin.auth().verifyIdToken(token).then(function(decodedToken) {
-            console.log('verified Firebase token and now looking for Plaid tokens...');
-            // grabs Plaid access token
-            admin.database().ref('/users/' + decodedToken.uid + '/accounts').once('value', function(snapshot) {
-                request.body.accessTokens = [];
-                for (var key in snapshot.val()) {
-                    var item = snapshot.val()[key];
-                    if (item['user_token']) {
-                        request.body.accessTokens.push(item['user_token']);
-                        console.log('found existing Plaid token: ' + request.body.accessTokens);
-                    }
-                    request.body.userId = decodedToken.uid;
+            console.log('verified Firebase token and now looking for Plaid token...');
 
-                    console.log("verified Firebase token for " + request.body.userId);
-                    next();
+            // grabs Plaid access token
+            admin.database().ref('/users/' + decodedToken.uid).once('value', function(snapshot) {
+                if (snapshot.val() && snapshot.val()['user_token']) {
+                    request.body.accessToken = snapshot.val()['user_token'];
+                    console.log('found existing Plaid token: ' + request.body.accessToken);
                 }
+                request.body.userId = decodedToken.uid;
+
+                console.log("verified Firebase token for " + request.body.userId);
+                next();
             });
         }).catch(function(error) {
             console.log('failed to authenticate token.');
@@ -282,21 +268,6 @@ apiRoutes.use(function(request, response, next) {
 });
 
 //BUCKET FUNCTIONALITIES HERE ...
-app.post('/reset_bucket_names', function(request, response, next) {
-    console.log('called /reset_bucket_names');
-    for (var key in buckets.nameBuckets) {
-        admin.database().ref("users/" + request.body.userId + "/bucketNames/" + key).set({
-            'name': buckets.nameBuckets[key]
-        }).catch(function(error) {
-            var errorMessage = error.message;
-            console.log('failed to call /reset_bucket_names: ' + errorMessage);
-            response.json({
-                error: error,
-                error: errorMessage
-            });
-        });
-    };
-});
 
 apiRoutes.post('/transactions_for_bucket',function(request,response,next){
     console.log("Grabbing Transactions")
@@ -305,9 +276,9 @@ apiRoutes.post('/transactions_for_bucket',function(request,response,next){
     var bucket_path = 'users/'+user_id+'/bucketTransactions/'+bucket
 
     admin.database().ref(bucket_path).once('value').then(function(snapshot) {
-        console.log("transactions_for_bucket called")
+        console.log("Bucket Info called")
         var bucket_transactions = snapshot.val();
-        // console.log(bucket_transactions)
+        console.log(bucket_transactions)
 
         response.json(bucket_transactions);
     }).catch(function(error) {
@@ -321,7 +292,7 @@ apiRoutes.post('/transactions_for_bucket',function(request,response,next){
 });
 
 apiRoutes.post('/rename_bucket',function(request,response,next){
-    console.log("RECEIVED")
+    console.log("RECIEVED")
     var user_id = request.body.userId
     var bucket = request.body.which_bucket
     var new_name = request.body.new_name
@@ -349,8 +320,8 @@ apiRoutes.post('/bucket_names',function(request,response,next){
     });
 });
 
-apiRoutes.post('/change_bucket_size',function(request,response,next){
-    console.log("RECEIVED")
+apiRoutes.post('/change_size',function(request,response,next){
+    console.log("RECIEVED")
     var user_id = request.body.userId
     var from_bucket=request.body.from_bucket
     var to_bucket=request.body.to_bucket
@@ -368,7 +339,7 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
     console.log('getting access token...');
 
     app.set('public token', request.body.publicToken);
-    plaidClient.exchangePublicToken(app.get('public token'), function(error, tokenResponse) {
+    client.exchangePublicToken(app.get('public token'), function(error, tokenResponse) {
         if (error != null) {
           var msg = 'Could not exchange public token!';
           console.log(msg + '\n' + error);
@@ -378,8 +349,9 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
         }
 
         console.log('loading Access Token: ' + tokenResponse.access_token);
-        admin.database().ref('users/' + request.body.userId + '/accounts/' + tokenResponse.item_id).set({
-            user_token: tokenResponse.access_token
+        admin.database().ref('users/' + request.body.userId).set({
+            user_token: tokenResponse.access_token,
+            item_id: tokenResponse.item_id
         });
 
         response.json({
@@ -387,32 +359,50 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
         });
 
         updateAccounts(tokenResponse.accessToken, request.body.userId, () => {});
-        updateTransactions(SIX_MONTHS, tokenResponse.accessToken, request.body.userId, () => {});
+        updateTransactions(SIX_MONTHS, request.body.accessToken, request.body.userId, () => {});
     });
 });
 
 apiRoutes.post('/accounts', function(request, response, next) {
     // Retrieve high-level account information and account and routing numbers
     // for each account associated with the Item.
-    console.log('/accounts called')
-    updateAllAccounts(request.body.accessTokens, request.body.userId).then(console.log("done"));
-});
-
-apiRoutes.post('/transactions', function(request, response, next) {
-    // Pull transactions for the Item for the last 30 days to the front-end
-    updateTransactions(SIX_MONTHS, request.body.accessTokens, request.body.userId, function(postData) {
+    updateAccounts(request.body.accessToken, request.body.userId, function(postData) {
         response.json(postData);
     });
 });
 
-apiRoutes.post('/savings', function(request, response, next) {
-    // for (var key in buckets.nameBuckets) {
-    //     admin.database().ref("users/" + request.body.userId + "/bucketNames/" + key).set({'name': buckets.nameBuckets[key]}).catch(
-    //         console.log("error with names")
-    //     );
-    // }
+apiRoutes.post('/transactions', function(request, response, next) {
+    // Pull transactions for the Item for the last 30 days to the front-end
+    var startDate = moment().format('YYYY-MM-DD').substr(0,8) + '01';
+    var endDate = moment().format('YYYY-MM-DD');
 
-    plaidClient.getAuth(request.body.accessToken, function(error, authResponse) {
+    client.getTransactions(request.body.accessToken, startDate, endDate, {
+        count: 500,
+        offset: 0,
+    }, function(error, transactionsResponse) {
+        if (error != null) {
+            console.log(JSON.stringify(error));
+            return response.json({
+                error: error
+            });
+        }
+        transactionsResponse.transactions.forEach(function(txn, idx) {
+            txn.bucket = buckets.selectBucket(txn)['bucketName'];
+        });
+        response.json(transactionsResponse);
+    });
+
+    updateTransactions(SIX_MONTHS, request.body.accessToken, request.body.userId, () => {});
+});
+
+apiRoutes.post('/savings', function(request, response, next) {
+    for (var key in buckets.nameBuckets) {
+        admin.database().ref("users/" + request.body.userId + "/bucketNames/" + key).set({'name': buckets.nameBuckets[key]}).catch(
+            console.log("error with names")
+        );
+    }
+
+    client.getAuth(request.body.accessToken, function(error, authResponse) {
         if (error != null) {
             var msg = 'Unable to pull accounts from the Plaid API.';
             console.log(msg + '\n' + error);
@@ -449,35 +439,24 @@ apiRoutes.post('/savings', function(request, response, next) {
             response.json(postData);
         });
     });
+
+    updateAccounts(request.body.accessToken, request.body.userId, () => {});
 });
 
 apiRoutes.post('/buckets', function(request, response, next) {
-    updateTransactions(SIX_MONTHS, request.body.accessTokens, request.body.userId, function() {
+    var bucketClasses = {}
+    updateTransactions(SIX_MONTHS, request.body.accessToken, request.body.userId, function() {
         admin.database().ref('users/' + request.body.userId + '/bucketMoney').once('value', function(snapshot) {
-            var bucketMoney = snapshot.val();
-            admin.database().ref('users/' + request.body.userId + '/accounts').once('value', function(snapshot) {
-                var accounts = snapshot.val();
-                console.log( 'INSIDE BUCKETS IN INDEX.JS SENDING SNAPSHOT');
-                console.log(snapshot.val());
-                response.json({
-                    'bucketMoney': bucketMoney,
-                    'accounts': accounts
-                });
-            });
+
+            console.log( "INSIDE BUCKETS IN INDEX.JS SENDING SNAPSHOT")
+            //console.log(snapshot.val());
+            response.json(snapshot.val());
         });
     });
 });
 
-function updateAllAccounts(accessToken, userId) {
-    return arr.reduce(function(promise, accessToken) {
-        return promise.then(function() {
-            return updateAccount(accessToken, userId, () => {});
-        });
-    }, Promise.resolve());
-}
-
-function updateAccount(accessToken, userId, jsonFunction) {
-    plaidClient.getItem(accessToken, function(error, itemResponse) {
+function updateAccounts(accessToken, userId, jsonFunction) {
+    client.getItem(accessToken, function(error, itemResponse) {
         if (error != null) {
             console.log(error);
             return {
@@ -488,7 +467,7 @@ function updateAccount(accessToken, userId, jsonFunction) {
         console.log('getItem');
 
         // Also pull information about the institution
-        plaidClient.getInstitutionById(itemResponse.item.institution_id, function(err, instRes) {
+        client.getInstitutionById(itemResponse.item.institution_id, function(err, instRes) {
             if (err != null) {
                 var msg = 'Unable to pull institution information from the Plaid API.';
                 console.log(msg + '\n' + error);
@@ -499,7 +478,7 @@ function updateAccount(accessToken, userId, jsonFunction) {
             var institution = instRes.institution;
             console.log('getInstitutionById');
 
-            plaidClient.getAuth(accessToken, function(error, authResponse) {
+            client.getAuth(accessToken, function(error, authResponse) {
                 if (error != null) {
                     var msg = 'Unable to pull accounts from the Plaid API.';
                     console.log(msg + '\n' + error);
@@ -515,16 +494,25 @@ function updateAccount(accessToken, userId, jsonFunction) {
                 // Admin section for updating account info on Firebase
                 var postData = {
                     'accounts': authResponse.accounts,
-                    'institution': institution
+                    'institution': institution,
+                    'item': item
                 };
-                admin.database().ref('users/' + userId + '/accounts/' + item).update(postData);
+                admin.database().ref('users/' + userId).update(postData);
                 console.log('posted item for: ' + userId);
+
+                jsonFunction({
+                    error: false,
+                    accounts: authResponse.accounts,
+                    numbers: authResponse.numbers,
+                    institution: institution,
+                    item: item
+                });
             });
         });
     });
 }
 
-function updateTransactions(timePeriod, accessTokens, userId, callbackFunction) {
+function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
     var startDate = moment().subtract(timePeriod, 'months').format('YYYY-MM-DD');
     var endDate = moment().format('YYYY-MM-DD');
     var updatedTransactions = 'transactions are working';
@@ -532,7 +520,7 @@ function updateTransactions(timePeriod, accessTokens, userId, callbackFunction) 
     var thisMonth = new Date(endDate.substr(0, 4), endDate.substr(5, 2), '01');
     var startMonth = startDate.substr(0,8) + '01';
 
-    plaidClient.getTransactions(accessToken, startMonth, endDate, {
+    client.getTransactions(accessToken, startMonth, endDate, {
       count: 500,
       offset: 0,
     }, function(error, transactionsResponse) {
@@ -560,7 +548,6 @@ function updateTransactions(timePeriod, accessTokens, userId, callbackFunction) 
 
             var txnDate = transaction.date;
             var transactionDate = new Date(txnDate.substr(0, 4), txnDate.substr(5, 2), txnDate.substr(8,2));
-
             admin.database().ref('users/' + userId + "/bucketTransactions/" + bucketName  + "/" + transaction.date.substr(0,7)).update(postData);
 
             if (transactionDate >= thisMonth) {
@@ -625,7 +612,7 @@ function updateTransactions(timePeriod, accessTokens, userId, callbackFunction) 
             console.log("updated bucket estimates: " );
         });
 
-        callbackFunction(transactionsResponse);
+        callbackFunction();
 
         console.log('saved ' + transactionsResponse.transactions.length + ' transactions under ' + userId);
     });
