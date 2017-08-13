@@ -22,110 +22,51 @@
            background-size: cover;
         }
 
+        #navigation-footer {
+             border-top:1px solid #EEE;
+             position:fixed;
+             top:635px;
+             right:0;
+             left:0;
+             z-index:99;
+             }
+
         </style>
     </head>
     <body>
 
-        <div id="menu">
-           <div class="box">
-               <button class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.png?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br />
-               <p style="margin-top:-5px; font-size:10px; color:#222;">Accounts</p></button>
-               <button class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.png?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222;">Transactions</p></button>
-               <button class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.png?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222;">Edit Bank</p></button>
-               <button class="logout-btn headerbutton"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.png?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222;">Logout</p></button>
-           </div>
-           <div id="get-button-data"></div>
-       </div>
-
-       <div class ="box" style="background-color:white;">
-           <div class="head">
-               <h1> True Amount Left <h1>
-           </div>
-           <div class = "body">
-                <div id="left-to-spend">
-                    loading
-                </div>
-                <div id="string">
-                    <div id="overall-stats"></div>
-                    estimated total balance after spendings this month
-                </div>
-           </div>
-       </div>
-
-       <div class ="box" style="background-color:white;">
-           <div class="head">
-               <h1> Monthly Income <h1>
-           </div>
-           <div class = "body">
-               <div id="monthly-income" style="cursor: pointer;">
-                   loading
-               </div>
-                <div id="string"> amount of money received this month so far </div>
-           </div>
-       </div>
-
-       <div class="box">
-           <div class = "body">
-               <div class = "head">
-                   <h1> Monthly Spending Buckets </h1>
-               </div>
-               <div class = "wrap">
-                   <div class = "bucket-heading" id = "total-spending">
-                       loading
-                   </div>
-                   <div class="circle" id="Variable Bills">
-                       <div class="perc">
-                           <div class="perc-value"></div>
-                       </div>
-                       <span class="top"></span>
-                       <span class="bottom"></span>
-                   </div>
-                   <div class="circle" id="Eating Out">
-                       <div class="perc">
-                           <div class="perc-value"></div>
-                       </div>
-                       <span class="top"></span>
-                       <span class="bottom"></span>
-                   </div>
-                   <div class="circle" id="Entertainment">
-                       <div class="perc">
-                           <div class="perc-value"></div>
-                       </div>
-                       <span class="top"></span>
-                       <span class="bottom"></span>
-                   </div>
-                   <div class="circle" id="Groceries">
-                       <div class="perc">
-                           <div class="perc-value"></div>
-                       </div>
-                       <span class="top"></span>
-                       <span class="bottom"></span>
-                   </div>
-                   <div class="circle" id="Other Spending">
-                       <div class="perc">
-                           <div class="perc-value"></div>
-                       </div>
-                       <span class="top"></span>
-                       <span class="bottom"></span>
-                   </div>
-                   <div class="circle" id="Shopping">
-                       <div class="perc">
-                           <div class="perc-value"></div>
-                       </div>
-                       <span class="top"></span>
-                       <span class="bottom"></span>
-                   </div>
-                   <div class="circle" id="Transportation">
-                       <div class="perc">
-                           <div class="perc-value"></div>
-                       </div>
-                       <span class="top"></span>
-                       <span class="bottom"></span>
-                   </div>
-               </div>
-           </div>
-       </div>
-
+    <div id="navigation-top" style="background-color:white;">
+              <div id="menu">
+                  <div class="box">
+                             <div class="nubox">
+          <p><a href="index.ejs"><button class="upbutton">Main</button></a></p>
+          <p><a href="bills.ejs"><button class="upbutton">Bills</button></a></p>
+          <p><a href="savings.ejs"><button class="upbutton">Savings</button></a></p>
+        </div>
+        <div class="nubox">
+          <div id="left-to-spend">loading</div>
+          <div id="string" style="font-size:16px; padding-top:5px;">Left to Spend</div>
+        </div>
+        <div class="nubox">
+          <p><a href="index.ejs"><button class="upbutton">Settings</button></a></p>
+          <p><a href="bills.ejs"><button class="upbutton">Notifications</button></a></p>
+          <p><a href="savings.ejs"><button class="upbutton">Logout</button></a></p>
+        </div>
+                  </div>
+              </div>
+            </div>
+      <div id="navigation-footer" style="background-color:white;">
+              <div id="menu">
+                  <div class="box">
+                             <button class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.png?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br />
+                             <p style="margin-top:-5px; font-size:10px; color:#222;">Accounts</p></button>
+                             <button class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.png?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222;">Transactions</p></button>
+                             <button class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.png?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222;">Edit Bank</p></button>
+                             <button class="logout-btn headerbutton"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.png?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222;">Insights</p></button>
+                  </div>
+              </div>
+            </div>
+            
         <div class ="box">
             <div class="head">
                 <h1> Emergency Savings Goal </h1>
@@ -148,54 +89,10 @@
 
         <div id="menu">
             <div class="box">
-                <button class="headerbutton" style="margin:10px 10px 10px 14px;" id="threeMonths"><span style="font-size:18px; color:#222;">3 Months</span></button>
-                <button class="headerbutton" style="margin:10px 10px;" id="sixMonths"><span style="font-size:18px; color:#222;">6 Months</span></button>
-                <button class="headerbutton" style="margin:10px 10px;" id="nineMonths"><span style="font-size:18px; color:#222;">9 Months</span></button>
-                <button class="headerbutton" style="margin:10px 10px;" id="twelveMonths"><span style="font-size:18px; color:#222;">12 Months</span></button>
-            </div>
-        </div>
-
-        <div class ="box">
-            <div class="head">
-                <h1> Monthly Fixed Bills</h1>
-            </div>
-            <div class = "body">
-                <div id = "monthly-fixed-bills">
-                    <div class = "bucket-heading" id = "total-bills">
-                        loading
-                    </div>
-                    <div class="wrap-bills">
-                        <div class="circle-bills" id="Housing">
-                            <div class="perc-bills">
-                                <div class="perc-value-bills"></div>
-                            </div>
-                            <span class="top-bills">Housing</span>
-                            <span class="bottom-bills"></span>
-                        </div>
-
-                        <div class="circle-bills" id="Loans">
-                            <div class="perc-bills">
-                                <div class="perc-value-bills"></div>
-                            </div>
-                            <span class="top-bills">Loans</span>
-                            <span class="bottom-bills"></span>
-                        </div>
-                        <div class="circle-bills" id="Insurance">
-                            <div class="perc-bills">
-                                <div class="perc-value-bills"></div>
-                            </div>
-                            <span class="top-bills">Insurance</span>
-                            <span class="bottom-bills"></span>
-                        </div>
-                        <div class="circle-bills" id="Subscriptions">
-                            <div class="perc-bills">
-                                <div class="perc-value-bills"></div>
-                            </div>
-                            <span class="top-bills">Subscriptions</span>
-                            <span class="bottom-bills"></span>
-                        </div>
-                    </div>
-                </div>
+                <button class="savingsbutton" style="margin:10px 10px 10px 14px;" id="threeMonths"><span style="font-size:18px; color:#222;">3 Months</span></button>
+                <button class="savingsbutton" style="margin:10px 10px;" id="sixMonths"><span style="font-size:18px; color:#222;">6 Months</span></button>
+                <button class="savingsbutton" style="margin:10px 10px;" id="nineMonths"><span style="font-size:18px; color:#222;">9 Months</span></button>
+                <button class="savingsbutton" style="margin:10px 10px;" id="twelveMonths"><span style="font-size:18px; color:#222;">12 Months</span></button>
             </div>
         </div>
 
