@@ -135,12 +135,27 @@ h1 + h1 {
 
 }
 
+.upbutton {
+      font-size:8px;
+      margin-bottom:-4px;
+      width:100px;
+      color:#444;
+      border:1px solid #DDD;
+      background-color: white;
+      border-radius: 4px;
+      display: inline-block;
+      float: left;
+      overflow:auto;
+      padding: 10px 30px;
+      margin:1px 0px;
+}
+
+.upbutton:hover {
+  color:#DDD;
+}
+
 button {
-  background-color: #fba40c;
-  background-image: -webkit-linear-gradient(top, #fba40c, #ffb606);
-  background-image: linear-gradient(to bottom, #fba40c, #ffb606);
   border-width: 0px;
-  color: #fff;
   font-size: 18px;
   border-radius: 4px;
   display: inline-block;
@@ -158,6 +173,17 @@ button:hover {
   border-width: 0px;
   font-size: 28px;
   border-radius: 0px;
+  display: inline-block;
+  float: left;
+  overflow:auto;
+}
+
+.savingsbutton {
+  background-color: #EEE;
+  border-width: 0px;
+  font-size: 28px;
+  border-radius: 4px;
+  padding:6px;
   display: inline-block;
   float: left;
   overflow:auto;
@@ -294,17 +320,26 @@ h1 {
 
 .box {
   background: white;
-  padding:5px 5px 20px 5px;
+  padding:5px 5px 5px 5px;
+}
+
+.nubox {
+    display:block;
+    float:left;
+    position:relative;
+    height:100px;
+    width:100px;
+    border-top:0px;
+    background-color:white;
 }
 
 #left-to-spend, #monthly-income  {
   background-color:white;
-  border-top:1px solid #EEE;
   text-align: center;
   font: "Lato", Arial;
-  padding-top: 30px;
-  padding-bottom:30px;
-  font-size:45px;
+  padding-top: 20px;
+  padding-bottom:5px;
+  font-size:24px;
   color:#333;
   font-weight:bold;
 }
@@ -621,11 +656,8 @@ body {
     width: 100%;
     height:100%;
     font-family: 'Montserrat', sans-serif;
-    background: #00b1b5;
-    background: -webkit-linear-gradient(#09868c, #00b7b8); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(#09868c, #00b7b8); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(#09868c, #00b7b8); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(#09868c, #00b7b8);
+    background-color:#EEE;
+    border-top:1px solid #DEDEDE;
     overflow: scroll;
 }
 
