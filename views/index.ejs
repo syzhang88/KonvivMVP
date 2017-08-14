@@ -5,6 +5,16 @@
         <title>Konviv MVP</title>
         <link rel="stylesheet" type="text/css" href="style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script>
+        window.onload = function () {
+        document.getElementById('button').onclick = function () {
+        document.getElementById('modal').style.display = "none"
+            };
+        };
+        </script>
+
+
+        </script>
         <style>
         @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
@@ -41,6 +51,27 @@
 
                 font: 10px Arial, sans-serif;
             }
+
+        #modal {
+            position: fixed;
+            font-family: Arial, Helvetica, sans-serif;
+            top: 0;
+            left: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 99999;
+            height: 100%;
+            width: 100%;
+        }
+        .modalconent {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            width: 80%;
+            padding: 20px;
+            border-radius:4px;
+        }
         </style>
     </head>
     <body>
@@ -55,12 +86,12 @@
         </div>
         <div class="nubox">
           <div id="left-to-spend">loading</div>
-          <div id="string" style="font-size:16px; padding-top:5px;">Left to Spend</div>
+          <div id="string" style="font-size:16px; padding-top:5px; color:#61cb43;">Left to Spend</div>
         </div>
         <div class="nubox">
-          <p><a href="index.ejs"><button class="upbutton">Settings</button></a></p>
-          <p><a href="bills.ejs"><button class="upbutton">Notifications</button></a></p>
           <p><a href="savings.ejs"><button class="upbutton">Logout</button></a></p>
+          <p><a href="newsfeed.ejs"><button class="upbutton">Newsfeed</button></a></p>
+          <p><a href="settings.ejs"><button class="upbutton">Settings</button></a></p>
         </div>
                   </div>
               </div>
@@ -68,14 +99,16 @@
       <div id="navigation-footer" style="background-color:white;">
               <div id="menu">
                   <div class="box">
-                             <button class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.png?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br />
-                             <p style="margin-top:-5px; font-size:10px; color:#222;">Accounts</p></button>
-                             <button class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.png?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222;">Transactions</p></button>
-                             <button class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.png?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222;">Edit Bank</p></button>
-                             <button class="logout-btn headerbutton"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.png?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222;">Insights</p></button>
+                             <button class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br />
+                             <p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Accounts</p></button>
+                             <button class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Transactions</p></button>
+                             <button class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Edit Bank</p></button>
+                             <button class="logout-btn headerbutton"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Insights</p></button>
                   </div>
               </div>
             </div>
+
+        <div id="get-button-data"></div>
 
        <div class="box">
            <div class="body" style="border-top:1px solid #EEE; margin-top:-5px;">
@@ -137,8 +170,6 @@
            </div>
        </div>
 
-        <div id="get-button-data"></div>
-
         <div class ="box" style="background-color:white; padding-bottom:190px;">
             <div class="head">
                 <h1> Monthly Income <h1>
@@ -149,6 +180,17 @@
                 </div>
                  <div id="string"> amount of money received this month so far </div>
             </div>
+        </div>
+
+        <div id="modal">
+        <div class="modalconent">
+        <h2 style="font-size:20px;">How do buckets work?</h2><br />
+        <p style="font-size:14px;">The top number <b>$139</b> is how much money you have left to spend in that category</p><br />
+        <p><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/sbucket.jpg?raw=true" style="width:200px;" /></p><br />
+        <p style="font-size:14px;">The bottom number <b>$199</b> represents your total budget for this bucket for the month</p><br />
+        <p style="font-size:12px; color:#999;">We calculated your budget for this bucket by looking at how much you typically spend in this category in a month, and averaging your last six months of transactions.</p><br />
+        <button id="button" style="padding:10px 30px; font-size:14px; margin-left:80px;">Close</button>
+        </div>
         </div>
 
       <!-- scripts -->
