@@ -114,6 +114,15 @@ app.get('/index.ejs', function(request, response, next) {
     });
 });
 
+app.get('/insights.ejs', function(request, response, next) {
+    console.log("app loading...");
+    response.render('insights.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+    console.log("app loaded");
+});
+
 app.get('/newuser.ejs', function(request, response, next) {
     response.render('newuser.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
