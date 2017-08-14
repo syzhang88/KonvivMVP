@@ -24,12 +24,17 @@
         #navigation-footer {
              border-top:1px solid #EEE;
              position:fixed;
-             top:605px;
+             top:490px;
              right:0;
              left:0;
              z-index:99;
              }
-
+         #navigation-top {
+          border-bottom:1px solid #EEE;
+          position:relative;
+          z-index:99;
+          background-color:white;
+          }
         </style>
     </head>
     <body>
@@ -66,7 +71,7 @@
               </div>
             </div>
 
-        <div class ="box" style="margin-bottom:200px;">
+        <div class ="box" style="margin-bottom:200px; margin-top:0px;">
             <div class="head">
                 <h1> Monthly Fixed Bills</h1>
             </div>
@@ -109,8 +114,6 @@
                 </div>
             </div>
         </div>
-
-        <div><p><a href="#"><button class="btn">See All Bills</button></a></p></div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
         <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>

@@ -29,48 +29,17 @@
         #navigation-footer {
              border-top:1px solid #EEE;
              position:fixed;
-             top:605px;
+             top:490px;
              right:0;
              left:0;
              z-index:99;
              }
-
-        .smallcircle {
-                border-radius: 50%;
-                behavior: url(PIE.htc); /* remove if you don't care about IE8 */
-
-                width: 15px;
-                height: 15px;
-                padding: 1px;
-
-                background: #fff;
-                border: 1px solid #DDD;
-                color: #666;
-                text-align: center;
-
-                font: 10px Arial, sans-serif;
-            }
-
-        #modal {
-            position: fixed;
-            font-family: Arial, Helvetica, sans-serif;
-            top: 0;
-            left: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 99999;
-            height: 100%;
-            width: 100%;
-        }
-        .modalconent {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #fff;
-            width: 80%;
-            padding: 20px;
-            border-radius:4px;
-        }
+         #navigation-top {
+          border-bottom:1px solid #EEE;
+          position:relative;
+          z-index:99;
+          background-color:white;
+          }
         </style>
     </head>
     <body>
@@ -107,69 +76,7 @@
               </div>
             </div>
 
-        <div id="get-button-data"></div>
-
-       <div class="box">
-           <div class="body" style="border-top:1px solid #EEE; margin-top:-5px;">
-               <div class = "wrap">
-                   <div class = "bucket-heading" id = "total-spending">
-                       loading
-                   </div>
-
-                   <div class="circle" id="Variable Bills"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
-                       <div class="perc">
-                           <div class="perc-value"></div>
-                       </div>
-                       <span class="top"></span>
-                       <span class="bottom"></span>
-                   </div>
-                   <div class="circle" id="Eating Out"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
-                       <div class="perc">
-                           <div class="perc-value"></div>
-                       </div>
-                       <span class="top"></span>
-                       <span class="bottom"></span>
-                   </div>
-                   <div class="circle" id="Entertainment"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
-                       <div class="perc">
-                           <div class="perc-value"></div>
-                       </div>
-                       <span class="top"></span>
-                       <span class="bottom"></span>
-                   </div>
-                   <div class="circle" id="Groceries"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
-                       <div class="perc">
-                           <div class="perc-value"></div>
-                       </div>
-                       <span class="top"></span>
-                       <span class="bottom"></span>
-                   </div>
-                   <div class="circle" id="Other Spending"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
-                       <div class="perc">
-                           <div class="perc-value"></div>
-                       </div>
-                       <span class="top"></span>
-                       <span class="bottom"></span>
-                   </div>
-                   <div class="circle" id="Shopping"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
-                       <div class="perc">
-                           <div class="perc-value"></div>
-                       </div>
-                       <span class="top"></span>
-                       <span class="bottom"></span>
-                   </div>
-                   <div class="circle" id="Transportation"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
-                       <div class="perc">
-                           <div class="perc-value"></div>
-                       </div>
-                       <span class="top"></span>
-                       <span class="bottom"></span>
-                   </div>
-               </div>
-           </div>
-       </div>
-
-        <div class ="box" style="background-color:white; padding-bottom:190px;">
+        <div class ="box" style="margin-top:0px;">
             <div class="head">
                 <h1> Monthly Income <h1>
             </div>
