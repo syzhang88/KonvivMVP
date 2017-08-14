@@ -80,6 +80,10 @@ app.get('/', function(request, response, next) {
     console.log("app loaded");
 });
 
+app.get('/loaderio-0e62a1b887def71a874861ea6f4fa319.txt', function(request, response, next) {
+    response.render('loaderio-0e62a1b887def71a874861ea6f4fa319.txt');
+});
+
 app.get('/login.ejs', function(request, response, next) {
     response.render('login.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
