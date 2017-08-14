@@ -47,7 +47,7 @@ var PLAID_PUBLIC_KEY = envvar.string('PLAID_PUBLIC_KEY', '9f4ef21fdb37b5c0e3f802
 var PLAID_ENV = envvar.string('PLAID_ENV', 'development');
 
 // Initialize Plaid client
-var client = new plaid.Client(
+var plaidClient = new plaid.Client(
   PLAID_CLIENT_ID,
   PLAID_SECRET,
   PLAID_PUBLIC_KEY,
@@ -88,7 +88,7 @@ app.get('/login.ejs', function(request, response, next) {
 });
 
 app.get('/bills.ejs', function(request, response, next) {
-    // console.log(request.body.accessToken);
+    // console.log(request.body.firebaseToken);
     response.render('bills.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
@@ -96,7 +96,7 @@ app.get('/bills.ejs', function(request, response, next) {
 });
 
 app.get('/savings.ejs', function(request, response, next) {
-    // console.log(request.body.accessToken);
+    // console.log(request.body.firebaseToken);
     response.render('savings.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
@@ -104,7 +104,7 @@ app.get('/savings.ejs', function(request, response, next) {
 });
 
 app.get('/index.ejs', function(request, response, next) {
-    console.log(request.body.accessToken);
+    // console.log(request.body.firebaseToken);
     response.render('index.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
@@ -233,7 +233,8 @@ app.post('/sign_up', function(request, response, next) {
 // ---------------------------------------------------------
 apiRoutes.use(function(request, response, next) {
     // console.log("validating token: " + request.body.token);
-    var token = request.body.token;
+    var token = request.body.firebaseToken;
+    console.log(token);
 
     if (token) {
         admin.auth().verifyIdToken(token).then(function(decodedToken) {
@@ -242,8 +243,8 @@ apiRoutes.use(function(request, response, next) {
             // grabs Plaid access token
             admin.database().ref('/users/' + decodedToken.uid).once('value', function(snapshot) {
                 if (snapshot.val() && snapshot.val()['user_token']) {
-                    request.body.accessToken = snapshot.val()['user_token'];
-                    console.log('found existing Plaid token: ' + request.body.accessToken);
+                    request.body.plaidToken = snapshot.val()['user_token'];
+                    console.log('found existing Plaid token: ' + request.body.plaidToken);
                 }
                 request.body.userId = decodedToken.uid;
 
@@ -271,7 +272,7 @@ apiRoutes.post('/transactions_for_bucket',function(request,response,next){
     console.log("Grabbing Transactions")
     var user_id = request.body.userId
     var bucket=request.body.which_bucket
-    var bucket_path = 'users/'+user_id+'/bucketTransactions/'+bucket
+    var bucket_path = 'users/' + user_id + '/bucketTransactions/' + bucket
 
     admin.database().ref(bucket_path).once('value').then(function(snapshot) {
         console.log("Bucket Info called")
@@ -337,7 +338,7 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
     console.log('getting access token...');
 
     app.set('public token', request.body.publicToken);
-    client.exchangePublicToken(app.get('public token'), function(error, tokenResponse) {
+    plaidClient.exchangePublicToken(app.get('public token'), function(error, tokenResponse) {
         if (error != null) {
           var msg = 'Could not exchange public token!';
           console.log(msg + '\n' + error);
@@ -356,15 +357,15 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
           'error': false
         });
 
-        updateAccounts(tokenResponse.accessToken, request.body.userId, () => {});
-        updateTransactions(SIX_MONTHS, request.body.accessToken, request.body.userId, () => {});
+        updateAccounts(tokenResponse.plaidToken, request.body.userId, () => {});
+        updateTransactions(SIX_MONTHS, request.body.plaidToken, request.body.userId, () => {});
     });
 });
 
 apiRoutes.post('/accounts', function(request, response, next) {
     // Retrieve high-level account information and account and routing numbers
     // for each account associated with the Item.
-    updateAccounts(request.body.accessToken, request.body.userId, function(postData) {
+    updateAccounts(request.body.plaidToken, request.body.userId, function(postData) {
         response.json(postData);
     });
 });
@@ -374,7 +375,7 @@ apiRoutes.post('/transactions', function(request, response, next) {
     var startDate = moment().format('YYYY-MM-DD').substr(0,8) + '01';
     var endDate = moment().format('YYYY-MM-DD');
 
-    client.getTransactions(request.body.accessToken, startDate, endDate, {
+    plaidClient.getTransactions(request.body.plaidToken, startDate, endDate, {
         count: 500,
         offset: 0,
     }, function(error, transactionsResponse) {
@@ -390,7 +391,7 @@ apiRoutes.post('/transactions', function(request, response, next) {
         response.json(transactionsResponse);
     });
 
-    updateTransactions(SIX_MONTHS, request.body.accessToken, request.body.userId, () => {});
+    updateTransactions(SIX_MONTHS, request.body.plaidToken, request.body.userId, () => {});
 });
 
 apiRoutes.post('/savings', function(request, response, next) {
@@ -400,7 +401,7 @@ apiRoutes.post('/savings', function(request, response, next) {
         );
     }
 
-    client.getAuth(request.body.accessToken, function(error, authResponse) {
+    plaidClient.getAuth(request.body.plaidToken, function(error, authResponse) {
         if (error != null) {
             var msg = 'Unable to pull accounts from the Plaid API.';
             console.log(msg + '\n' + error);
@@ -438,23 +439,27 @@ apiRoutes.post('/savings', function(request, response, next) {
         });
     });
 
-    updateAccounts(request.body.accessToken, request.body.userId, () => {});
+    updateAccounts(request.body.plaidToken, request.body.userId, () => {});
 });
 
 apiRoutes.post('/buckets', function(request, response, next) {
     var bucketClasses = {}
-    updateTransactions(SIX_MONTHS, request.body.accessToken, request.body.userId, function() {
-        admin.database().ref('users/' + request.body.userId + '/bucketMoney').once('value', function(snapshot) {
+    updateTransactions(SIX_MONTHS, request.body.plaidToken, request.body.userId, function(data) {
+        admin.database().ref('users/' + request.body.userId + '/Total Balance').once('value', function(snapshot) {
 
-            console.log( "INSIDE BUCKETS IN INDEX.JS SENDING SNAPSHOT")
-            //console.log(snapshot.val());
-            response.json(snapshot.val());
+            console.log( "INSIDE BUCKETS IN INDEX.JS SENDING SNAPSHOT");
+            console.log(data);
+
+            response.json({
+                bucketMoney: data,
+                totalBalance: snapshot.val()
+            });
         });
     });
 });
 
-function updateAccounts(accessToken, userId, jsonFunction) {
-    client.getItem(accessToken, function(error, itemResponse) {
+function updateAccounts(plaidToken, userId, callbackFunction) {
+    plaidClient.getItem(plaidToken, function(error, itemResponse) {
         if (error != null) {
             console.log(error);
             return {
@@ -465,7 +470,7 @@ function updateAccounts(accessToken, userId, jsonFunction) {
         console.log('getItem');
 
         // Also pull information about the institution
-        client.getInstitutionById(itemResponse.item.institution_id, function(err, instRes) {
+        plaidClient.getInstitutionById(itemResponse.item.institution_id, function(err, instRes) {
             if (err != null) {
                 var msg = 'Unable to pull institution information from the Plaid API.';
                 console.log(msg + '\n' + error);
@@ -474,9 +479,10 @@ function updateAccounts(accessToken, userId, jsonFunction) {
                 };
             }
             var institution = instRes.institution;
+
             console.log('getInstitutionById');
 
-            client.getAuth(accessToken, function(error, authResponse) {
+            plaidClient.getAuth(plaidToken, function(error, authResponse) {
                 if (error != null) {
                     var msg = 'Unable to pull accounts from the Plaid API.';
                     console.log(msg + '\n' + error);
@@ -484,33 +490,39 @@ function updateAccounts(accessToken, userId, jsonFunction) {
                         error: msg
                     };
                 }
+                var accounts = authResponse.accounts;
+                var numbers = authResponse.numbers;
 
-                console.log("getAuth: " + authResponse.accounts);
+                console.log("getAuth: " + item.item_id);
                 // [object Object],[object Object],[object Object],[object Object]
                 // These are the different checking/cc banking accounts
 
                 // Admin section for updating account info on Firebase
-                var postData = {
-                    'accounts': authResponse.accounts,
+                var accountData = {
+                    'accounts': accounts,
+                    'numbers': numbers,
                     'institution': institution,
-                    'item': item
                 };
-                admin.database().ref('users/' + userId).update(postData);
+
+                var totalBalance = 0;
+                for (var account in accounts) {
+                    if (accounts[account]['type'] == 'depository') {
+                        totalBalance += accounts[account]['balances']['current'];
+                    }
+                }
+                admin.database().ref('users/' + userId + '/accounts/' + item.item_id).update(accountData);
+                admin.database().ref('users/' + userId).update({
+                    'Total Balance': totalBalance
+                });
                 console.log('posted item for: ' + userId);
 
-                jsonFunction({
-                    error: false,
-                    accounts: authResponse.accounts,
-                    numbers: authResponse.numbers,
-                    institution: institution,
-                    item: item
-                });
+                callbackFunction(accountData);
             });
         });
     });
 }
 
-function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
+function updateTransactions(timePeriod, plaidToken, userId, callbackFunction) {
     var startDate = moment().subtract(timePeriod, 'months').format('YYYY-MM-DD');
     var endDate = moment().format('YYYY-MM-DD');
     var updatedTransactions = 'transactions are working';
@@ -518,7 +530,7 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
     var thisMonth = new Date(endDate.substr(0, 4), endDate.substr(5, 2), '01');
     var startMonth = startDate.substr(0,8) + '01';
 
-    client.getTransactions(accessToken, startMonth, endDate, {
+    plaidClient.getTransactions(plaidToken, startMonth, endDate, {
       count: 500,
       offset: 0,
     }, function(error, transactionsResponse) {
@@ -561,10 +573,13 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
             }
         });
 
-        admin.database().ref('users/' + userId + '/').once('value', function(snapshot) {
-            if (snapshot.val()["lastEstimateUpdate"] && snapshot.val()["bucketMoney"]) {
+        admin.database().ref('users/' + userId + '/lastEstimateUpdate').once('value', function(snapshot) {
+            if (snapshot.val() && snapshot.val()["bucketMoney"]) {
                 if (thisMonth <= Date.parse(snapshot.val()["lastEstimateUpdate"]["Month"])){
-                    return;
+                    admin.database().ref('users/' + userId + '/bucketMoney').once('value', function(snapshot) {
+                        callbackFunction(snapshot.val());
+                        return;
+                    });
                 }
             }
             console.log('updated bucket totals for this month:');
@@ -607,11 +622,11 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
             admin.database().ref('users/' + userId + "/lastEstimateUpdate/").update({
                 "Month": thisMonth
             });
+            callbackFunction(allBucketData);
             console.log("updated bucket estimates: " );
+            console.log(allBucketData);
+
         });
-
-        callbackFunction();
-
         console.log('saved ' + transactionsResponse.transactions.length + ' transactions under ' + userId);
     });
 }

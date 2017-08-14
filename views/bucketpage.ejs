@@ -67,7 +67,7 @@
 
     <script>
         $(document).ready(function() {
-            if (sessionStorage.getItem("token") && sessionStorage.getItem("bucketPage")) {
+            if (sessionStorage.getItem("firebaseToken") && sessionStorage.getItem("bucketPage")) {
                 console.log("bucket page loaded for " + sessionStorage.getItem(sessionStorage.getItem("bucketPage")));
             } else {
                 location.href("/index.ejs");
@@ -96,7 +96,10 @@
             function checkLoginStatus() {
                 console.log("refresh check");
                 firebase.auth().onAuthStateChanged(function(user) {
-                    if (!user) {
+                    if (user) {
+                        console.log(user);
+                        checkTokenStatus(true)
+                    } else {
                         sessionStorage.clear();
                         location.href="/";
                     }
@@ -105,9 +108,11 @@
 
             function checkTokenStatus(success) {
                 if (success) {
-                    user.getIdToken(true).then(function(token) {
-                        sessionStorage.setItem('firebaseAccessToken', token);
-                    })
+                    firebase.auth().onAuthStateChanged(function(user) {
+                        user.getIdToken(true).then(function(token) {
+                            sessionStorage.setItem('firebaseToken', token);
+                        });
+                    });
                 } else {
                     firebase.auth().signOut();
                     sessionStorage.clear();
@@ -123,10 +128,10 @@
                 // console.log("grabbing transactions...");
                 $.post('/transactions_for_bucket',{
                     which_bucket: sessionStorage.getItem("bucketPage"),
-                    token: sessionStorage.token
+                    firebaseToken: sessionStorage.getItem("firebaseToken")
                 }, function(data) {
                     if (data.error != null) {
-                        if (|| data.message == 'Failed to authenticate token.') {
+                        if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
                             checkTokenStatus(false);
                         }
                         // Format the error
@@ -158,7 +163,7 @@
                                     // console.log(txnId)
                                     if(data[month].hasOwnProperty(txnId)){
                                         txn = data[month][txnId];
-                                        html += '<div id='clickTransaction '><br>';
+                                        html += '<div id=clickTransaction ><br>';
                                         html += '<strong>' + txn.name + '</strong><br>';
                                         html += '$' + txn.amount + '<br>';
                                         html += '<em>' + txn.date + '</em><br></div>';
@@ -208,7 +213,7 @@
 
             function callResult(data) {
                 if (data.error != null) {
-                    if (data.message == 'Failed to authenticate token.') {
+                    if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
                         checkTokenStatus(false);
                     }
                     // Format the error

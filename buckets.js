@@ -121,7 +121,7 @@ exports.selectBuckets = function selectBuckets (transactions) {
 
 // Classifies which bucket a certain transaction belongs to
 exports.selectBucket = function selectBucket (transaction) {
-    console.log('New Selection:');
+    // console.log('New Selection:');
     var bucket = {
         bucketName: 'Other Spending',
         bucketClass: 'Spending'
