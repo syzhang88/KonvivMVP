@@ -81,12 +81,26 @@ app.get('/', function(request, response, next) {
 });
 
 app.get('/login.ejs', function(request, response, next) {
-    console.log("app loading...");
     response.render('login.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
     });
-    console.log("app loaded");
+});
+
+app.get('/bills.ejs', function(request, response, next) {
+    // console.log(request.body.accessToken);
+    response.render('bills.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+});
+
+app.get('/savings.ejs', function(request, response, next) {
+    // console.log(request.body.accessToken);
+    response.render('savings.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
 });
 
 app.get('/index.ejs', function(request, response, next) {
@@ -288,7 +302,7 @@ apiRoutes.post('/rename_bucket',function(request,response,next){
     // buckets.renameBucket(bucket_path, new_name)
 });
 
-apiRoutes.post('/names',function(request,response,next){
+apiRoutes.post('/bucket_names',function(request,response,next){
     console.log("RECIEVED")
     var user_id = request.body.userId
     var bucket=request.body.which_bucket
@@ -547,7 +561,7 @@ function updateTransactions(timePeriod, accessToken, userId, callbackFunction) {
             }
         });
 
-        admin.database().ref('users/' + userId + '/lastEstimateUpdate').once('value', function(snapshot) {
+        admin.database().ref('users/' + userId + '/').once('value', function(snapshot) {
             if (snapshot.val()["lastEstimateUpdate"] && snapshot.val()["bucketMoney"]) {
                 if (thisMonth <= Date.parse(snapshot.val()["lastEstimateUpdate"]["Month"])){
                     return;
