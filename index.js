@@ -81,16 +81,14 @@ app.get('/', function(request, response, next) {
 });
 
 app.get('/login.ejs', function(request, response, next) {
-    console.log("app loading...");
     response.render('login.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
     });
-    console.log("app loaded");
 });
 
 app.get('/bills.ejs', function(request, response, next) {
-    console.log(request.body.accessToken);
+    // console.log(request.body.accessToken);
     response.render('bills.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
@@ -98,7 +96,7 @@ app.get('/bills.ejs', function(request, response, next) {
 });
 
 app.get('/savings.ejs', function(request, response, next) {
-    console.log(request.body.accessToken);
+    // console.log(request.body.accessToken);
     response.render('savings.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
