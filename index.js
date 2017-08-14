@@ -271,25 +271,23 @@ apiRoutes.use(function(request, response, next) {
 
 //BUCKET FUNCTIONALITIES HERE ...
 
-apiRoutes.post('/bills_list',function(request,response,next){
-    console.log("Grabbing Transactions")
-    var user_id = request.body.userId
-    var bucket=request.body.which_bucket
-    var bucket_path = 'users/' + user_id + '/bucketTransactions/' + bucket
+apiRoutes.post('/bills',function(request,response,next){
+    var billsList = [];
+    admin.database().ref('users/' + request.body.userId + '/bucketTransactions').once('value').then(function(snapshot) {
+        for (var billName in buckets.fixedAmounts) {
+            for (var transactions  in snapshot.val()[billName]) {
+                if (not in billsList) {
+                    billsList.push()
+                }
+            }
+        }
+        for (var transactions  in snapshot.val()['Variable Bills']) {
+            if (not in billsList) {
+                billsList.push()
+            }
+        }
 
-    admin.database().ref(bucket_path).once('value').then(function(snapshot) {
-        console.log("Bucket Info called")
-        var bucket_transactions = snapshot.val();
-        console.log(bucket_transactions)
-
-        response.json(bucket_transactions);
-    }).catch(function(error) {
-        var errorMessage = error.message;
-        console.log('failed to call bucketInfo: ' + errorMessage);
-        response.json({
-            error: error,
-            error: errorMessage
-        });
+        response.json(billsList);
     });
 });
 
