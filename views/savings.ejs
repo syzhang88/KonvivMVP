@@ -28,11 +28,12 @@
           }
         #navigation-footer {
              border-top:1px solid #EEE;
-             position:fixed;
-             top:490px;
-             right:0;
-             left:0;
-             z-index:99;
+             position: fixed; 
+                top: 520px; 
+                right: 0; 
+                left: 0; 
+                z-index: 99; 
+                width: 100%!important;
              }
          #navigation-top {
           border-bottom:1px solid #EEE;
@@ -76,15 +77,32 @@
               </div>
             </div>
 
-        <div class ="box" style="margin-top:0px;">
+         <div class ="box">
             <div class="head">
-                <h1> Monthly Income <h1>
+                <h1> Emergency Savings Goal </h1>
             </div>
             <div class = "body">
-                <div id="monthly-income" style="cursor: pointer;">
-                    loading
+                <div id = "Savings Account">
+                    <div class="wrap-savings">
+                        <div class="circle-savings" id="Emergency Savings">
+                            <div class="perc-savings">
+                                <div class="perc-value-savings"></div>
+                            </div>
+                            <span class="top-savings"></span>
+                            <span class="bottom-savings"></span>
+                        </div>
+                    </div>
                 </div>
-                 <div id="string"> amount of money received this month so far </div>
+            </div>
+            <div class = "monthNumber" id="string"> </div>
+        </div>
+
+        <div id="menu">
+            <div class="box">
+                <button class="headerbutton" style="margin:10px 10px 10px 14px; background-color:#999;" id="threeMonths"><span style="font-size:18px; color:#222;">3 Months</span></button>
+                <button class="headerbutton" style="margin:10px 10px; background-color:#999;" id="sixMonths"><span style="font-size:18px; color:#222;">6 Months</span></button>
+                <button class="headerbutton" style="margin:10px 10px; background-color:#999;" id="nineMonths"><span style="font-size:18px; color:#222;">9 Months</span></button>
+                <button class="headerbutton" style="margin:10px 10px; background-color:#999;" id="twelveMonths"><span style="font-size:18px; color:#222;">12 Months</span></button>
             </div>
         </div>
 
