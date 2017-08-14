@@ -4,6 +4,7 @@
 var envvar = require('envvar');
 var express = require('express');
 var bodyParser = require('body-parser');
+var stringSimilarity = require('string-similarity');
 var moment = require('moment');
 var plaid = require('plaid');
 var buckets = require('./buckets');
@@ -281,21 +282,36 @@ apiRoutes.use(function(request, response, next) {
 //BUCKET FUNCTIONALITIES HERE ...
 
 apiRoutes.post('/bills',function(request,response,next){
-    var billsList = [];
+    var billsList = {};
     admin.database().ref('users/' + request.body.userId + '/bucketTransactions').once('value').then(function(snapshot) {
         for (var billName in buckets.fixedAmounts) {
-            for (var transactions  in snapshot.val()[billName]) {
-                if (not in billsList) {
-                    billsList.push()
+            for (var month in snapshot.val()[billName]) {
+                var monthlyBucket = snapshot.val()[billName][month];
+                for (var transaction in monthlyBucket) {
+                    var perc = 0;
+                    for (var bill in billsList) {
+                        perc = Math.max(perc, stringSimilarity.compareTwoStrings(bill, monthlyBucket[transaction]['name']));
+                        console.log('/bills: ' + perc);
+                    }
+                    if (perc < 0.5) {
+                        billsList[monthlyBucket[transaction]['name']] = monthlyBucket[transaction];
+                    }
                 }
             }
         }
-        for (var transactions  in snapshot.val()['Variable Bills']) {
-            if (not in billsList) {
-                billsList.push()
+        for (var month in snapshot.val()['Variable Bills']) {
+            var monthlyBucket = snapshot.val()['Variable Bills'][month];
+            for (var transaction in monthlyBucket) {
+                var perc = 0;
+                for (var bill in billsList) {
+                    perc = Math.max(perc, stringSimilarity.compareTwoStrings(bill, monthlyBucket[transaction]['name']));
+                    console.log('/bills: ' + perc);
+                }
+                if (perc < 0.5) {
+                    billsList[monthlyBucket[transaction]['name']] = monthlyBucket[transaction];
+                }
             }
         }
-
         response.json(billsList);
     });
 });

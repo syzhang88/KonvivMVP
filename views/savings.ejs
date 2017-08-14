@@ -28,11 +28,11 @@
           }
         #navigation-footer {
              border-top:1px solid #EEE;
-             position: fixed; 
-                top: 520px; 
-                right: 0; 
-                left: 0; 
-                z-index: 99; 
+             position: fixed;
+                top: 520px;
+                right: 0;
+                left: 0;
+                z-index: 99;
                 width: 100%!important;
              }
          #navigation-top {
@@ -212,7 +212,15 @@
                         months: timePeriod
                     }, function(data) {
                         // Catching error
-                        if (data.error != null) {
+                        if (data == null) {
+                            var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
+                            // Render the error
+                            $('#get-button-data').slideUp(function() {
+                                $(this).slideUp(function() {
+                                    $(this).html(errorHtml).slideDown();
+                                });
+                            });
+                        } else if (data.error != null) {
                             if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
                                 checkTokenStatus(false);
                             }
@@ -254,7 +262,15 @@
                 $.post('/bucket_names', {
                     firebaseToken: sessionStorage.getItem('firebaseToken')
                 }, function(data) {
-                    if (data.error != null) {
+                    if (data == null) {
+                        var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
+                        // Render the error
+                        $('#get-button-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(errorHtml).slideDown();
+                            });
+                        });
+                    } else if (data.error != null) {
                         if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
                             checkTokenStatus(false);
                         }
@@ -421,7 +437,15 @@
                     $.post('/accounts', {
                         firebaseToken: sessionStorage.getItem('firebaseToken')
                     }, function(data) {
-                        if (data.error != null) {
+                        if (data == null) {
+                            var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
+                            // Render the error
+                            $('#get-button-data').slideUp(function() {
+                                $(this).slideUp(function() {
+                                    $(this).html(errorHtml).slideDown();
+                                });
+                            });
+                        } else if (data.error != null) {
                             if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
                                 checkTokenStatus(false);
                             }
@@ -504,7 +528,15 @@
                         firebaseToken: sessionStorage.getItem('firebaseToken')
                     }, function(data) {
                         textDisplay = "transactions";
-                        if (data.error != null) {
+                        if (data == null) {
+                            var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
+                            // Render the error
+                            $('#get-button-data').slideUp(function() {
+                                $(this).slideUp(function() {
+                                    $(this).html(errorHtml).slideDown();
+                                });
+                            });
+                        } else if (data.error != null) {
                             if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
                                 checkTokenStatus(false);
                             }
