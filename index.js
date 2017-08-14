@@ -124,6 +124,24 @@ app.get('/insights.ejs', function(request, response, next) {
     console.log("app loaded");
 });
 
+app.get('/newsfeed.ejs', function(request, response, next) {
+    console.log("app loading...");
+    response.render('newsfeed.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+    console.log("app loaded");
+});
+
+app.get('/settings.ejs', function(request, response, next) {
+    console.log("app loading...");
+    response.render('settings.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+    console.log("app loaded");
+});
+
 app.get('/newuser.ejs', function(request, response, next) {
     response.render('newuser.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,

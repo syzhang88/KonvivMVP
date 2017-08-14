@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Konviv MVP</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+             <!--   <script>
+        window.onload = function () {
+        document.getElementById('button').onclick = function () {
+        document.getElementById('modal').style.display = "none"
+            };
+        };
+        </script> -->
+
+        <style>
+        @import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+        body {
+         font-family: 'Open Sans', sans-serif;
+           background-image: url('https://github.com/Konviv/konviv.github.io/blob/master/img/whitebox.jpg?raw=true');
+        }
+        #navigation-top {
+          position:relative;
+          z-index:99;
+          background-color:white;
+          }
+        #navigation-footer {
+             border-top:1px solid #EEE;
+             position:fixed;
+             top:490px;
+             right:0;
+             left:0;
+             z-index:99;
+             }
+
+        .smallcircle {
+                border-radius: 50%;
+                behavior: url(PIE.htc); /* remove if you don't care about IE8 */
+
+                width: 15px;
+                height: 15px;
+                padding: 1px;
+
+                background: #fff;
+                border: 1px solid #DDD;
+                color: #666;
+                text-align: center;
+
+                font: 10px Arial, sans-serif;
+            }
+
+        #modal {
+            position: fixed;
+            font-family: Arial, Helvetica, sans-serif;
+            top: 0;
+            left: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 99999;
+            height: 100%;
+            width: 100%;
+        }
+        .modalconent {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            width: 80%;
+            padding: 20px;
+            border-radius:4px;
+          }
+
+      .slider {
+      	width: 100%;
+      	overflow: hidden;
+      	position: relative;
+      	height: 400px;
+      }
+
+      .slider-wrapper {
+      	width: 100%;
+      	height: 100%;
+      	position: relative;
+      }
+
+      .slide {
+      	float: left;
+      	position: absolute;
+      	width: 75%;
+      	height: 50%;
+      	background-repeat: no-repeat;
+      	background-size: cover;
+      	opacity: 0;
+      	transition: opacity 500ms linear;
+        margin-top:50px;
+        text-align:center;
+        padding:40px;
+        margin-left:50px;
+        border-radius:4px;
+        border:1px solid #999;
+      }
+
+      .slider-wrapper > .slide:first-child {
+      	opacity: 1;
+      }
+
+    .slider-nav {
+    	height: 64px;
+    	width: 100%;
+      color:white;
+    	position: absolute;
+    	top: 50%;
+    	left: 0;
+    	margin-top: -32px;
+    	z-index: 1000;
+    	display: none;
+    }
+
+      .slider-nav button {
+      	display: block;
+      	width: 64px;
+      	height: 64px;
+        border-radius:100px;
+      	cursor: pointer;
+      	background-color: black;
+        opacity:0.5;
+      	background-repeat: no-repeat;
+      }
+
+      .slider-nav button:focus {
+      	outline-style: none;
+      }
+
+      .slider-nav button.slider-previous {
+      	float: left;
+        }
+
+      .slider-nav button.slider-next {
+      	float: right;
+      }
+        </style>
+    </head>
+    <body>
+
+        <div id="navigation-top" style="background-color:white;">
+            <div id="menu">
+                <div class="box">
+                    <div class="nubox">
+                        <p><a href="index.ejs"><button class="upbutton">Main</button></a></p>
+                        <p><a href="bills.ejs"><button class="upbutton">Bills</button></a></p>
+                        <p><a href="savings.ejs"><button class="upbutton">Savings</button></a></p>
+                    </div>
+                    <div class="nubox">
+                        <div id="left-to-spend">loading</div>
+                        <div id="string" style="font-size:16px; padding-top:5px; color:#61cb43;">Left to Spend</div>
+                    </div>
+                    <div class="nubox">
+                        <p><a href="#"><button class="upbutton" id="logout-btn">Logout</button></a></p>
+                        <p><a href="newsfeed.ejs"><button class="upbutton">Newsfeed</button></a></p>
+                        <p><a href="settings.ejs"><button class="upbutton">Settings</button></a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="navigation-footer" style="background-color:white;">
+            <div id="menu">
+                <div class="box">
+                    <button style="opacity:0.5;" class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br />
+                    <p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Accounts</p></button>
+                    <button style="opacity:0.5;" class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Transactions</p></button>
+                    <button style="opacity:0.5;" class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Edit Bank</p></button>
+                    <button class="headerbutton" id="get-insights-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.jpg?raw=true" alt="Insights" desc="Insights" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Insights</p></button>
+                </div>
+            </div>
+        </div>
+
+        <div class ="box" style="background-color:white; margin-top:-5px;">
+            <div class="head">
+                <h1> Smart Insights <h1>
+            </div>
+            <div class = "body">
+
+              <div class="slider" id="main-slider"><!-- outermost container element -->
+          	<div class="slider-wrapper"><!-- innermost wrapper element -->
+          		<div class="slide">
+                <p><b>Insight One</b></p><br /><p>the capacity to gain an accurate and deep intuitive understanding of a person or thing</p>
+              </div>
+              <div class="slide">
+                <p><b>Insight Two</b></p><br /><p>the capacity to gain an accurate and deep intuitive understanding of a person or thing</p>
+              </div>
+              <div class="slide">
+                <p><b>Insight Three</b></p><br /><p>the capacity to gain an accurate and deep intuitive understanding of a person or thing</p>
+              </div>
+          	</div>
+          	<div class="slider-nav">
+          		<button class="slider-previous"><h1><</h1></button>
+          		<button class="slider-next"><h1>></h1></button>
+          	</div>
+          </div>
+          <center><div style="margin-top:-100px; height:400px; border-top:1px solid #EEE; padding:25px 50px;">
+            <p>Old Insight</p><br />
+            <p>Old Insight</p><br />
+            <p>Old Insight</p>
+          </div></center>
+
+            </div>
+        </div>
+
+
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+        <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
+
+        <script>
+            (function() {
+
+	function Slideshow( element ) {
+		this.el = document.querySelector( element );
+		this.init();
+	}
+
+	Slideshow.prototype = {
+		init: function() {
+			this.wrapper = this.el.querySelector( ".slider-wrapper" );
+			this.slides = this.el.querySelectorAll( ".slide" );
+			this.previous = this.el.querySelector( ".slider-previous" );
+			this.next = this.el.querySelector( ".slider-next" );
+			this.nav = this.el.querySelector( ".slider-nav" );
+			this.index = 0;
+			this.total = this.slides.length;
+
+			this.setup();
+			this.actions();
+		},
+		_slideTo: function( slide ) {
+			var currentSlide = this.slides[slide];
+			currentSlide.style.opacity = 1;
+
+			for( var i = 0; i < this.slides.length; i++ ) {
+				var slide = this.slides[i];
+				if( slide !== currentSlide ) {
+					slide.style.opacity = 0;
+				}
+			}
+		},
+		setup: function() {
+			var slides = this.slides,
+				len = slides.length,
+				i;
+			for( i = 0; i < len; ++i ) {
+				var slide = slides[i],
+					src = slide.getAttribute( "data-image" );
+
+				    slide.style.backgroundImage = "url(" + src + ")";
+			}
+		},
+		actions: function() {
+			var self = this;
+
+			self.el.addEventListener( "mouseover", function() {
+				self.nav.style.display = "block";
+
+			}, false);
+
+			self.el.addEventListener( "mouseout", function() {
+				self.nav.style.display = "none";
+
+			}, false);
+
+			self.next.addEventListener( "click", function() {
+				self.index++;
+				self.previous.style.display = "block";
+
+				if( self.index == self.total - 1 ) {
+					self.index = self.total - 1;
+					self.next.style.display = "none";
+				}
+
+				self._slideTo( self.index );
+
+			}, false);
+
+			self.previous.addEventListener( "click", function() {
+				self.index--;
+				self.next.style.display = "block";
+
+				if( self.index == 0 ) {
+					self.index = 0;
+					self.previous.style.display = "none";
+				}
+
+				self._slideTo( self.index );
+
+			}, false);
+
+			document.body.addEventListener( "keydown", function( e ) {
+				var code = e.keyCode;
+				var evt = new Event( "click" );
+
+				if( code == 39 ) {
+					self.next.dispatchEvent( evt );
+				}
+				if( code == 37 ) {
+					self.previous.dispatchEvent( evt );
+				}
+
+			}, false);
+		}
+
+
+	};
+
+	document.addEventListener( "DOMContentLoaded", function() {
+
+		var slider = new Slideshow( "#main-slider" );
+
+	});
+
+
+})();
+        </script>
+    </body>
+</html>
