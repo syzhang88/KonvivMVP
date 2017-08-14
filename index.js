@@ -354,6 +354,12 @@ apiRoutes.post('/change_size',function(request,response,next){
     buckets.changeBucketsize(from_bucket_path,to_bucket_path,amount)
 });
 
+apiRoutes.post('/get_insights',function(request,response,next){
+    console.log("RECEIVED")
+    var user_id = request.body.userId
+    var path='users/'+user_id+'/Insights'
+    insights.showInsights(path)
+});
 
 apiRoutes.post('/get_access_token', function(request, response, next) {
     // We HAVE to store the access token, so that Plaid does not think the
