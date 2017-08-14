@@ -10,6 +10,7 @@
 
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
 
         <style>
 
@@ -65,16 +66,23 @@
             * { -webkit-box-sizing:border-box; -moz-box-sizing:border-box; -ms-box-sizing:border-box; -o-box-sizing:border-box; box-sizing:border-box; }
 
             html { width: 100%; height:100%; overflow:hidden; }
-
-            body {
-            	width: 100%;
-            	height:100%;
-              font-family: 'Lato', sans-serif;
-            	background-image: url('https://raw.githubusercontent.com/Konviv/konviv.github.io/master/img/green.jpg');
-              background-position: center;
+        
+        body {
+            width: 100%;
+            height:100%;
+            font-family: 'Open Sans', sans-serif;
+            background-image: url('https://github.com/Konviv/konviv.github.io/blob/master/img/finalbackground.jpg?raw=true');
+            background-position: center;
+            padding:0px 15px;
             }
+        p {
+            font-family:'Arial';
+            color:#999;
+
+        }
+
             .login {
-              padding:45px 30px 0px 30px;
+              padding:25px 30px 0px 30px;
             }
             .login h1 { color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3);
                 letter-spacing:1px;
@@ -126,15 +134,20 @@
             <br><br><br>
         	<input id="txtEmail" type="email" placeholder="Email" required="required" />
             <input id="txtPassword" type="Password" placeholder="Password" required="required" />
-            <button id="btnLogin" class="btn btn-action btn-primary btn-block btn-large">L o g i n</button>
+            <button id="btnLogin" class="btn btn-action btn-primary btn-block btn-large">Login</button>
 
            <br>
           <!--   <button id="btnLogout" class="btn btn-action btn-primary btn-block btn-large">Logout</button> -->
 
-             <button id="btnSignup" class="btn btn-secondary btn-block btn-large">C r e a t e A c c o u n t</button>
+             <button id="btnSignup" class="btn btn-secondary btn-block btn-large">Create An Account</button>
              <div id='get-button-data'> </div>
+             <br /><br />
+             <div style="margin-top:300px; text-align:center; margin:10px 5px;">
+                <p style="font-size:14px; color:#DDD;">
+                    Konviv uses a secure connection and 256-bit encryption just like your bank!
+                </p>
+            </div>
 
-             <div style="margin-top:300px; text-align:center; margin:10px 5px;"><p style="font-size:14px; color:#DDD; padding-bottom: 30px">Konviv uses a secure connection and 256-bit encryption just like your bank!</p></div>
         </div>
 
         <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script> -->

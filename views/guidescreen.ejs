@@ -44,7 +44,7 @@
 
         * { -webkit-box-sizing:border-box; -moz-box-sizing:border-box; -ms-box-sizing:border-box; -o-box-sizing:border-box; box-sizing:border-box; }
 
-        html { width: 100%; height:100%; overflow:hidden; font-family: 'Montserrat', sans-serif;
+        html { width: 100%; height:100%; overflow:hidden; font-family: 'Open Sans', sans-serif;
         }
 
         .back {
@@ -68,12 +68,13 @@
         }
 
         body {
-        width: 100%;
-        height:100%;
-        font-family: 'Lato', sans-serif;
-        background-image: url('https://raw.githubusercontent.com/Konviv/konviv.github.io/master/img/green.jpg');
-        background-position: center;
-      }
+            width: 100%;
+            height:100%;
+            font-family: 'Open Sans', sans-serif;
+            background-image: url('https://github.com/Konviv/konviv.github.io/blob/master/img/finalbackground.jpg?raw=true');
+            background-position: center;
+            padding:0px 15px;
+            }
 
         .back{
           color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3);
@@ -87,53 +88,35 @@
 
     }
 
-#string{
-      font-size: 18px;
-        line-height: 18px;
-        opacity: .7;
-        text-align: center;
-        justify-content:center;
-        top: -30px;
-        padding-bottom: 30px;
+        #string{
+                font-size: 18px;
+                line-height: 18px;
+                opacity: .7;
+                text-align: center;
+                justify-content:center;
+                top: -30px;
+                padding-bottom: 30px;
 
-}
+        }
         </style>
     </head>
 
     <body>
-
       <div class = "title">
-            <h1> Welcome To KONVIV </h1>
-            <div id="string"> How to use Konviv </div>
-        </div>
+            <h1> How to use Konviv </h1>
+            <div id="string"><h2>We help you <br />track monthly spending</h2></div>
+      </div>
 
         <div class = "container" style="background-color:white; color:#333;">
-            <p>Konviv distributes your money into buckets so that you can see exactly how your spending breaks down.</p>
-
-                <p>Your budget for each bucket is initially created using the average of your spending for the
-                last six months.
-            </p>
-                <p style="padding-top:15px;"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/bucket.jpg?raw=true" style="width:240px;"></p>
-            <p style="font-size:14px; color:#444;">
-                As you spend money, the bucket will slowly empty out, and you can easily
-                see how much money you have left in each bucket before the end of the month!</p>
-               <p>Next, learn about our security (spoiler: it's really good!).</p>
-     
-
+        <p style="font-size:14px; font-weight:300; color: #888; font-family:'Arial';">Using your transaction history, we create buckets based on the categories you spend money in.</p>
+        <p style="font-size:14px; font-weight:300; color: #888; font-family:'Arial';">We then show you how much you have spent in that bucket up to today - helping you budget in real time.</p>
+                <p style="padding-top:15px;"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/sbucket.jpg?raw=true" style="width:240px;"></p><br />
 
         <button id="btnSecurity" class="btn btn-block">Continue</button>
            </div>
        
 
     <script>
-        // $(document).ready(function() {
-        //     console.log("guide page loaded");
-        //     if (sessionStorage.token && sessionStorage.userId) {
-        //         console.log('currently not signing in');
-        //     } else {
-        //         location.href="/newuser.ejs";
-        //     }
-        // });
 
         btnSecurity.addEventListener('click', e => {
             location.href="securityscreen.ejs";
