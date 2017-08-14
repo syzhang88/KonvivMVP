@@ -24,12 +24,17 @@
         #navigation-footer {
              border-top:1px solid #EEE;
              position:fixed;
-             top:530px;
+             top:490px;
              right:0;
              left:0;
              z-index:99;
              }
-
+         #navigation-top {
+          border-bottom:1px solid #EEE;
+          position:relative;
+          z-index:99;
+          background-color:white;
+          }
         </style>
     </head>
     <body>
@@ -66,7 +71,7 @@
               </div>
             </div>
 
-        <div class ="box" style="margin-bottom:200px;">
+        <div class ="box" style="margin-bottom:200px; margin-top:0px;">
             <div class="head">
                 <h1> Monthly Fixed Bills</h1>
             </div>
@@ -127,7 +132,7 @@
                     onSuccess: function(public_token) {
                         // alert('calling /get_access_token...')
                         $.post('/get_access_token', {
-                            token: sessionStorage.getItem("token"),
+                            firebaseToken: sessionStorage.getItem("firebaseToken"),
                             publicToken: public_token,
                             userId: sessionStorage.getItem("userId")
                         }, function() {
@@ -159,10 +164,14 @@
                 }
 
                 function checkTokenStatus(success) {
+                    console.log('verifying user token...')
+
                     if (success) {
-                        user.getIdToken(true).then(function(token) {
-                            sessionStorage.setItem('firebaseAccessToken', token);
-                        })
+                        firebase.auth().onAuthStateChanged(function(user) {
+                            user.getIdToken(true).then(function(token) {
+                                sessionStorage.setItem('firebaseToken', token);
+                            });
+                        });
                     } else {
                         firebase.auth().signOut();
                         sessionStorage.clear();
@@ -176,7 +185,7 @@
                         console.log('currently logged out');
                     } else {
                         console.log('unable to log out');
-                        console.log('token: ' + sessionStorage.getItem('token'));
+                        console.log('token: ' + sessionStorage.getItem('firebaseToken'));
                     }
                 };
 
@@ -194,12 +203,12 @@
                 // RESTful calls to index.js server using post function
                 function savingsCall(timePeriod) {
                     $.post('/savings', {
-                        token: sessionStorage.getItem('token'),
+                        firebaseToken: sessionStorage.getItem('firebaseToken'),
                         months: timePeriod
                     }, function(data) {
                         // Catching error
                         if (data.error != null) {
-                            if (data.message == 'Failed to authenticate token.') {
+                            if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
                                 checkTokenStatus(false);
                             }
                             // Format the error
@@ -238,10 +247,10 @@
                 }
 
                 $.post('/bucket_names', {
-                    token: sessionStorage.getItem('token')
+                    firebaseToken: sessionStorage.getItem('firebaseToken')
                 }, function(data) {
                     if (data.error != null) {
-                        if (data.message == 'Failed to authenticate token.') {
+                        if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
                             checkTokenStatus(false);
                         }
                         // Format the error
@@ -264,12 +273,26 @@
                 });
 
                 $.post('/buckets', {
-                    token: sessionStorage.getItem('token')
+                    firebaseToken: sessionStorage.getItem('firebaseToken')
                 }, function(data) {
+                    // alert('bug check');
+                    // console.log(data);
                     // Catching error
+                    if (data == null) {
+                        // alert('bug check #1');
 
-                    if (data.error != null) {
-                        if (data.message == 'Failed to authenticate token.') {
+                        // Format the error
+                        var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
+                        // Render the error
+                        $('#get-button-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(errorHtml).slideDown();
+                            });
+                        });
+                    } else if (data.error != null) {
+                        // alert('bug check #2');
+
+                        if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
                             checkTokenStatus(false);
                         }
                         // Format the error
@@ -319,7 +342,7 @@
                                     if (newPercent > 75){
                                         console.log('low bucket found: ' + newPercent)
                                         $(selector)
-                                            .find(".bottom-bills,.bottom")
+                                            .find(".perc-bills,.perc")
                                             .css("border", "1px solid red")
                                             .css("background-color", "red")
                                     }
@@ -343,12 +366,7 @@
                         $("#monthly-income").on('click', openBucketPage('Income'));
 
                         /* TOTAL BALANCE */
-                        for (account in data['accounts']) {
-                            if (data['accounts'][account]['type'] == 'depository') {
-                                totalBalance += data['accounts'][account]['balances']['current'];
-                            }
-                        }
-
+                        var totalBalance = data['totalBalance'];
                         var totalActual = totalActualBills + totalActualSpending;
                         var totalBills = Math.max(totalEstimatedBills, totalActualBills);
                         var totalSpending = Math.max(totalEstimatedSpending, totalActualSpending);
@@ -396,10 +414,10 @@
                     console.log('accounts called...')
 
                     $.post('/accounts', {
-                        token: sessionStorage.getItem('token')
+                        firebaseToken: sessionStorage.getItem('firebaseToken')
                     }, function(data) {
                         if (data.error != null) {
-                            if (data.message == 'Failed to authenticate token.') {
+                            if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
                                 checkTokenStatus(false);
                             }
                             // Format the error
@@ -453,7 +471,7 @@
                 //         return $('#get-button-data').slideUp();
                 //     }
                 //     $.post('/item', {
-                //         token: sessionStorage.getItem('token')
+                //         token: sessionStorage.getItem('firebaseToken')
                 //     }, function(data) {
                 //         textDisplay = "item";
                 //         $('#get-button-data').slideUp(function() {
@@ -478,11 +496,11 @@
                         return $('#get-button-data').slideUp();
                     }
                     $.post('/transactions', {
-                        token: sessionStorage.getItem('token')
+                        firebaseToken: sessionStorage.getItem('firebaseToken')
                     }, function(data) {
                         textDisplay = "transactions";
                         if (data.error != null) {
-                            if (data.message == 'Failed to authenticate token.') {
+                            if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
                                 checkTokenStatus(false);
                             }
                             // Format the error

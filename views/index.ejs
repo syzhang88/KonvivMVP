@@ -13,7 +13,7 @@
             };
         };
         </script> -->
-        
+
         <style>
         @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
@@ -29,7 +29,7 @@
         #navigation-footer {
              border-top:1px solid #EEE;
              position:fixed;
-             top:530px;
+             top:490px;
              right:0;
              left:0;
              z-index:99;
@@ -110,7 +110,7 @@
         <div id="get-button-data"></div>
 
        <div class="box">
-           <div class="body" style="border-top:1px solid #EEE; font-size:13px; margin-top:-25px;">
+           <div class="body" style="border-top:1px solid #EEE; font-size:13px; margin-top:-5px;">
                <div class = "wrap">
                    <div class = "bucket-heading" id = "total-spending">
                        loading
@@ -247,10 +247,11 @@
                     console.log('verifying user token...')
 
                     if (success) {
-                        var user = firebase.auth().currentUser;
-                        user.getIdToken(true).then(function(token) {
-                            sessionStorage.setItem('firebaseToken', token);
-                        })
+                        firebase.auth().onAuthStateChanged(function(user) {
+                            user.getIdToken(true).then(function(token) {
+                                sessionStorage.setItem('firebaseToken', token);
+                            });
+                        });
                     } else {
                         firebase.auth().signOut();
                         sessionStorage.clear();

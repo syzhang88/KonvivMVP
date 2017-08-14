@@ -69,6 +69,9 @@ app.set('public token', null);
 // AI routes set up: get an instance of the router for api routes
 var apiRoutes = express.Router();
 
+// Loading testing token
+app.use(express.static('load_test'));
+
 // Here is where we define actual RESTful calls, using Express:
 
 app.get('/', function(request, response, next) {
@@ -268,6 +271,26 @@ apiRoutes.use(function(request, response, next) {
 
 //BUCKET FUNCTIONALITIES HERE ...
 
+apiRoutes.post('/bills',function(request,response,next){
+    var billsList = [];
+    admin.database().ref('users/' + request.body.userId + '/bucketTransactions').once('value').then(function(snapshot) {
+        for (var billName in buckets.fixedAmounts) {
+            for (var transactions  in snapshot.val()[billName]) {
+                if (not in billsList) {
+                    billsList.push()
+                }
+            }
+        }
+        for (var transactions  in snapshot.val()['Variable Bills']) {
+            if (not in billsList) {
+                billsList.push()
+            }
+        }
+
+        response.json(billsList);
+    });
+});
+
 apiRoutes.post('/transactions_for_bucket',function(request,response,next){
     console.log("Grabbing Transactions")
     var user_id = request.body.userId
@@ -291,7 +314,7 @@ apiRoutes.post('/transactions_for_bucket',function(request,response,next){
 });
 
 apiRoutes.post('/rename_bucket',function(request,response,next){
-    console.log("RECIEVED")
+    console.log("RECEIVED")
     var user_id = request.body.userId
     var bucket = request.body.which_bucket
     var new_name = request.body.new_name
@@ -304,7 +327,7 @@ apiRoutes.post('/rename_bucket',function(request,response,next){
 });
 
 apiRoutes.post('/bucket_names',function(request,response,next){
-    console.log("RECIEVED")
+    console.log("RECEIVED")
     var user_id = request.body.userId
     var bucket=request.body.which_bucket
     //console.log(request.body.token)
@@ -320,7 +343,7 @@ apiRoutes.post('/bucket_names',function(request,response,next){
 });
 
 apiRoutes.post('/change_size',function(request,response,next){
-    console.log("RECIEVED")
+    console.log("RECEIVED")
     var user_id = request.body.userId
     var from_bucket=request.body.from_bucket
     var to_bucket=request.body.to_bucket
