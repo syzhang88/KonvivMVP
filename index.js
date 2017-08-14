@@ -268,6 +268,28 @@ apiRoutes.use(function(request, response, next) {
 
 //BUCKET FUNCTIONALITIES HERE ...
 
+apiRoutes.post('/bills_list',function(request,response,next){
+    console.log("Grabbing Transactions")
+    var user_id = request.body.userId
+    var bucket=request.body.which_bucket
+    var bucket_path = 'users/' + user_id + '/bucketTransactions/' + bucket
+
+    admin.database().ref(bucket_path).once('value').then(function(snapshot) {
+        console.log("Bucket Info called")
+        var bucket_transactions = snapshot.val();
+        console.log(bucket_transactions)
+
+        response.json(bucket_transactions);
+    }).catch(function(error) {
+        var errorMessage = error.message;
+        console.log('failed to call bucketInfo: ' + errorMessage);
+        response.json({
+            error: error,
+            error: errorMessage
+        });
+    });
+});
+
 apiRoutes.post('/transactions_for_bucket',function(request,response,next){
     console.log("Grabbing Transactions")
     var user_id = request.body.userId
@@ -291,7 +313,7 @@ apiRoutes.post('/transactions_for_bucket',function(request,response,next){
 });
 
 apiRoutes.post('/rename_bucket',function(request,response,next){
-    console.log("RECIEVED")
+    console.log("RECEIVED")
     var user_id = request.body.userId
     var bucket = request.body.which_bucket
     var new_name = request.body.new_name
@@ -304,7 +326,7 @@ apiRoutes.post('/rename_bucket',function(request,response,next){
 });
 
 apiRoutes.post('/bucket_names',function(request,response,next){
-    console.log("RECIEVED")
+    console.log("RECEIVED")
     var user_id = request.body.userId
     var bucket=request.body.which_bucket
     //console.log(request.body.token)
@@ -320,7 +342,7 @@ apiRoutes.post('/bucket_names',function(request,response,next){
 });
 
 apiRoutes.post('/change_size',function(request,response,next){
-    console.log("RECIEVED")
+    console.log("RECEIVED")
     var user_id = request.body.userId
     var from_bucket=request.body.from_bucket
     var to_bucket=request.body.to_bucket

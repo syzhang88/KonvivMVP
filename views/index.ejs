@@ -13,7 +13,7 @@
             };
         };
         </script> -->
-        
+
         <style>
         @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
@@ -247,10 +247,11 @@
                     console.log('verifying user token...')
 
                     if (success) {
-                        var user = firebase.auth().currentUser;
-                        user.getIdToken(true).then(function(token) {
-                            sessionStorage.setItem('firebaseToken', token);
-                        })
+                        firebase.auth().onAuthStateChanged(function(user) {
+                            user.getIdToken(true).then(function(token) {
+                                sessionStorage.setItem('firebaseToken', token);
+                            });
+                        });
                     } else {
                         firebase.auth().signOut();
                         sessionStorage.clear();
