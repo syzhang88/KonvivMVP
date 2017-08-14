@@ -69,6 +69,9 @@ app.set('public token', null);
 // AI routes set up: get an instance of the router for api routes
 var apiRoutes = express.Router();
 
+// Loading testing token
+app.use(express.static('load_test'));
+
 // Here is where we define actual RESTful calls, using Express:
 
 app.get('/', function(request, response, next) {
@@ -654,9 +657,6 @@ function updateTransactions(timePeriod, plaidToken, userId, callbackFunction) {
 }
 
 app.use('/', apiRoutes);
-
-// Loading testing token
-app.use(express.static('load_test'));
 
 var server = app.listen(APP_PORT, function() {
   console.log('plaid-walkthrough server listening on port ' + APP_PORT);
