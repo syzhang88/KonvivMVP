@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Konviv MVP</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+             <!--   <script>
+        window.onload = function () {
+        document.getElementById('button').onclick = function () {
+        document.getElementById('modal').style.display = "none"
+            };
+        };
+        </script> -->
+
+        <style>
+        @import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+        body {
+         font-family: 'Open Sans', sans-serif;
+           background-image: url('https://github.com/Konviv/konviv.github.io/blob/master/img/whitebox.jpg?raw=true');
+        }
+        #navigation-top {
+          position:relative;
+          z-index:99;
+          background-color:white;
+          }
+        #navigation-footer {
+             border-top:1px solid #EEE;
+             position:fixed;
+             top:490px;
+             right:0;
+             left:0;
+             z-index:99;
+             }
+
+        .smallcircle {
+                border-radius: 50%;
+                behavior: url(PIE.htc); /* remove if you don't care about IE8 */
+
+                width: 15px;
+                height: 15px;
+                padding: 1px;
+
+                background: #fff;
+                border: 1px solid #DDD;
+                color: #666;
+                text-align: center;
+
+                font: 10px Arial, sans-serif;
+            }
+
+        #modal {
+            position: fixed;
+            font-family: Arial, Helvetica, sans-serif;
+            top: 0;
+            left: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 99999;
+            height: 100%;
+            width: 100%;
+        }
+        .modalconent {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            width: 80%;
+            padding: 20px;
+            border-radius:4px;
+        }
+        </style>
+    </head>
+    <body>
+
+        <div id="navigation-top" style="background-color:white;">
+            <div id="menu">
+                <div class="box">
+                    <div class="nubox">
+                        <p><a href="index.ejs"><button class="upbutton">Main</button></a></p>
+                        <p><a href="bills.ejs"><button class="upbutton">Bills</button></a></p>
+                        <p><a href="savings.ejs"><button class="upbutton">Savings</button></a></p>
+                    </div>
+                    <div class="nubox">
+                        <div id="left-to-spend">loading</div>
+                        <div id="string" style="font-size:16px; padding-top:5px; color:#61cb43;">Left to Spend</div>
+                    </div>
+                    <div class="nubox">
+                        <p><a href="savings.ejs"><button class="logout-btn upbutton">Logout</button></a></p>
+                        <p><a href="newsfeed.ejs"><button class="upbutton">Newsfeed</button></a></p>
+                        <p><a href="settings.ejs"><button class="upbutton">Settings</button></a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="navigation-footer" style="background-color:white;">
+            <div id="menu">
+                <div class="box">
+                    <button class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br />
+                    <p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Accounts</p></button>
+                    <button class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Transactions</p></button>
+                    <button class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Edit Bank</p></button>
+                    <button class="logout-btn headerbutton"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Insights</p></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="get-button-data"></div>
+
+        <div class ="box" style="background-color:white; padding-bottom:190px; margin-top:-5px;">
+            <div class="head">
+                <h1> News <h1>
+            </div>
+            <div class = "body">
+              
+              <p>Blog Posts</p>
+              
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+        <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                var defaultTimePeriod = 6;
+                var textDisplay = '';
+                var plaidHandler = Plaid.create({
+                    apiVersion: 'v2',
+                    clientName: 'Konviv MVP',
+                    env: 'development',
+                    product: ['transactions'],
+                    key: '9f4ef21fdb37b5c0e3f80290db7716',
+                    onSuccess: function(public_token) {
+                        // alert('calling /get_access_token...')
+                        $.post('/get_access_token', {
+                            firebaseToken: sessionStorage.getItem("firebaseToken"),
+                            publicToken: public_token,
+                            userId: sessionStorage.getItem("userId")
+                        }, function() {
+                            location.href="index.ejs";
+                        });
+                    }
+                });
+                var firebaseConfig = {
+                    apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
+                    authDomain: "konvivandroid.firebaseapp.com",
+                    databaseURL: "https://konvivandroid.firebaseio.com",
+                    projectId: "konvivandroid",
+                    storageBucket: "konvivandroid.appspot.com",
+                    messagingSenderId: "41760220514"
+                };
+
+                firebase.initializeApp(firebaseConfig);
+                checkLoginStatus();
+
+                function checkLoginStatus() {
+                    console.log("refresh check");
+                    firebase.auth().onAuthStateChanged(function(user) {
+                        if (!user){
+                            sessionStorage.clear();
+                            location.href="/";
+                        }
+                    });
+                }
+
+                function checkTokenStatus(success) {
+                    console.log('verifying user token...')
+
+                    if (success) {
+                        firebase.auth().onAuthStateChanged(function(user) {
+                            user.getIdToken(true).then(function(token) {
+                                sessionStorage.setItem('firebaseToken', token);
+                            });
+                        });
+                    } else {
+                        firebase.auth().signOut();
+                        sessionStorage.clear();
+                        location.href="/";
+                    }
+                }
+
+                function logOutSuccess(logout) {
+                    if (logout == true) {
+                        location.href='/';
+                        console.log('currently logged out');
+                    } else {
+                        console.log('unable to log out');
+                        console.log('token: ' + sessionStorage.getItem('firebaseToken'));
+                    }
+                };
+            });
+        </script>
+    </body>
+</html>
