@@ -221,22 +221,23 @@ function reclassification (transaction, oldBucket, newBucket) {
 // oldDbPath and newDbPath each are firebase.database().ref('...')
 // oldDbPath and newDbPath are manually entered because of abstraction, to
 // simplify modifying firebase structure
-exports.moveTransaction = function moveTransaction (transaction, oldBucketPath, newBucketPath, path) {
-    // Check if bucket is real
-    var names = Object.keys(nameBuckets);
-    if (names.indexOf(oldBucket) < 0 || names.indexOf(newBucket) < 0 ) throw "not a bucket";
-
-    reclassification(transaction, oldBucket, newBucket);
-    var newPostKey = transaction.transaction_id;
-    var postData = {}
-
-    postData[newPostKey] = transaction;
-
-    //add transaction to new bucket
-    firebase.database().ref(path + newBucket).update(postData);
-
-    //delete transaction from old bucket
-    firebase.database().ref(path + oldBucket).remove(postData);
+exports.moveTransaction = function moveTransaction (oldBucketPath, newBucketPath) {
+    // Check if bucket is real 
+    oldPath=admin.database().ref(oldBucketPath)
+    newPath=admin.database().ref(newBucketPath)
+    console.log("HERE")
+    
+    oldPath.once('value', function(snap)  {
+        newPath.update(snap.val(), function(error) {
+            if( !error ) {
+                oldPath.remove(); 
+            }
+            else if( typeof(console) !== 'undefined' && console.error ) {  
+                console.error(error); 
+            }
+        });
+    });
+    console.log("DONE")    
 }
 
 // moveMoney returns false IF you subtract more money from a bucket than you

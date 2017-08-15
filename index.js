@@ -427,6 +427,20 @@ apiRoutes.post('/change_size',function(request,response,next){
     });
 });
 
+apiRoutes.post('/move_transaction',function(request,response,next){
+    console.log("RECIEVED")
+    var user_id = request.body.userId
+    var from_bucket=request.body.from_bucket
+    var to_bucket=request.body.to_bucket
+    var transaction_id=request.body.transaction_id
+    var date=request.body.year_month
+    console.log(date)
+    var from_bucket_path='users/'+user_id+'/bucketTransactions/'+ from_bucket + '/' + date + '/' + transaction_id
+    var to_bucket_path='users/'+user_id+'/bucketTransactions/'+ to_bucket + '/' + date + '/' + transaction_id
+    console.log(from_bucket_path)
+    console.log(to_bucket_path)
+    buckets.moveTransaction(from_bucket_path,to_bucket_path)
+
 apiRoutes.post('/get_insights',function(request,response,next){
     console.log("RECEIVED")
     console.log("HELLO")
