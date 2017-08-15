@@ -190,7 +190,7 @@ button:hover {
 }
 
 .savingsActive {
-  background-color: #d9a425;
+  background-color:#d9a425!important;
   color:white;
 }
 
