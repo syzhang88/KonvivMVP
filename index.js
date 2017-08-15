@@ -352,7 +352,6 @@ apiRoutes.post('/transactions_for_bucket',function(request,response,next){
         console.log('failed to call bucketInfo: ' + errorMessage);
         response.json({
             error: error,
-            error: errorMessage
         });
     });
 });
@@ -366,6 +365,15 @@ apiRoutes.post('/rename_bucket',function(request,response,next){
     console.log(bucket)
     console.log("USER ID IS: "+user_id)
     var bucket_path = 'users/'+user_id+'/bucketNames/' + bucket
+    admin.database().ref('users/' + request.body.userId + '/bucketNames').once('value', function(snapshot) {
+        for (var bucket in snapshot.val()) {
+            if (new_name == snapshot.val()[bucket]['name']) {
+                return response.json({
+                    error: new Error('Another bucket is already named this!'),
+                });
+            }
+        }
+    });
     admin.database().ref(bucket_path).update({name: new_name});
     // buckets.renameBucket(bucket_path, new_name)
 });
@@ -375,14 +383,20 @@ apiRoutes.post('/bucket_names',function(request,response,next){
     var user_id = request.body.userId
     var bucket=request.body.which_bucket
     //console.log(request.body.token)
-    console.log(bucket)
-    console.log("USER ID IS :"+user_id)
+    // console.log(bucket)
+    // console.log("USER ID IS : " + user_id)
 
     admin.database().ref('users/' + request.body.userId + '/bucketNames').once('value', function(snapshot) {
 
-        console.log( "INSIDE NAMES IN INDEX.JS SENDING SNAPSHOT")
+        // console.log( "INSIDE NAMES IN INDEX.JS SENDING SNAPSHOT")
         //console.log(snapshot.val());
         response.json(snapshot.val());
+    }).catch(function(error) {
+        var errorMessage = error.message;
+        console.log('failed to call bucket_names: ' + errorMessage);
+        response.json({
+            error: error,
+        });
     });
 });
 
@@ -392,10 +406,25 @@ apiRoutes.post('/change_size',function(request,response,next){
     var from_bucket=request.body.from_bucket
     var to_bucket=request.body.to_bucket
     var amount=request.body.amount
-    //console.log(request.body.token)
-    var from_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+from_bucket
-    var to_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+to_bucket
-    buckets.changeBucketsize(from_bucket_path,to_bucket_path,amount)
+
+    // Checks bucketNames for a user-set name
+    admin.database().ref('users/' + request.body.userId + '/bucketNames').once('value', function(snapshot) {
+        for (var true_bucket in snapshot.val()) {
+            if (to_bucket == true_bucket) {
+                to_bucket = snapshot.val()[true_bucket]['name'];
+            }
+            var from_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+from_bucket;
+            var to_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+to_bucket;
+            return response.json(buckets.changeBucketsize(from_bucket_path,to_bucket_path,amount));
+        }
+        response.json(buckets.changeBucketsize(from_bucket_path,to_bucket_path,amount));
+    }).catch(function(error) {
+        var errorMessage = error.message;
+        console.log('failed to call bucketInfo: ' + errorMessage);
+        response.json({
+            error: error,
+        });
+    });
 });
 
 apiRoutes.post('/get_insights',function(request,response,next){
@@ -422,7 +451,7 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
           var msg = 'Could not exchange public token!';
           console.log(msg + '\n' + error);
           return response.json({
-            error: msg
+            error: error
           });
         }
 
@@ -476,11 +505,11 @@ apiRoutes.post('/transactions', function(request, response, next) {
 });
 
 apiRoutes.post('/savings', function(request, response, next) {
-    for (var key in buckets.nameBuckets) {
-        admin.database().ref("users/" + request.body.userId + "/bucketNames/" + key).set({'name': buckets.nameBuckets[key]}).catch(
-            console.log("error with names")
-        );
-    }
+    // for (var key in buckets.nameBuckets) {
+    //     admin.database().ref("users/" + request.body.userId + "/bucketNames/" + key).set({'name': buckets.nameBuckets[key]}).catch(
+    //         console.log("error with names")
+    //     );
+    // }
 
     plaidClient.getAuth(request.body.plaidToken, function(error, authResponse) {
         if (error != null) {
@@ -632,14 +661,18 @@ function updateTransactions(timePeriod, plaidToken, userId, callbackFunction) {
             var bucketSelect = buckets.selectBucket(transaction);
             var bucketName = bucketSelect['bucketName'];
             var bucketClass = bucketSelect['bucketClass'];
-            var newPostKey = transaction.transaction_id;
             var postData = {};
-
-            transaction.bucket = bucketName;
-            postData[newPostKey] = transaction;
 
             var txnDate = transaction.date;
             var transactionDate = new Date(txnDate.substr(0, 4), txnDate.substr(5, 2), txnDate.substr(8,2));
+            var transactionOrder = txnDate.substr(8,2);
+            var newPostKey = transactionOrder + transaction.transaction_id;
+
+            // console.log("transactions orders");
+            // console.log(transactionOrder);
+            transaction.bucket = bucketName;
+            postData[newPostKey] = transaction;
+
             admin.database().ref('users/' + userId + "/bucketTransactions/" + bucketName  + "/" + transaction.date.substr(0,7)).update(postData);
 
             if (transactionDate >= thisMonth) {
@@ -694,9 +727,9 @@ function updateTransactions(timePeriod, plaidToken, userId, callbackFunction) {
             for (var bucket in bucketIncome) {
                 if (!isNaN(bucketTotal[bucket])) {
                     allBucketData["Income Buckets"][bucket] = {
-                            Spending: bucketIncome[bucket],
-                            Total: bucketTotal[bucket]/timePeriod
-                        };
+                        Spending: bucketIncome[bucket],
+                        Total: bucketTotal[bucket]/timePeriod
+                    };
                 }
             }
 

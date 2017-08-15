@@ -174,9 +174,14 @@
 
                     if (success) {
                         firebase.auth().onAuthStateChanged(function(user) {
-                            user.getIdToken(true).then(function(token) {
-                                sessionStorage.setItem('firebaseToken', token);
-                            });
+                            if (user) {
+                                user.getIdToken(true).then(function(token) {
+                                    sessionStorage.setItem('firebaseToken', token);
+                                });
+                            } else {
+                                sessionStorage.clear();
+                                location.href="/";
+                            }
                         });
                     } else {
                         firebase.auth().signOut();

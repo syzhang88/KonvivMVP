@@ -27,7 +27,7 @@
           background-color:white;
           margin-bottom:-15px;
           }
-        
+
               #sticky {
                 width:100%;
                 padding:20px;
@@ -55,7 +55,7 @@
                 min-width:150px; /*containers won't get smaller than 200px*/
                 vertical-align:top;
               }
-              
+
         </style>
     </head>
     <body>
@@ -79,7 +79,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- <div id="low-bucket-alert"></div> -->
 
         <div id="sticky" style="background-color:white;">
@@ -196,7 +196,7 @@
       // Get the <span> element that closes the modal
       var span = document.getElementsByClassName("close")[0];
 
-      // When the user clicks on the button, open the modal 
+      // When the user clicks on the button, open the modal
       btn.onclick = function() {
           modal.style.display = "block";
       }
@@ -262,9 +262,14 @@
 
                     if (success) {
                         firebase.auth().onAuthStateChanged(function(user) {
-                            user.getIdToken(true).then(function(token) {
-                                sessionStorage.setItem('firebaseToken', token);
-                            });
+                            if (user) {
+                                user.getIdToken(true).then(function(token) {
+                                    sessionStorage.setItem('firebaseToken', token);
+                                });
+                            } else {
+                                sessionStorage.clear();
+                                location.href="/";
+                            }
                         });
                     } else {
                         firebase.auth().signOut();
@@ -318,9 +323,9 @@
                                 $(this).html(errorHtml).slideDown();
                             });
                         });
-                        // Using for loo
                     } else {
                         checkTokenStatus(true);
+                        console.log('pulling names...');
                         for (var key in data) {
                             var selector = '[id="' + key + '"]';
                             $(selector).find('.top-bills,.top').text(data[key]['name']).end();
