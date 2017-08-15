@@ -452,7 +452,21 @@ apiRoutes.post('/get_insights',function(request,response,next){
     var current_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-08'
     var last_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-07'
     //console.log(path)
-    insights.getInsights(path_check,current_month_path,last_month_path,user_id)
+    insights.getInsights(path_check,current_month_path,last_month_path,user_id);
+});
+
+apiRoutes.post('/get_sample_insights',function(request,response,next){
+    var user_id = request.body.userId
+
+    admin.database().ref('users/' + user_id + '/Insights').once('value').then(function(snapshot) {
+        response.json(snapshot.val());
+    }).catch(function(error) {
+        var errorMessage = error.message;
+        console.log('failed to call bucketInfo: ' + errorMessage);
+        response.json({
+            error: error,
+        });
+    });
 });
 
 apiRoutes.post('/get_access_token', function(request, response, next) {
