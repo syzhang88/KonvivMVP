@@ -179,8 +179,7 @@ button:hover {
 }
 
 .savingsbutton {
-  background-color: #EEE;
-  border-width: 0px;
+  border: 1px solid #999;
   font-size: 28px;
   border-radius: 4px;
   padding:6px;
