@@ -207,9 +207,9 @@
                 var plaidHandler = Plaid.create({
                     apiVersion: 'v2',
                     clientName: 'Konviv MVP',
-                    env: 'development',
+                    env: PLAID_ENV,
                     product: ['transactions'],
-                    key: '9f4ef21fdb37b5c0e3f80290db7716',
+                    key: PLAID_PUBLIC_KEY,
                     onSuccess: function(public_token) {
                         // alert('calling /get_access_token...')
                         $.post('/get_access_token', {

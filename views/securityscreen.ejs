@@ -145,26 +145,32 @@
         });
 
         //Sign up
+        var plaidEnv = '';
+        var plaidKey = '';
 
-        var handler = Plaid.create({
+        $.get('/plaid_info', function(data) {
+            plaidEnv = data.env;
+            plaidKey = data.key;s
+        });
+
+        var defaultTimePeriod = 6;
+        var textDisplay = '';
+
+        var plaidHandler = Plaid.create({
             apiVersion: 'v2',
             clientName: 'Konviv MVP',
-            env: 'development',
+            env: plaidEnv,
             product: ['transactions'],
-            key: '9f4ef21fdb37b5c0e3f80290db7716',
+            key: plaidKey,
             onSuccess: function(public_token) {
                 // alert('calling /get_access_token...')
                 $.post('/get_access_token', {
-                    token: sessionStorage.getItem("token"),
+                    firebaseToken: sessionStorage.getItem("firebaseToken"),
                     publicToken: public_token,
                     userId: sessionStorage.getItem("userId")
                 }, function() {
-                    sessionStorage.removeItem("userId");
                     location.href="index.ejs";
                 });
-            },
-            onExit: function() {
-                console.log('did not call /get_access_token!');
             }
         });
         </script>

@@ -132,25 +132,39 @@
 
         <script>
             $(document).ready(function() {
+                var plaidEnv = '';
+                var plaidKey = '';
+                var plaidHandler = null;
+
+                $.get('/plaid_info', function(data) {
+                    // console.log('plaidKey');
+                    //
+                    // console.log(data);
+                    plaidEnv = data.env;
+                    plaidKey = data.key;
+
+                    plaidHandler = plaidHandler = Plaid.create({
+                        apiVersion: 'v2',
+                        clientName: 'Konviv MVP',
+                        env: plaidEnv,
+                        product: ['transactions'],
+                        key: plaidKey,
+                        onSuccess: function(public_token) {
+                            // alert('calling /get_access_token...')
+                            $.post('/get_access_token', {
+                                firebaseToken: sessionStorage.getItem("firebaseToken"),
+                                publicToken: public_token,
+                                userId: sessionStorage.getItem("userId")
+                            }, function() {
+                                location.href="index.ejs";
+                            });
+                        }
+                    });
+                });
+
                 var defaultTimePeriod = 6;
                 var textDisplay = '';
-                var plaidHandler = Plaid.create({
-                    apiVersion: 'v2',
-                    clientName: 'Konviv MVP',
-                    env: 'development',
-                    product: ['transactions'],
-                    key: '9f4ef21fdb37b5c0e3f80290db7716',
-                    onSuccess: function(public_token) {
-                        // alert('calling /get_access_token...')
-                        $.post('/get_access_token', {
-                            firebaseToken: sessionStorage.getItem("firebaseToken"),
-                            publicToken: public_token,
-                            userId: sessionStorage.getItem("userId")
-                        }, function() {
-                            location.href="index.ejs";
-                        });
-                    }
-                });
+
                 var firebaseConfig = {
                     apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
                     authDomain: "konvivandroid.firebaseapp.com",
@@ -201,7 +215,7 @@
                         console.log('currently logged out');
                     } else {
                         console.log('unable to log out');
-                        console.log('token: ' + sessionStorage.getItem('firebaseToken'));
+                        // console.log('token: ' + sessionStorage.getItem('firebaseToken'));
                     }
                 };
 

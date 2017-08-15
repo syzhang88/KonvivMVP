@@ -172,6 +172,14 @@ app.get('/bucketpage.ejs', function(request, response, next) {
     });
 });
 
+app.get('/plaid_info', function(request, response, next) {
+    console.log(PLAID_PUBLIC_KEY);
+    response.json({
+        env: PLAID_ENV,
+        key: PLAID_PUBLIC_KEY,
+    });
+});
+
 app.post('/log_in', function(request, response, next) {
     console.log('attempting login...');
     var success = {
@@ -274,8 +282,8 @@ apiRoutes.use(function(request, response, next) {
 
             // grabs Plaid access token
             admin.database().ref('/users/' + decodedToken.uid).once('value', function(snapshot) {
-                if (snapshot.val() && snapshot.val()['user_token']) {
-                    request.body.plaidToken = snapshot.val()['user_token'];
+                if (snapshot.val() && snapshot.val()['firebaseToken']) {
+                    request.body.plaidToken = snapshot.val()['firebaseToken'];
                     console.log('found existing Plaid token: ' + request.body.plaidToken);
                 }
                 request.body.userId = decodedToken.uid;
@@ -486,7 +494,7 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
 
         console.log('loading Access Token: ' + tokenResponse.access_token);
         admin.database().ref('users/' + request.body.userId).set({
-            firebaseToken: tokenResponse.getItem("firebaseToken"),
+            firebaseToken: tokenResponse.access_token,
             item_id: tokenResponse.item_id
         });
 
@@ -598,6 +606,7 @@ apiRoutes.post('/buckets', function(request, response, next) {
 });
 
 function updateAccounts(plaidToken, userId, callbackFunction) {
+    console.log('updateAccounts');
     plaidClient.getItem(plaidToken, function(error, itemResponse) {
         if (error != null) {
             console.log(error);
@@ -674,6 +683,7 @@ function updateTransactions(timePeriod, plaidToken, userId, callbackFunction) {
       count: 500,
       offset: 0,
     }, function(error, transactionsResponse) {
+        console.log('updateTransactions');
         if (error != null) {
             return console.log(error);
         }

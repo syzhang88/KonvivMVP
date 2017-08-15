@@ -228,7 +228,7 @@
 
                 firebase.initializeApp(firebaseConfig);
                 checkLoginStatus();
-                
+
                 function checkLoginStatus() {
                     console.log("refresh check");
                     firebase.auth().onAuthStateChanged(function(user) {
