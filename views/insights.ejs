@@ -26,14 +26,20 @@
           z-index:99;
           background-color:white;
           }
-        #navigation-footer {
-             border-top:1px solid #EEE;
-             position:fixed;
-             top:490px;
-             right:0;
-             left:0;
-             z-index:99;
-             }
+             #sticky {
+                width:100%;
+                padding:20px;
+                padding-bottom:4px;
+                background:black;
+                color:white;
+                font-weight:bold;
+                font-size:18px;
+                position:fixed;    /*Here's what sticks it*/
+                bottom:0;          /*to the bottom of the body*/
+                left:0;            /*and to the left of the body.*/
+                z-index:9999;
+                text-align:center; /*this will center the containers*/
+              }
 
         .smallcircle {
                 border-radius: 50%;
@@ -50,27 +56,6 @@
 
                 font: 10px Arial, sans-serif;
             }
-
-        #modal {
-            position: fixed;
-            font-family: Arial, Helvetica, sans-serif;
-            top: 0;
-            left: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 99999;
-            height: 100%;
-            width: 100%;
-        }
-        .modalconent {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #fff;
-            width: 80%;
-            padding: 20px;
-            border-radius:4px;
-          }
 
       .slider {
       	width: 100%;
@@ -165,7 +150,7 @@
             </div>
         </div>
 
-        <div id="navigation-footer" style="background-color:white;">
+        <div id="sticky" style="background-color:white;">
             <div id="menu">
                 <div class="box">
                     <button style="opacity:0.5;" class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br />
