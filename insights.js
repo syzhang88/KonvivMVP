@@ -72,7 +72,7 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                     }
                     else{
                         console.log("YOU SPENT $"+diff+" MORE THIS MONTH")
-                        result_one="As of today, you’ve spent $" + diff + " more than at this point last month on Eating Out category"
+                        result_one="As of today, you’ve spent $" + diff + " more than at this point last month on Eating Out"
                     }
                     //SAVE INSIGHT --1 ON FIREBASE 
                     ref.update({
