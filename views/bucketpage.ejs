@@ -13,19 +13,11 @@
         <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
-    <style>
-        .back {
-            font-size: 18px;
-            text-decoration: none!important;
-            color: #444;
-            text-shadow: 0 0 10px rgba(0,0,0,0.3);
-            letter-spacing:1px;
-        }
-    </style>
+
     <body>
         <div class ="box">
 
-            <p><a style="font-size:12px;" href="/index.ejs">< Back</a></p> <br><br>
+            <p><a class="back" href="/index.ejs">< Back</a></p> <br><br>
 
              <div class="head">
                     <h1 style="font-size:18px; font-family:'Lato'; font-weight:300;"> Transactions <h1>
@@ -76,33 +68,33 @@
             firebase.initializeApp(firebaseConfig);
             checkLoginStatus();
             get_details();
-            
+
             var trans_id
             var full_date
             var date
-          
+
             $("[id='btnName']").on("click", rename_bucket);
             $("[id='btnSize']").on("click", change_size);
             $("[id='moveTrans']").on("click",move_trans);
 
             $("[id='pageTitle']").text("Edit "  + sessionStorage.getItem(sessionStorage.getItem("bucketPage")) + " Bucket").end();
 
-            
+
             function move_trans_where(){
-                
+
                 console.log("CHOOSE BUCKET")
                 console.log(this.id)
                 console.log(this.dataset.date)
                 trans_id=this.id
                 full_date= this.dataset.date
-                
+
                 //Keep only the year and month from the date
                 date=full_date.slice(0,7)                    // removing the last two characters from full_date
                 console.log(date)
                 document.getElementById("bucketname").style.display='block';
                 document.getElementById("moveTrans").style.display='block';
             }
-            
+
             function checkLoginStatus() {
                 console.log("refresh check");
                 firebase.auth().onAuthStateChanged(function(user) {
