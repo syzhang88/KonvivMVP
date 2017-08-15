@@ -21,14 +21,20 @@
            background-repeat: no-repeat;
            background-size: cover;
         }
-        #navigation-footer {
-             border-top:1px solid #EEE;
-             position:fixed;
-             top:490px;
-             right:0;
-             left:0;
-             z-index:99;
-             }
+           #sticky {
+                width:100%;
+                padding:20px;
+                padding-bottom:4px;
+                background:black;
+                color:white;
+                font-weight:bold;
+                font-size:18px;
+                position:fixed;    /*Here's what sticks it*/
+                bottom:0;          /*to the bottom of the body*/
+                left:0;            /*and to the left of the body.*/
+                z-index:9999;
+                text-align:center; /*this will center the containers*/
+              }
          #navigation-top {
           border-bottom:1px solid #EEE;
           position:relative;
@@ -59,7 +65,7 @@
             </div>
         </div>
 
-        <div id="navigation-footer" style="background-color:white;">
+        <div id="sticky" style="background-color:white;">
             <div id="menu">
                 <div class="box">
                     <button class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br />
