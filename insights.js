@@ -64,17 +64,23 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                     console.log(this_month_amount)
                     console.log(last_month_amount)
                     diff=this_month_amount-last_month_amount
+                    var result_one
                     if (diff<0){
                         console.log("YOU SAVED $"+diff+" THIS MONTH")
+                        result_one="YOU SAVED $"+diff+" THIS MONTH"
                     }
                     else{
                         console.log("YOU SPENT $"+diff+" MORE THIS MONTH")
+                        result_one="YOU SPENT $"+diff+" MORE THIS MONTH"
                     }
+                    //SAVE INSIGHT --1 ON FIREBASE 
+                    ref.update({
+                        First_Insight: result_one
+                    });
 
                 })
             })
-            // SAVE INSIGHT --1 ON FIREBASE 
-
+                 
             
             // CREATE INSIGHT -- 2
             var num_of_transactions=0
@@ -97,10 +103,15 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                     }
                 }
                 console.log("The number of transactions above $100 is "+num_of_transactions)
+                var result_two="The number of transactions above $100 is "+num_of_transactions
+                //SAVE INSIGHT --2 ON FIREBASE
+                ref.update({
+                        Second_Insight: result_two
+                    });
             })
             
             
-            //SAVE INSIGHT --2 ON FIREBASE
+            
 
             
             //CREATE INSIGHT --3
@@ -133,10 +144,13 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                 console.log("FIXED+SPENDING "+total_spending)
                 var spending_per_day=total_spending/day_of_month
                 console.log("You’ve spent $" + total_spending + " till today which is an average of $" + spending_per_day + " per day.")
+                var result_three="You’ve spent $" + total_spending + " till today which is an average of $" + spending_per_day + " per day."
+                //SAVE INSIGHT --3 ON FIREBASE
+                ref.update({
+                        Third_Insight: result_three
+                    });
                 })
             })
-            
-            //SAVE INSIGHT --3 ON FIREBASE
         }
     });
 }
