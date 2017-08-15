@@ -316,6 +316,10 @@ h1 {
   color:white;
 }
 
+.savingsActive {
+    backgroud-color:#ffc845; 
+}
+
 /*MONTHLY*/
 
 .box {
