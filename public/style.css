@@ -21,7 +21,7 @@ address,
 big,
 cite,
 code,
-del,
+del, 
 dfn,
 font,
 img,
@@ -179,14 +179,18 @@ button:hover {
 }
 
 .savingsbutton {
-  background-color: #EEE;
-  border-width: 0px;
+  border: 1px solid #999;
   font-size: 28px;
   border-radius: 4px;
   padding:6px;
   display: inline-block;
   float: left;
   overflow:auto;
+}
+
+.savingsActive {
+  background-color:#d9a425!important;
+  color:white;
 }
 
 #header {
@@ -236,9 +240,9 @@ button:hover {
 }
 
 .inner {
-  background: #f3f3f3;
+  background:white;
   font-size: 14px;
-  line-height: 17px;
+  line-height: 18px;
   padding: 20px;
   border-radius: 2px;
   margin-top: 20px;
@@ -314,10 +318,6 @@ padding:5px;
 h1 {
   line-height: 2;
   color:white;
-}
-
-.savingsActive {
-    backgroud-color:#ffc845; 
 }
 
 /*MONTHLY*/
@@ -696,6 +696,9 @@ input:focus {
 
 .clickTransaction {
     cursor: pointer;
+    padding:10px;
+    border-top:1px solid #EEE;
+    border-bottom:1px solid #EEE;
 }
 
 /* Main Page */
