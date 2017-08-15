@@ -6,12 +6,12 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-             <!--   <script>
-        window.onload = function () {
-        document.getElementById('button').onclick = function () {
-        document.getElementById('modal').style.display = "none"
-            };
-        };
+       <!-- <script>
+        $(function() {
+          $('.btn-notify').ready(function() {
+            $('.notify-bubble').show(400);
+            });
+        });
         </script> -->
 
         <style>
@@ -25,17 +25,38 @@
           position:relative;
           z-index:99;
           background-color:white;
+          margin-bottom:-15px;
           }
-        #navigation-footer {
-             border-top:1px solid #EEE;
-             position:fixed;
-             top:490px;
-             right:0;
-             left:0;
-             z-index:99;
-             }
+        
+              #sticky {
+                width:100%;
+                padding:20px;
+                padding-bottom:4px;
+                background:black;
+                color:white;
+                font-weight:bold;
+                font-size:18px;
+                position:fixed;    /*Here's what sticks it*/
+                bottom:0;          /*to the bottom of the body*/
+                left:0;            /*and to the left of the body.*/
+                z-index:9999;
+                text-align:center; /*this will center the containers*/
+              }
 
-        .smallcircle {
+              #sticky * {
+                margin:0;
+                padding:0;
+              }
+
+              #sticky .container {
+                display:inline-block; /*required for centering containers and allowing wrap*/
+                margin-bottom:16px;
+                width:20%; /*relative unit for responsive design*/
+                min-width:150px; /*containers won't get smaller than 200px*/
+                vertical-align:top;
+              }
+
+              .smallcircle {
                 border-radius: 50%;
                 behavior: url(PIE.htc); /* remove if you don't care about IE8 */
 
@@ -51,61 +72,103 @@
                 font: 10px Arial, sans-serif;
             }
 
-        #modal {
-            position: fixed;
-            font-family: Arial, Helvetica, sans-serif;
-            top: 0;
-            left: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 99999;
-            height: 100%;
-            width: 100%;
+          .container {
+          margin: 100px auto;
+          text-align: center;
         }
-        .modalconent {
+
+        .notify-container {
+          position: relative;
+            display: inline-block;
+          margin-top: 10px;
+        }
+
+          .notify-bubble {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #fff;
-            width: 80%;
-            padding: 20px;
-            border-radius:4px;
-        }
+            top: -8px;
+            right: -7px;
+            padding: 2px 5px 2px 6px;
+            background-color: green;
+            color: white;
+            font-size: 0.65em;
+            border-radius: 50%;
+            box-shadow: 1px 1px 1px gray;
+            display: none;
+          }
+
+                    /* The Modal (background) */
+          .modal {
+              display: none; /* Hidden by default */
+              position: fixed; /* Stay in place */
+              z-index: 999; /* Sit on top */
+              left: 0;
+              top: 0;
+              width: 100%; /* Full width */
+              height: 100%; /* Full height */
+              overflow: auto; /* Enable scroll if needed */
+              background-color: white; /* Fallback color */
+              background-color: white; /* Black w/ opacity */
+          }
+
+          /* Modal Content/Box */
+          .modal-content {
+              border-radius:4px;
+              margin: 15% auto; /* 15% from the top and centered */
+              padding: 20px;
+              border: 1px solid #888;
+              width: 80%; /* Could be more or less, depending on screen size */
+          }
+
+          /* The Close Button */
+          .close {
+              color: #aaa;
+              float: right;
+              font-size: 28px;
+              font-weight: bold;
+          }
+
+          .close:hover,
+          .close:focus {
+              color: black;
+              text-decoration: none;
+              cursor: pointer;
+          }
         </style>
     </head>
     <body>
+        <div id="navigation-top" style="background-color:white;">
+            <div id="menu">
+                <div class="box">
+                    <div class="nubox">
+                        <p><a href="index.ejs"><button class="upbutton">Main</button></a></p>
+                        <p><a href="bills.ejs"><button class="upbutton">Bills</button></a></p>
+                        <p><a href="savings.ejs"><button class="upbutton">Savings</button></a></p>
+                    </div>
+                    <div class="nubox">
+                        <div id="left-to-spend">loading</div>
+                        <div id="string" style="font-size:16px; padding-top:5px; color:#61cb43;">Left to Spend</div>
+                    </div>
+                    <div class="nubox">
+                        <p><a href="/"><button class="upbutton" id="logout-btn">Logout</button></a></p>
+                        <p><a href="newsfeed.ejs"><button class="upbutton">Newsfeed</button></a></p>
+                        <p><a href="#"><button id="myBtn" class="upbutton">Settings</button></a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div id="low-bucket-alert"></div> -->
 
- <div id="navigation-top" style="background-color:white;">
-              <div id="menu">
-                  <div class="box">
-                             <div class="nubox">
-          <p><a href="index.ejs"><button class="upbutton">Main</button></a></p>
-          <p><a href="bills.ejs"><button class="upbutton">Bills</button></a></p>
-          <p><a href="savings.ejs"><button class="upbutton">Savings</button></a></p>
-        </div>
-        <div class="nubox">
-          <div id="left-to-spend">loading</div>
-          <div id="string" style="font-size:16px; padding-top:5px; color:#61cb43;">Left to Spend</div>
-        </div>
-        <div class="nubox">
-          <p><a href="#"><button class="upbutton" id="logout-btn">Logout</button></a></p>
-          <p><a href="newsfeed.ejs"><button class="upbutton">Newsfeed</button></a></p>
-          <p><a href="settings.ejs"><button class="upbutton">Settings</button></a></p>
-        </div>
-                  </div>
-              </div>
+        <div id="sticky" style="background-color:white;">
+            <div id="menu">
+                <div class="box">
+                    <button class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br />
+                    <p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Accounts</p></button>
+                    <button class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Transactions</p></button>
+                    <button class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Edit Bank</p></button>
+                    <button class="headerbutton" id="get-insights-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.jpg?raw=true" alt="Insights" desc="Insights" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Insights</p></button>
+                </div>
             </div>
-      <div id="navigation-footer" style="background-color:white;">
-              <div id="menu">
-                  <div class="box">
-                             <button class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br />
-                             <p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Accounts</p></button>
-                             <button class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Transactions</p></button>
-                             <button class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Edit Bank</p></button>
-                             <button class="headerbutton" id="get-insights-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.jpg?raw=true" alt="Insights" desc="Insights" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Insights</p></button>
-                  </div>
-              </div>
-            </div>
+        </div>
 
         <div id="get-button-data"></div>
 
@@ -116,49 +179,49 @@
                        loading
                    </div>
 
-                   <div class="circle" id="Variable Bills"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
+                   <div class="circle" id="Variable Bills"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
                        </div>
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
-                   <div class="circle" id="Eating Out"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
+                   <div class="circle" id="Eating Out"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
                        </div>
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
-                   <div class="circle" id="Entertainment"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
+                   <div class="circle" id="Entertainment"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
                        </div>
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
-                   <div class="circle" id="Groceries"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
+                   <div class="circle" id="Groceries"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
                        </div>
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
-                   <div class="circle" id="Other Spending"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
+                   <div class="circle" id="Other Spending"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
                        </div>
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
-                   <div class="circle" id="Shopping"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
+                   <div class="circle" id="Shopping"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
                        </div>
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
-                   <div class="circle" id="Transportation"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
+                   <div class="circle" id="Transportation"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
                        </div>
@@ -181,23 +244,51 @@
             </div>
         </div>
 
-<!--
-        <div id="modal">
-        <div class="modalconent">
-        <h2 style="font-size:20px;">How do buckets work?</h2><br />
-        <p style="font-size:14px;">The top number <b>$139</b> is how much money you have left to spend in that category</p><br />
-        <p><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/sbucket.jpg?raw=true" style="width:200px;" /></p><br />
-        <p style="font-size:14px;">The bottom number <b>$199</b> represents your total budget for this bucket for the month</p><br />
-        <p style="font-size:12px; color:#999;">We calculated your budget for this bucket by looking at how much you typically spend in this category in a month, and averaging your last six months of transactions.</p><br />
-        <button id="button" style="padding:10px 30px; font-size:14px; margin-left:80px;">Close</button>
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+
+          <!-- Modal content -->
+          <div class="modal-content">
+            <span class="close" style="margin-top:-5px;">&times;</span>
+            <p>Settings...</p><br />
+          </div>
+
         </div>
-        </div>
-       -->
 
       <!-- scripts -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
         <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
         <script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
+
+
+    <!-- Modal script -->
+    <script>
+          // Get the modal
+      var modal = document.getElementById('myModal');
+
+      // Get the button that opens the modal
+      var btn = document.getElementById("myBtn");
+
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close")[0];
+
+      // When the user clicks on the button, open the modal 
+      btn.onclick = function() {
+          modal.style.display = "block";
+      }
+
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+          modal.style.display = "none";
+      }
+
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+          if (event.target == modal) {
+              modal.style.display = "none";
+          }
+      }
+    </script>
 
         <script>
             $(document).ready(function() {
@@ -231,7 +322,6 @@
 
                 firebase.initializeApp(firebaseConfig);
                 checkLoginStatus();
-                savingsCall(defaultTimePeriod);
 
                 function checkLoginStatus() {
                     console.log("refresh check");
@@ -281,55 +371,18 @@
                 //  Bucket Functionalities END here...
 
                 // RESTful calls to index.js server using post function
-                function savingsCall(timePeriod) {
-                    $.post('/savings', {
-                        firebaseToken: sessionStorage.getItem('firebaseToken'),
-                        months: timePeriod
-                    }, function(data) {
-                        // Catching error
-                        if (data.error != null) {
-                            if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
-                                checkTokenStatus(false);
-                            }
-                            // Format the error
-                            var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
-                            // Render the error
-
-                            $('#get-button-data').slideUp(function() {
-                                $(this).slideUp(function() {
-                                    $(this).html(errorHtml).slideDown();
-                                });
-                            });
-                            // Using for loop to pull information for each bucket from data
-                        } else {
-                            console.log(data)
-                            var bucket = data;
-                            var fillPercent = 0;
-
-                            checkTokenStatus(true);
-                            // Accounting for divide-by-zero error
-                            if (bucket['Total'] > 0) {
-                                fillPercent = 100 - (bucket['Savings']/bucket['Total'])*100
-                            }
-                            bucketSavings = Math.round(bucket['Savings']*100)/100;
-                            bucketTotal = Math.round(bucket['Total']*100)/100;
-                            newPercent = fillPercent;
-
-                            $("[id='savings-account']")
-                                .find(".top-savings").text("Savings Account").end()
-                                .find(".bottom-savings").text("$" + bucketSavings + " of $" + bucketTotal).end()
-                                .find(".perc-value-savings").css("height", newPercent + "%")
-
-                            $('[class="monthNumber"]').text("emergency savings goal for " + timePeriod + " months of living expenses (set below)");
-                            // document.getElementById('Savings Account').setAttribute("onclick", "location.href='bucketpage.ejs'");
-                        }
-                    });
-                }
-
                 $.post('/bucket_names', {
                     firebaseToken: sessionStorage.getItem('firebaseToken')
                 }, function(data) {
-                    if (data.error != null) {
+                    if (data == null) {
+                        var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
+                        // Render the error
+                        $('#get-button-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(errorHtml).slideDown();
+                            });
+                        });
+                    } else if (data.error != null) {
                         if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
                             checkTokenStatus(false);
                         }
@@ -391,6 +444,10 @@
                         var totalActualBills = 0;
                         var totalActualSpending = 0;
                         var totalBalance = 0;
+                        var emptyNotif = 0;
+                        var tenthNotif = 0;
+                        var quarterNotif = 0;
+                        var halfNotif = 0;
 
                         checkTokenStatus(true);
                         bucketMoney = data['bucketMoney']
@@ -419,12 +476,33 @@
                                     $(selector)
                                         .on('click', openBucketPage(key));
 
-                                    if (newPercent > 75){
-                                        console.log('low bucket found: ' + newPercent)
+                                    if (newPercent >= 100){
+                                        emptyNotif += 1;
                                         $(selector)
                                             .find(".perc-bills,.perc")
-                                            .css("border", "1px solid red")
-                                            .css("background-color", "red")
+                                            .css("border", "1px solid #e30544")
+                                            .css("background-color", "#e30544")
+                                    } else if (newPercent >= 90) {
+                                        console.log('low bucket found: ' + newPercent);
+                                        quarterNotif += 1;
+                                        $(selector)
+                                            .find(".perc-bills,.perc")
+                                            .css("border", "1px solid #e1006a")
+                                            .css("background-color", "#e1006a")
+                                    } else if (newPercent >= 75) {
+                                        console.log('low bucket found: ' + newPercent);
+                                        quarterNotif += 1;
+                                        $(selector)
+                                            .find(".perc-bills,.perc")
+                                            .css("border", "1px solid #f0e308")
+                                            .css("background-color", "#f0e308")
+                                    } else if (newPercent >= 50){
+                                        console.log('low bucket found: ' + newPercent);
+                                        halfNotif += 1;
+                                        $(selector)
+                                            .find(".perc-bills,.perc")
+                                            .css("border", "1px solid #008d9e")
+                                            .css("background-color", "#008d9e")
                                     }
 
                                     /*edit: bucketTotal*/
@@ -456,6 +534,34 @@
                         $("#total-bills").text("Total Bills: $" + totalActualBills.toFixed(2) + " | Estimated Bills: $" + totalEstimatedBills.toFixed(2));
                         $("#total-spending").text("Total Spending: $" + totalActualSpending.toFixed(2)  + " | Estimated Spending: $" + totalEstimatedSpending.toFixed(2));
                         $("#overall-stats").text("+ $" + totalIncome.toFixed(2)  + " income | - $" + totalActual.toFixed(2) + " costs");
+
+                        /* NOTIFICATIONS */
+                        console.log('notifications update...');
+                        function notificationText(buckets) {
+                            if (buckets == 1) {
+                                return buckets + ' bucket is';
+                            }
+                            return buckets + ' buckets are';
+                        }
+                        if (emptyNotif > 0) {
+                            var htmlNotification = '<div class="inner"><p style="color:maroon;"><strong> Just a heads up - </strong></p>';
+                            htmlNotification += '<p style="color:#e30544;"><strong>' + notificationText(emptyNotif) + ' completely empty </strong></p>';
+                        }
+                        if (tenthNotif > 0) {
+                            var htmlNotification = '<div class="inner"><p style="color:maroon;"><strong> Just a heads up - </strong></p>';
+                            htmlNotification += '<p style="color:#e1006a;"><strong>' + notificationText(tenthNotif) + ' just about empty </strong></p>';
+                        }
+                        if (quarterNotif > 0) {
+                            htmlNotification += '<p style="color:#f0e308;"><strong>' + notificationText(quarterNotif) + ' almost empty</strong></p>';
+                        }
+                        if (halfNotif > 0) {
+                            htmlNotification += '<p style="color:#008d9e;"><strong>' + notificationText(halfNotif) + ' half empty!</strong></p></div>';
+                        }
+                        $('#get-button-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(htmlNotification).slideDown();
+                            });
+                        });
                     }
                });
 
@@ -500,7 +606,15 @@
                     $.post('/accounts', {
                         firebaseToken: sessionStorage.getItem('firebaseToken')
                     }, function(data) {
-                        if (data.error != null) {
+                        if (data == null) {
+                            var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
+                            // Render the error
+                            $('#get-button-data').slideUp(function() {
+                                $(this).slideUp(function() {
+                                    $(this).html(errorHtml).slideDown();
+                                });
+                            });
+                        } else if (data.error != null) {
                             if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
                                 checkTokenStatus(false);
                             }
@@ -583,7 +697,15 @@
                         firebaseToken: sessionStorage.getItem('firebaseToken')
                     }, function(data) {
                         textDisplay = "transactions";
-                        if (data.error != null) {
+                        if (data == null) {
+                            var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
+                            // Render the error
+                            $('#get-button-data').slideUp(function() {
+                                $(this).slideUp(function() {
+                                    $(this).html(errorHtml).slideDown();
+                                });
+                            });
+                        } else if (data.error != null) {
                             if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
                                 checkTokenStatus(false);
                             }

@@ -139,7 +139,7 @@ h1 + h1 {
       font-size:10px;
       margin-bottom:-4px;
       width:100px;
-      color:#777;
+      color:#3F3F44;
       border:1px solid #DDD;
       background-color: white;
       border-radius: 4px;
@@ -580,6 +580,13 @@ h1 {
     display: block;
     margin: auto;
 
+}
+
+#bucket-low-alert {
+    display: none;
+    max-width: 850px;
+    display: block;
+    margin: auto;
 }
 
 #footer .box{

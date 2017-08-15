@@ -64,6 +64,7 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
 
             // SAVE INSIGHT --1 ON FIREBASE 
 
+            
             // CREATE INSIGHT -- 2
             var num_of_transactions=0
             var transaction_path='users/'+user_id+'/bucketTransactions
@@ -74,7 +75,7 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                 for (var category in buckets){
                     if(buckets.hasOwnProperty(category)){
                         console.log(buckets[category]['2017-08'])
-                        bucket_month=bucket_transactions[category]['2017-08']
+                        bucket_month=buckets[category]['2017-08']
                         for (var trans in bucket_month){
                             if (bucket_month['amount']>100){
                                 num_of_transaction=num_of_transaction+1
@@ -87,7 +88,37 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
             
             //SAVE INSIGHT --2 ON FIREBASE
 
-            //CREATE INSIGHT --3 
+            
+            //CREATE INSIGHT --3
+            var total_spending=0
+            var fixed_buckets_path='users/'+user_id+'/bucketMoney/Fixed Buckets'
+            var spending_buckets_path='users/'+user_id+'/bucketMoney/Spending Buckets'
+            admin.database().ref(fixed_bucket_path).once('value').then(function(snapshot) {
+                var fixed_buckets = snapshot.val();
+                console.log(fixed_buckets)
+                //return bucket_transactions
+                for (var category in fixed_buckets){
+                    if(fixed_buckets.hasOwnProperty(bills)){
+                        console.log(fixed_buckets[category]['2017-08'])
+                        total_spending=total+spending+fixed_buckets[category]['Spending']
+                    }
+                }
+            })
+            admin.database().ref(fixed_bucket_path).once('value').then(function(snapshot) {
+                var spending_buckets = snapshot.val();
+                console.log(spending_buckets)
+                //return bucket_transactions
+                for (var category in spending_buckets){
+                    if(fixed_buckets.hasOwnProperty(bills)){
+                        console.log(spending_buckets[category]['2017-08'])
+                        total_spending=total_spending+spending_buckets[category]['Spending']
+                    }
+                }
+            })
+            var spending_per_day=total_spending/day_of_month
+            console.log("You’ve spent $" + total_spending + " till today which is an average of $" + spending_per_day + " per day.")
+            
+            //SAVE INSIGHT --3 ON FIREBASE
         }
     }
 }

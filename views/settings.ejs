@@ -216,85 +216,6 @@
         <script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
 
         <script>
-            $(document).ready(function() {
-                var defaultTimePeriod = 6;
-                var textDisplay = '';
-                var plaidHandler = Plaid.create({
-                    apiVersion: 'v2',
-                    clientName: 'Konviv MVP',
-                    env: 'development',
-                    product: ['transactions'],
-                    key: '9f4ef21fdb37b5c0e3f80290db7716',
-                    onSuccess: function(public_token) {
-                        // alert('calling /get_access_token...')
-                        $.post('/get_access_token', {
-                            firebaseToken: sessionStorage.getItem("firebaseToken"),
-                            publicToken: public_token,
-                            userId: sessionStorage.getItem("userId")
-                        }, function() {
-                            location.href="index.ejs";
-                        });
-                    }
-                });
-                var firebaseConfig = {
-                    apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
-                    authDomain: "konvivandroid.firebaseapp.com",
-                    databaseURL: "https://konvivandroid.firebaseio.com",
-                    projectId: "konvivandroid",
-                    storageBucket: "konvivandroid.appspot.com",
-                    messagingSenderId: "41760220514"
-                };
-
-                firebase.initializeApp(firebaseConfig);
-                checkLoginStatus();
-                getInsights();
-
-                function getInsights(){
-                    console.log("INSIGHTS INCOMING")
-                    $.post('/get_insights',{
-                        year_month:'2017-08',
-                        token:sessionStorage.token
-                    });
-                    console.log("values sent")
-                }
-                
-                function checkLoginStatus() {
-                    console.log("refresh check");
-                    firebase.auth().onAuthStateChanged(function(user) {
-                        if (!user){
-                            sessionStorage.clear();
-                            location.href="/";
-                        }
-                    });
-                }
-
-                function checkTokenStatus(success) {
-                    console.log('verifying user token...')
-
-                    if (success) {
-                        firebase.auth().onAuthStateChanged(function(user) {
-                            user.getIdToken(true).then(function(token) {
-                                sessionStorage.setItem('firebaseToken', token);
-                            });
-                        });
-                    } else {
-                        firebase.auth().signOut();
-                        sessionStorage.clear();
-                        location.href="/";
-                    }
-                }
-
-                function logOutSuccess(logout) {
-                    if (logout == true) {
-                        location.href='/';
-                        console.log('currently logged out');
-                    } else {
-                        console.log('unable to log out');
-                        console.log('token: ' + sessionStorage.getItem('firebaseToken'));
-                    }
-                };
-            });
-
             (function() {
 
 	function Slideshow( element ) {
@@ -401,7 +322,6 @@
 
 
 })();
-
         </script>
     </body>
 </html>
