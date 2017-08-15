@@ -440,6 +440,7 @@ apiRoutes.post('/move_transaction',function(request,response,next){
     console.log(from_bucket_path)
     console.log(to_bucket_path)
     buckets.moveTransaction(from_bucket_path,to_bucket_path)
+});
 
 apiRoutes.post('/get_insights',function(request,response,next){
     console.log("RECEIVED")
