@@ -582,6 +582,13 @@ h1 {
 
 }
 
+#bucket-low-alert {
+    display: none;
+    max-width: 850px;
+    display: block;
+    margin: auto;
+}
+
 #footer .box{
   background: #e4e4e4;
   margin-bottom: 30px;

@@ -13,14 +13,14 @@
             };
         };
         </script> -->
-        
-        <script>
+
+        <!-- <script>
         $(function() {
           $('.btn-notify').ready(function() {
             $('.notify-bubble').show(400);
             });
         });
-        </script>
+        </script> -->
 
         <style>
         @import url('https://fonts.googleapis.com/css?family=Open+Sans');
@@ -107,41 +107,42 @@
         </style>
     </head>
     <body>
+        <div id="navigation-top" style="background-color:white;">
+            <div id="menu">
+                <div class="box">
+                    <div class="nubox">
+                        <p><a href="index.ejs"><button class="upbutton">Main</button></a></p>
+                        <p><a href="bills.ejs"><button class="upbutton">Bills</button></a></p>
+                        <p><a href="savings.ejs"><button class="upbutton">Savings</button></a></p>
+                    </div>
+                    <div class="nubox">
+                        <div id="left-to-spend">loading</div>
+                        <div id="string" style="font-size:16px; padding-top:5px; color:#61cb43;">Left to Spend</div>
+                    </div>
+                    <div class="nubox">
+                        <p><a href="#"><button class="upbutton" id="logout-btn">Logout</button></a></p>
+                        <p><a href="newsfeed.ejs"><button class="upbutton">Newsfeed</button></a></p>
+                        <p><a href="settings.ejs"><button class="upbutton">Settings</button></a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div id="low-bucket-alert"></div> -->
 
- <div id="navigation-top" style="background-color:white;">
-              <div id="menu">
-                  <div class="box">
-                             <div class="nubox">
-          <p><a href="index.ejs"><button class="upbutton">Main</button></a></p>
-          <p><a href="bills.ejs"><button class="upbutton">Bills</button></a></p>
-          <p><a href="savings.ejs"><button class="upbutton">Savings</button></a></p>
-        </div>
-        <div class="nubox">
-          <div id="left-to-spend">loading</div>
-          <div id="string" style="font-size:16px; padding-top:5px; color:#61cb43;">Left to Spend</div>
-        </div>
-        <div class="nubox">
-          <p><a href="#"><button class="upbutton" id="logout-btn">Logout</button></a></p>
-          <p><a href="newsfeed.ejs"><button class="upbutton">Newsfeed</button></a></p>
-          <p><a href="settings.ejs"><button class="upbutton">Settings</button></a></p>
-        </div>
-                  </div>
-              </div>
+        <div id="navigation-footer" style="background-color:white;">
+            <div id="menu">
+                <div class="box">
+                    <button class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br />
+                    <p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Accounts</p></button>
+                    <button class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Transactions</p></button>
+                    <button class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Edit Bank</p></button>
+                    <button class="headerbutton" id="get-insights-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.jpg?raw=true" alt="Insights" desc="Insights" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Insights</p></button>
+                </div>
             </div>
-      <div id="navigation-footer" style="background-color:white;">
-              <div id="menu">
-                  <div class="box">
-                             <button class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br />
-                             <p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Accounts</p></button>
-                             <button class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Transactions</p></button>
-                             <button class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Edit Bank</p></button>
-                             <button class="headerbutton" id="get-insights-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.jpg?raw=true" alt="Insights" desc="Insights" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Insights</p></button>
-                  </div>
-              </div>
-            </div>
+        </div>
 
         <div id="get-button-data"></div>
-    
+
        <div class="box">
            <div class="body" style="border-top:1px solid #EEE; font-size:13px; margin-top:-5px;">
                <div class = "wrap">
@@ -440,6 +441,9 @@
                         var totalActualBills = 0;
                         var totalActualSpending = 0;
                         var totalBalance = 0;
+                        var emptyNotif = 0;
+                        var quarterNotif = 0;
+                        var halfNotif = 0;
 
                         checkTokenStatus(true);
                         bucketMoney = data['bucketMoney']
@@ -468,12 +472,22 @@
                                     $(selector)
                                         .on('click', openBucketPage(key));
 
-                                    if (newPercent > 75){
-                                        console.log('low bucket found: ' + newPercent)
+                                    if (newPercent > 90){
+                                        emptyNotif += 1;
                                         $(selector)
                                             .find(".perc-bills,.perc")
                                             .css("border", "1px solid red")
                                             .css("background-color", "red")
+                                    } else if (newPercent > 75) {
+                                        console.log('low bucket found: ' + newPercent);
+                                        quarterNotif += 1;
+                                        $(selector)
+                                            .find(".perc-bills,.perc")
+                                            .css("border", "1px solid red")
+                                            .css("background-color", "red")
+                                    } else if (newPercent > 50){
+                                        console.log('low bucket found: ' + newPercent);
+                                        halfNotif += 1;
                                     }
 
                                     /*edit: bucketTotal*/
@@ -505,6 +519,30 @@
                         $("#total-bills").text("Total Bills: $" + totalActualBills.toFixed(2) + " | Estimated Bills: $" + totalEstimatedBills.toFixed(2));
                         $("#total-spending").text("Total Spending: $" + totalActualSpending.toFixed(2)  + " | Estimated Spending: $" + totalEstimatedSpending.toFixed(2));
                         $("#overall-stats").text("+ $" + totalIncome.toFixed(2)  + " income | - $" + totalActual.toFixed(2) + " costs");
+
+                        /* NOTIFICATIONS */
+                        console.log('notifications update...');
+                        function notificationText(buckets) {
+                            if (buckets == 1) {
+                                return buckets + ' bucket is';
+                            }
+                            return buckets + ' buckets are';
+                        }
+                        if (quarterNotif > 0) {
+                            var htmlNotification = '<div class="inner"><p style="color:maroon;"><strong> Just a heads up - </strong></p>';
+                            htmlNotification += '<p style="color:red;"><strong>' + notificationText(emptyNotif) + ' completely empty </strong></p>';
+                        }
+                        if (quarterNotif > 0) {
+                            htmlNotification += '<p style="color:orange;"><strong>' + notificationText(quarterNotif) + ' nearly empty</strong></p>';
+                        }
+                        if (halfNotif > 0) {
+                            htmlNotification += '<p style="color:black;"><strong>' + notificationText(halfNotif) + ' half empty!</strong></p></div>';
+                        }
+                        $('#get-button-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(htmlNotification).slideDown();
+                            });
+                        });
                     }
                });
 
