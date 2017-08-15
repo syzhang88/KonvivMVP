@@ -2,9 +2,9 @@ var admin = require("firebase-admin");
 var firebase = require("firebase");
 var serviceAccount = require("./konvivandroid-firebase-adminsdk-re0l3-f09e6af5d7.json");
 
-exports.getInsights=function getInsights(path_check,current_month_path,last_month_path){
-    console.log(path)
-    var ref = firebase.database().ref(path_check);
+exports.getInsights=function getInsights(path_check,current_month_path,last_month_path,user_id){
+    console.log(path_check)
+    var ref = admin.database().ref(path_check);
     ref.once("value").then(function(snapshot) {
         if (snapshot.exists()===true){
             console.log("Insight section exists")
@@ -23,11 +23,11 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
             var last_month = firebase.database().ref(last_month_path);
             admin.database().ref(current_month_path).once('value').then(function(snapshot) {
                 var bucket_transactions = snapshot.val();
-                console.log(bucket_transactions)
+                //console.log(bucket_transactions)
                 //return bucket_transactions
                 for (var key in bucket_transactions){
                     if(bucket_transactions.hasOwnProperty(key)){
-                        console.log('Transaction Date: '+bucket_transactions[key]['date'])
+                        //console.log('Transaction Date: '+bucket_transactions[key]['date'])
                         date=bucket_transactions[key]['date']
                         day=parseInt(date.slice(8,9))
                         if (day<day_of_month){
@@ -40,11 +40,11 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
 
             admin.database().ref(last_month_path).once('value').then(function(snapshot) {
                 var bucket_transactions = snapshot.val();
-                console.log(bucket_transactions)
+                //console.log(bucket_transactions)
                 //return bucket_transactions
                 for (var key in bucket_transactions){
                     if(bucket_transactions.hasOwnProperty(key)){
-                        console.log('Transaction Date: '+bucket_transactions[key]['date'])
+                        //console.log('Transaction Date: '+bucket_transactions[key]['date'])
                         date=bucket_transactions[key]['date']
                         day=parseInt(date.slice(8,9))
                         if (day<day_of_month){
@@ -67,14 +67,14 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
             
             // CREATE INSIGHT -- 2
             var num_of_transactions=0
-            var transaction_path='users/'+user_id+'/bucketTransactions
+            var transaction_path='users/'+user_id+'/bucketTransactions'
             admin.database().ref(transaction_path).once('value').then(function(snapshot) {
                 var buckets = snapshot.val();
-                console.log(buckets)
+                //console.log(buckets)
                 //return bucket_transactions
                 for (var category in buckets){
                     if(buckets.hasOwnProperty(category)){
-                        console.log(buckets[category]['2017-08'])
+                        //console.log(buckets[category]['2017-08'])
                         bucket_month=buckets[category]['2017-08']
                         for (var trans in bucket_month){
                             if (bucket_month['amount']>100){
@@ -93,23 +93,23 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
             var total_spending=0
             var fixed_buckets_path='users/'+user_id+'/bucketMoney/Fixed Buckets'
             var spending_buckets_path='users/'+user_id+'/bucketMoney/Spending Buckets'
-            admin.database().ref(fixed_bucket_path).once('value').then(function(snapshot) {
+            admin.database().ref(fixed_buckets_path).once('value').then(function(snapshot) {
                 var fixed_buckets = snapshot.val();
-                console.log(fixed_buckets)
+                //console.log(fixed_buckets)
                 //return bucket_transactions
                 for (var category in fixed_buckets){
-                    if(fixed_buckets.hasOwnProperty(bills)){
-                        console.log(fixed_buckets[category]['2017-08'])
-                        total_spending=total+spending+fixed_buckets[category]['Spending']
+                    if(fixed_buckets.hasOwnProperty(category)){
+                        //console.log(fixed_buckets[category]['2017-08'])
+                        total_spending=total_spending+fixed_buckets[category]['Spending']
                     }
                 }
             })
-            admin.database().ref(fixed_bucket_path).once('value').then(function(snapshot) {
+            admin.database().ref(spending_buckets_path).once('value').then(function(snapshot) {
                 var spending_buckets = snapshot.val();
-                console.log(spending_buckets)
+                //console.log(spending_buckets)
                 //return bucket_transactions
                 for (var category in spending_buckets){
-                    if(fixed_buckets.hasOwnProperty(bills)){
+                    if(spending_buckets.hasOwnProperty(category)){
                         console.log(spending_buckets[category]['2017-08'])
                         total_spending=total_spending+spending_buckets[category]['Spending']
                     }
@@ -120,5 +120,5 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
             
             //SAVE INSIGHT --3 ON FIREBASE
         }
-    }
+    });
 }

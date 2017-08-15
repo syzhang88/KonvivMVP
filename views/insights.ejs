@@ -238,7 +238,7 @@
                     console.log("INSIGHTS INCOMING")
                     $.post('/get_insights',{
                         year_month:'2017-08',
-                        token:sessionStorage.token
+                        firebaseToken:sessionStorage.getItem("firebaseToken")
                     });
                     console.log("values sent")
                 }

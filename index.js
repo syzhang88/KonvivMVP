@@ -8,6 +8,7 @@ var stringSimilarity = require('string-similarity');
 var moment = require('moment');
 var plaid = require('plaid');
 var buckets = require('./buckets');
+var insights = require('./insights');
 var admin = require("firebase-admin");
 var firebase = require("firebase");
 var serviceAccount = require("./konvivandroid-firebase-adminsdk-re0l3-f09e6af5d7.json");
@@ -407,7 +408,7 @@ apiRoutes.post('/get_insights',function(request,response,next){
     var current_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-08'
     var last_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-08'
     //console.log(path)
-    insights.showInsights(path_check,current_month_path,last_month_path)
+    insights.getInsights(path_check,current_month_path,last_month_path,user_id)
 });
 
 apiRoutes.post('/get_access_token', function(request, response, next) {
@@ -427,7 +428,7 @@ apiRoutes.post('/get_access_token', function(request, response, next) {
 
         console.log('loading Access Token: ' + tokenResponse.access_token);
         admin.database().ref('users/' + request.body.userId).set({
-            user_token: tokenResponse.access_token,
+            firebaseToken: tokenResponse.getItem("firebaseToken"),
             item_id: tokenResponse.item_id
         });
 
