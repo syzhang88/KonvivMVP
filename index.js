@@ -435,7 +435,7 @@ apiRoutes.post('/get_insights',function(request,response,next){
     var date=request.body.year_month
     var path_check='users/'+user_id+'/Insights'
     var current_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-08'
-    var last_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-08'
+    var last_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-07'
     //console.log(path)
     insights.getInsights(path_check,current_month_path,last_month_path,user_id)
 });
