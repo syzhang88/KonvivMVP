@@ -4,6 +4,8 @@ var serviceAccount = require("./konvivandroid-firebase-adminsdk-re0l3-f09e6af5d7
 
 exports.getInsights=function getInsights(path_check,current_month_path,last_month_path,user_id){
     console.log(path_check)
+    console.log(current_month_path)
+    console.log(last_month_path)
     var ref = admin.database().ref(path_check);
     ref.once("value").then(function(snapshot) {
         if (snapshot.exists()===true){
@@ -15,53 +17,62 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
             //CREATE INSIGHT -- 1
             var this_month_amount=0
             var last_month_amount=0
-            var day_of_month=14
+            var day_of_month=15
             var day
-            var current_date='2017-08-14'
-            var last_month_date='2017-07-14'
+            var current_date='2017-08-15'
+            var last_month_date='2017-07-15'
             var current_month = firebase.database().ref(current_month_path);
             var last_month = firebase.database().ref(last_month_path);
             admin.database().ref(current_month_path).once('value').then(function(snapshot) {
                 var bucket_transactions = snapshot.val();
                 //console.log(bucket_transactions)
                 //return bucket_transactions
+                //console.log("THIS MONTH")
                 for (var key in bucket_transactions){
                     if(bucket_transactions.hasOwnProperty(key)){
                         //console.log('Transaction Date: '+bucket_transactions[key]['date'])
                         date=bucket_transactions[key]['date']
                         day=parseInt(date.slice(8,9))
                         if (day<day_of_month){
+                            //console.log(bucket_transactions[key]['amount'])
                             this_month_amount=this_month_amount+bucket_transactions[key]['amount']
                         }
                         
                     }
                 }
-            })
 
-            admin.database().ref(last_month_path).once('value').then(function(snapshot) {
-                var bucket_transactions = snapshot.val();
-                //console.log(bucket_transactions)
-                //return bucket_transactions
-                for (var key in bucket_transactions){
-                    if(bucket_transactions.hasOwnProperty(key)){
-                        //console.log('Transaction Date: '+bucket_transactions[key]['date'])
-                        date=bucket_transactions[key]['date']
-                        day=parseInt(date.slice(8,9))
-                        if (day<day_of_month){
-                            last_month_amount=last_month_amount+bucket_transactions[key]['amount']
+                admin.database().ref(last_month_path).once('value').then(function(snapshot) {
+                    var bucket_transactions = snapshot.val();
+                    //console.log(bucket_transactions)
+                    //return bucket_transactions
+                    //console.log("PREVIOUS MONTH")
+                    for (var key in bucket_transactions){
+                        if(bucket_transactions.hasOwnProperty(key)){
+                            //console.log('Transaction Date: '+bucket_transactions[key]['date'])
+                            date=bucket_transactions[key]['date']
+                            //day=date.slice(8,10)
+                            day=parseInt(date.slice(8,10))
+                            //console.log(date)
+                            //console.log(day)
+                            if (day<day_of_month){
+                                //console.log(bucket_transactions[key]['amount'])
+                                last_month_amount=last_month_amount+bucket_transactions[key]['amount']
+                            }
+                            
                         }
-                        
                     }
-                }
-            })
-            diff=this_month_amount-last_month_amount
-            if (diff<0){
-                console.log("YOU SAVED $"+diff+" THIS MONTH")
-            }
-            else{
-                console.log("YOU SPENT $"+diff+" MORE THIS MONTH")
-            }
+                    console.log(this_month_amount)
+                    console.log(last_month_amount)
+                    diff=this_month_amount-last_month_amount
+                    if (diff<0){
+                        console.log("YOU SAVED $"+diff+" THIS MONTH")
+                    }
+                    else{
+                        console.log("YOU SPENT $"+diff+" MORE THIS MONTH")
+                    }
 
+                })
+            })
             // SAVE INSIGHT --1 ON FIREBASE 
 
             
@@ -73,22 +84,25 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                 //console.log(buckets)
                 //return bucket_transactions
                 for (var category in buckets){
+                    //console.log(category)
                     if(buckets.hasOwnProperty(category)){
                         //console.log(buckets[category]['2017-08'])
-                        bucket_month=buckets[category]['2017-08']
-                        for (var trans in bucket_month){
-                            if (bucket_month['amount']>100){
-                                num_of_transaction=num_of_transaction+1
+                        transactions=buckets[category]['2017-08']
+                        for (var trans in transactions){
+                            //console.log(buckets[category]['2017-08'][trans]['amount'])
+                            if (buckets[category]['2017-08'][trans]['amount']>100){
+                                num_of_transactions=num_of_transactions+1
                             }
                         }
                     }
                 }
+                console.log("The number of transactions above $100 is "+num_of_transactions)
             })
-            console.log("The number of transactions above $100 is "+num_of_transactions)
+            
             
             //SAVE INSIGHT --2 ON FIREBASE
 
-            
+            /*
             //CREATE INSIGHT --3
             var total_spending=0
             var fixed_buckets_path='users/'+user_id+'/bucketMoney/Fixed Buckets'
@@ -117,7 +131,7 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
             })
             var spending_per_day=total_spending/day_of_month
             console.log("You’ve spent $" + total_spending + " till today which is an average of $" + spending_per_day + " per day.")
-            
+            */
             //SAVE INSIGHT --3 ON FIREBASE
         }
     });
