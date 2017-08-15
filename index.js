@@ -432,6 +432,8 @@ apiRoutes.post('/accounts', function(request, response, next) {
     // Retrieve high-level account information and account and routing numbers
     // for each account associated with the Item.
     updateAccounts(request.body.plaidToken, request.body.userId, function(postData) {
+        console.log('/accounts called');
+        console.log(postData);
         response.json(postData);
     });
 });
@@ -568,6 +570,7 @@ function updateAccounts(plaidToken, userId, callbackFunction) {
                     'accounts': accounts,
                     'numbers': numbers,
                     'institution': institution,
+                    'item': item
                 };
 
                 var totalBalance = 0;

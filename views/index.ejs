@@ -120,7 +120,7 @@
                         <div id="string" style="font-size:16px; padding-top:5px; color:#61cb43;">Left to Spend</div>
                     </div>
                     <div class="nubox">
-                        <p><a href="#"><button class="upbutton" id="logout-btn">Logout</button></a></p>
+                        <p><a href="/"><button class="upbutton" id="logout-btn">Logout</button></a></p>
                         <p><a href="newsfeed.ejs"><button class="upbutton">Newsfeed</button></a></p>
                         <p><a href="settings.ejs"><button class="upbutton">Settings</button></a></p>
                     </div>
@@ -265,7 +265,6 @@
 
                 firebase.initializeApp(firebaseConfig);
                 checkLoginStatus();
-                savingsCall(defaultTimePeriod);
 
                 function checkLoginStatus() {
                     console.log("refresh check");
@@ -315,59 +314,6 @@
                 //  Bucket Functionalities END here...
 
                 // RESTful calls to index.js server using post function
-                function savingsCall(timePeriod) {
-                    $.post('/savings', {
-                        firebaseToken: sessionStorage.getItem('firebaseToken'),
-                        months: timePeriod
-                    }, function(data) {
-                        // Catching error
-                        if (data == null) {
-                            var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
-                            // Render the error
-                            $('#get-button-data').slideUp(function() {
-                                $(this).slideUp(function() {
-                                    $(this).html(errorHtml).slideDown();
-                                });
-                            });
-                        } else if (data.error != null) {
-                            if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
-                                checkTokenStatus(false);
-                            }
-                            // Format the error
-                            var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
-                            // Render the error
-
-                            $('#get-button-data').slideUp(function() {
-                                $(this).slideUp(function() {
-                                    $(this).html(errorHtml).slideDown();
-                                });
-                            });
-                            // Using for loop to pull information for each bucket from data
-                        } else {
-                            console.log(data)
-                            var bucket = data;
-                            var fillPercent = 0;
-
-                            checkTokenStatus(true);
-                            // Accounting for divide-by-zero error
-                            if (bucket['Total'] > 0) {
-                                fillPercent = 100 - (bucket['Savings']/bucket['Total'])*100
-                            }
-                            bucketSavings = Math.round(bucket['Savings']*100)/100;
-                            bucketTotal = Math.round(bucket['Total']*100)/100;
-                            newPercent = fillPercent;
-
-                            $("[id='savings-account']")
-                                .find(".top-savings").text("Savings Account").end()
-                                .find(".bottom-savings").text("$" + bucketSavings + " of $" + bucketTotal).end()
-                                .find(".perc-value-savings").css("height", newPercent + "%")
-
-                            $('[class="monthNumber"]').text("emergency savings goal for " + timePeriod + " months of living expenses (set below)");
-                            // document.getElementById('Savings Account').setAttribute("onclick", "location.href='bucketpage.ejs'");
-                        }
-                    });
-                }
-
                 $.post('/bucket_names', {
                     firebaseToken: sessionStorage.getItem('firebaseToken')
                 }, function(data) {
@@ -442,6 +388,7 @@
                         var totalActualSpending = 0;
                         var totalBalance = 0;
                         var emptyNotif = 0;
+                        var tenthNotif = 0;
                         var quarterNotif = 0;
                         var halfNotif = 0;
 
@@ -472,22 +419,33 @@
                                     $(selector)
                                         .on('click', openBucketPage(key));
 
-                                    if (newPercent > 90){
+                                    if (newPercent >= 100){
                                         emptyNotif += 1;
                                         $(selector)
                                             .find(".perc-bills,.perc")
-                                            .css("border", "1px solid red")
-                                            .css("background-color", "red")
-                                    } else if (newPercent > 75) {
+                                            .css("border", "1px solid #e30544")
+                                            .css("background-color", "#e30544")
+                                    } else if (newPercent >= 90) {
                                         console.log('low bucket found: ' + newPercent);
                                         quarterNotif += 1;
                                         $(selector)
                                             .find(".perc-bills,.perc")
-                                            .css("border", "1px solid red")
-                                            .css("background-color", "red")
-                                    } else if (newPercent > 50){
+                                            .css("border", "1px solid #e1006a")
+                                            .css("background-color", "#e1006a")
+                                    } else if (newPercent >= 75) {
+                                        console.log('low bucket found: ' + newPercent);
+                                        quarterNotif += 1;
+                                        $(selector)
+                                            .find(".perc-bills,.perc")
+                                            .css("border", "1px solid #f0e308")
+                                            .css("background-color", "#f0e308")
+                                    } else if (newPercent >= 50){
                                         console.log('low bucket found: ' + newPercent);
                                         halfNotif += 1;
+                                        $(selector)
+                                            .find(".perc-bills,.perc")
+                                            .css("border", "1px solid #008d9e")
+                                            .css("background-color", "#008d9e")
                                     }
 
                                     /*edit: bucketTotal*/
@@ -528,15 +486,19 @@
                             }
                             return buckets + ' buckets are';
                         }
-                        if (quarterNotif > 0) {
+                        if (emptyNotif > 0) {
                             var htmlNotification = '<div class="inner"><p style="color:maroon;"><strong> Just a heads up - </strong></p>';
-                            htmlNotification += '<p style="color:red;"><strong>' + notificationText(emptyNotif) + ' completely empty </strong></p>';
+                            htmlNotification += '<p style="color:#e30544;"><strong>' + notificationText(emptyNotif) + ' completely empty </strong></p>';
+                        }
+                        if (tenthNotif > 0) {
+                            var htmlNotification = '<div class="inner"><p style="color:maroon;"><strong> Just a heads up - </strong></p>';
+                            htmlNotification += '<p style="color:#e1006a;"><strong>' + notificationText(tenthNotif) + ' just about empty </strong></p>';
                         }
                         if (quarterNotif > 0) {
-                            htmlNotification += '<p style="color:orange;"><strong>' + notificationText(quarterNotif) + ' nearly empty</strong></p>';
+                            htmlNotification += '<p style="color:#f0e308;"><strong>' + notificationText(quarterNotif) + ' almost empty</strong></p>';
                         }
                         if (halfNotif > 0) {
-                            htmlNotification += '<p style="color:black;"><strong>' + notificationText(halfNotif) + ' half empty!</strong></p></div>';
+                            htmlNotification += '<p style="color:#008d9e;"><strong>' + notificationText(halfNotif) + ' half empty!</strong></p></div>';
                         }
                         $('#get-button-data').slideUp(function() {
                             $(this).slideUp(function() {
