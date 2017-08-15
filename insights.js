@@ -67,11 +67,12 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                     var result_one
                     if (diff<0){
                         console.log("YOU SAVED $"+diff+" THIS MONTH")
-                        result_one="YOU SAVED $"+diff+" THIS MONTH"
+                        result_one="As of today, you’ve spent $" + (-1*diff) + " less than at this point last month on Eating Out category"
+
                     }
                     else{
                         console.log("YOU SPENT $"+diff+" MORE THIS MONTH")
-                        result_one="YOU SPENT $"+diff+" MORE THIS MONTH"
+                        result_one="As of today, you’ve spent $" + diff + " more than at this point last month on Eating Out"
                     }
                     //SAVE INSIGHT --1 ON FIREBASE 
                     ref.update({
@@ -103,16 +104,12 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                     }
                 }
                 console.log("The number of transactions above $100 is "+num_of_transactions)
-                var result_two="The number of transactions above $100 is "+num_of_transactions
+                var result_two="There are " +num_of_transactions+ " transactions this month that were over $100.00."
                 //SAVE INSIGHT --2 ON FIREBASE
                 ref.update({
                         Second_Insight: result_two
                     });
             })
-            
-            
-            
-
             
             //CREATE INSIGHT --3
             var total_spending=0
@@ -145,6 +142,7 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                 var spending_per_day=total_spending/day_of_month
                 console.log("You’ve spent $" + total_spending + " till today which is an average of $" + spending_per_day + " per day.")
                 var result_three="You’ve spent $" + total_spending + " till today which is an average of $" + spending_per_day + " per day."
+               
                 //SAVE INSIGHT --3 ON FIREBASE
                 ref.update({
                         Third_Insight: result_three
