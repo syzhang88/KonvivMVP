@@ -102,7 +102,7 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
             
             //SAVE INSIGHT --2 ON FIREBASE
 
-            /*
+            
             //CREATE INSIGHT --3
             var total_spending=0
             var fixed_buckets_path='users/'+user_id+'/bucketMoney/Fixed Buckets'
@@ -113,25 +113,29 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                 //return bucket_transactions
                 for (var category in fixed_buckets){
                     if(fixed_buckets.hasOwnProperty(category)){
+                        console.log(category)
                         //console.log(fixed_buckets[category]['2017-08'])
                         total_spending=total_spending+fixed_buckets[category]['Spending']
                     }
                 }
-            })
-            admin.database().ref(spending_buckets_path).once('value').then(function(snapshot) {
-                var spending_buckets = snapshot.val();
-                //console.log(spending_buckets)
-                //return bucket_transactions
-                for (var category in spending_buckets){
-                    if(spending_buckets.hasOwnProperty(category)){
-                        console.log(spending_buckets[category]['2017-08'])
-                        total_spending=total_spending+spending_buckets[category]['Spending']
+                console.log("FIXED "+total_spending)
+                admin.database().ref(spending_buckets_path).once('value').then(function(snapshot) {
+                    var spending_buckets = snapshot.val();
+                    //console.log(spending_buckets)
+                    //return bucket_transactions
+                    for (var category in spending_buckets){
+                        if(spending_buckets.hasOwnProperty(category)){
+                            console.log(category)
+                            //console.log(spending_buckets[category]['2017-08'])
+                            total_spending=total_spending+spending_buckets[category]['Spending']
+                        }
                     }
-                }
+                console.log("FIXED+SPENDING "+total_spending)
+                var spending_per_day=total_spending/day_of_month
+                console.log("You’ve spent $" + total_spending + " till today which is an average of $" + spending_per_day + " per day.")
+                })
             })
-            var spending_per_day=total_spending/day_of_month
-            console.log("You’ve spent $" + total_spending + " till today which is an average of $" + spending_per_day + " per day.")
-            */
+            
             //SAVE INSIGHT --3 ON FIREBASE
         }
     });
