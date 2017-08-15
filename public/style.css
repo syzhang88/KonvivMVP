@@ -21,7 +21,7 @@ address,
 big,
 cite,
 code,
-del,
+del, 
 dfn,
 font,
 img,
@@ -187,6 +187,11 @@ button:hover {
   display: inline-block;
   float: left;
   overflow:auto;
+}
+
+.savingsActive {
+  background-color: #d9a425;
+  color:white;
 }
 
 #header {
