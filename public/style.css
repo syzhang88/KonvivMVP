@@ -698,6 +698,7 @@ input:focus {
     cursor: pointer;
     padding:10px;
     border-top:1px solid #EEE;
+    border-bottom:1px solid #EEE;
 }
 
 /* Main Page */
