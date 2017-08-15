@@ -6,15 +6,7 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-             <!--   <script>
-        window.onload = function () {
-        document.getElementById('button').onclick = function () {
-        document.getElementById('modal').style.display = "none"
-            };
-        };
-        </script> -->
-
-        <!-- <script>
+       <!-- <script>
         $(function() {
           $('.btn-notify').ready(function() {
             $('.notify-bubble').show(400);
@@ -61,27 +53,7 @@
                 font: 10px Arial, sans-serif;
             }
 
-        #modal {
-            position: fixed;
-            font-family: Arial, Helvetica, sans-serif;
-            top: 0;
-            left: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 99999;
-            height: 100%;
-            width: 100%;
-        }
-        .modalconent {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #fff;
-            width: 80%;
-            padding: 20px;
-            border-radius:4px;
-        }
-                .container {
+          .container {
           margin: 100px auto;
           text-align: center;
         }
@@ -104,6 +76,44 @@
             box-shadow: 1px 1px 1px gray;
             display: none;
           }
+
+                    /* The Modal (background) */
+          .modal {
+              display: none; /* Hidden by default */
+              position: fixed; /* Stay in place */
+              z-index: 999; /* Sit on top */
+              left: 0;
+              top: 0;
+              width: 100%; /* Full width */
+              height: 100%; /* Full height */
+              overflow: auto; /* Enable scroll if needed */
+              background-color: white; /* Fallback color */
+              background-color: white; /* Black w/ opacity */
+          }
+
+          /* Modal Content/Box */
+          .modal-content {
+              border-radius:4px;
+              margin: 15% auto; /* 15% from the top and centered */
+              padding: 20px;
+              border: 1px solid #888;
+              width: 80%; /* Could be more or less, depending on screen size */
+          }
+
+          /* The Close Button */
+          .close {
+              color: #aaa;
+              float: right;
+              font-size: 28px;
+              font-weight: bold;
+          }
+
+          .close:hover,
+          .close:focus {
+              color: black;
+              text-decoration: none;
+              cursor: pointer;
+          }
         </style>
     </head>
     <body>
@@ -122,7 +132,7 @@
                     <div class="nubox">
                         <p><a href="/"><button class="upbutton" id="logout-btn">Logout</button></a></p>
                         <p><a href="newsfeed.ejs"><button class="upbutton">Newsfeed</button></a></p>
-                        <p><a href="settings.ejs"><button class="upbutton">Settings</button></a></p>
+                        <p><a href="#"><button id="myBtn" class="upbutton">Settings</button></a></p>
                     </div>
                 </div>
             </div>
@@ -150,49 +160,49 @@
                        loading
                    </div>
 
-                   <div class="circle" id="Variable Bills"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
+                   <div class="circle" id="Variable Bills"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
                        </div>
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
-                   <div class="circle" id="Eating Out"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
+                   <div class="circle" id="Eating Out"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
                        </div>
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
-                   <div class="circle" id="Entertainment"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
+                   <div class="circle" id="Entertainment"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
                        </div>
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
-                   <div class="circle" id="Groceries"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
+                   <div class="circle" id="Groceries"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
                        </div>
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
-                   <div class="circle" id="Other Spending"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
+                   <div class="circle" id="Other Spending"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
                        </div>
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
-                   <div class="circle" id="Shopping"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
+                   <div class="circle" id="Shopping"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
                        </div>
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
-                   <div class="circle" id="Transportation"><span style="margin:0px 0px 0px 200px; color:#DDD;"><p class="smallcircle"><a style="color:#BBB; cursor:pointer;" href="#" data-toggle="modal" data-target="#myModal">?</a></p></span>
+                   <div class="circle" id="Transportation"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
                        </div>
@@ -215,23 +225,51 @@
             </div>
         </div>
 
-<!--
-        <div id="modal">
-        <div class="modalconent">
-        <h2 style="font-size:20px;">How do buckets work?</h2><br />
-        <p style="font-size:14px;">The top number <b>$139</b> is how much money you have left to spend in that category</p><br />
-        <p><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/sbucket.jpg?raw=true" style="width:200px;" /></p><br />
-        <p style="font-size:14px;">The bottom number <b>$199</b> represents your total budget for this bucket for the month</p><br />
-        <p style="font-size:12px; color:#999;">We calculated your budget for this bucket by looking at how much you typically spend in this category in a month, and averaging your last six months of transactions.</p><br />
-        <button id="button" style="padding:10px 30px; font-size:14px; margin-left:80px;">Close</button>
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+
+          <!-- Modal content -->
+          <div class="modal-content">
+            <span class="close" style="margin-top:-5px;">&times;</span>
+            <p>Settings...</p><br />
+          </div>
+
         </div>
-        </div>
-       -->
 
       <!-- scripts -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
         <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
         <script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
+
+
+    <!-- Modal script -->
+    <script>
+          // Get the modal
+      var modal = document.getElementById('myModal');
+
+      // Get the button that opens the modal
+      var btn = document.getElementById("myBtn");
+
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close")[0];
+
+      // When the user clicks on the button, open the modal 
+      btn.onclick = function() {
+          modal.style.display = "block";
+      }
+
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+          modal.style.display = "none";
+      }
+
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+          if (event.target == modal) {
+              modal.style.display = "none";
+          }
+      }
+    </script>
 
         <script>
             $(document).ready(function() {
