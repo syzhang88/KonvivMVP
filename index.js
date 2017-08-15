@@ -308,6 +308,16 @@ apiRoutes.use(function(request, response, next) {
 
 //BUCKET FUNCTIONALITIES HERE ...
 
+apiRoutes.post('/bank_access',function(request,response,next){
+    admin.database().ref('/users/' + request.body.userId).once('value', function(snapshot) {
+        if (snapshot.val() && snapshot.val()['firebaseToken']) {
+            request.body.plaidToken = snapshot.val()['firebaseToken'];
+            return response.json({bank: true});
+        }
+        return response.json({bank: false});
+    });
+});
+
 apiRoutes.post('/bills',function(request,response,next){
     var billsList = {};
     admin.database().ref('users/' + request.body.userId + '/bucketTransactions').once('value').then(function(snapshot) {

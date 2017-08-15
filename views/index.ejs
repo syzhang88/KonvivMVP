@@ -314,37 +314,17 @@
                 //  Bucket Functionalities END here...
 
                 // RESTful calls to index.js server using post function
-                $.post('/bucket_names', {
+                $.post('/bank_access', {
                     firebaseToken: sessionStorage.getItem('firebaseToken')
                 }, function(data) {
-                    if (data == null) {
-                        var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
+                    if (data.bank == false) {
+                        var errorHtml = '<div class="inner"><p><strong> You have not added a bank account yet. Add a bank to see data! </strong></p></div>';
                         // Render the error
                         $('#get-button-data').slideUp(function() {
                             $(this).slideUp(function() {
                                 $(this).html(errorHtml).slideDown();
                             });
                         });
-                    } else if (data.error != null) {
-                        if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
-                            checkTokenStatus(false);
-                        }
-                        // Format the error
-                        var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
-                        // Render the error
-                        $('#get-button-data').slideUp(function() {
-                            $(this).slideUp(function() {
-                                $(this).html(errorHtml).slideDown();
-                            });
-                        });
-                    } else {
-                        checkTokenStatus(true);
-                        console.log('pulling names...');
-                        for (var key in data) {
-                            var selector = '[id="' + key + '"]';
-                            $(selector).find('.top-bills,.top').text(data[key]['name']).end();
-                            sessionStorage.setItem(key, data[key]['name']);
-                        }
                     }
                 });
 
@@ -352,7 +332,7 @@
                     firebaseToken: sessionStorage.getItem('firebaseToken')
                 }, function(data) {
                     // alert('bug check');
-                    // console.log(data);
+                    console.log(data);
                     // Catching error
                     if (data == null) {
                         // alert('bug check #1');
@@ -366,9 +346,17 @@
                             });
                         });
                     } else if (data.error != null) {
+                        var errorHtml = '<div class="inner"><p><strong> Add a bank account to your data! </strong></p></div>';
+                        // Render the error
+                        $('#get-button-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(errorHtml).slideDown();
+                            });
+                        });
+                    } else if (data.error != null) {
                         // alert('bug check #2');
 
-                        if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
+                        if (data.message == 'Failed to authenticate Firebase token.' || data.message == 'Failed to find Firebase token.') {
                             checkTokenStatus(false);
                         }
                         // Format the error
@@ -388,9 +376,9 @@
                         var totalActualSpending = 0;
                         var totalBalance = 0;
                         var emptyNotif = 0;
-                        var tenthNotif = 0;
                         var quarterNotif = 0;
                         var halfNotif = 0;
+                        var mostNotif = 0;
 
                         checkTokenStatus(true);
                         bucketMoney = data['bucketMoney']
@@ -425,23 +413,23 @@
                                             .find(".perc-bills,.perc")
                                             .css("border", "1px solid #e30544")
                                             .css("background-color", "#e30544")
-                                    } else if (newPercent >= 90) {
+                                    } else if (newPercent >= 75) {
                                         console.log('low bucket found: ' + newPercent);
                                         quarterNotif += 1;
                                         $(selector)
                                             .find(".perc-bills,.perc")
                                             .css("border", "1px solid #e1006a")
                                             .css("background-color", "#e1006a")
-                                    } else if (newPercent >= 75) {
+                                    } else if (newPercent >= 50) {
                                         console.log('low bucket found: ' + newPercent);
-                                        quarterNotif += 1;
+                                        halfNotif += 1;
                                         $(selector)
                                             .find(".perc-bills,.perc")
                                             .css("border", "1px solid #f0e308")
                                             .css("background-color", "#f0e308")
-                                    } else if (newPercent >= 50){
+                                    } else if (newPercent >= 25){
                                         console.log('low bucket found: ' + newPercent);
-                                        halfNotif += 1;
+                                        mostNotif += 1;
                                         $(selector)
                                             .find(".perc-bills,.perc")
                                             .css("border", "1px solid #008d9e")
@@ -490,22 +478,53 @@
                             var htmlNotification = '<div class="inner"><p style="color:maroon;"><strong> Just a heads up - </strong></p>';
                             htmlNotification += '<p style="color:#e30544;"><strong>' + notificationText(emptyNotif) + ' completely empty </strong></p>';
                         }
-                        if (tenthNotif > 0) {
-                            var htmlNotification = '<div class="inner"><p style="color:maroon;"><strong> Just a heads up - </strong></p>';
-                            htmlNotification += '<p style="color:#e1006a;"><strong>' + notificationText(tenthNotif) + ' just about empty </strong></p>';
-                        }
                         if (quarterNotif > 0) {
-                            htmlNotification += '<p style="color:#f0e308;"><strong>' + notificationText(quarterNotif) + ' almost empty</strong></p>';
+                            htmlNotification += '<p style="color:#e1006a;"><strong>' + notificationText(quarterNotif) + ' just about empty </strong></p>';
                         }
                         if (halfNotif > 0) {
-                            htmlNotification += '<p style="color:#008d9e;"><strong>' + notificationText(halfNotif) + ' half empty!</strong></p></div>';
+                            htmlNotification += '<p style="color:#f0e308;"><strong>' + notificationText(halfNotif) + ' almost empty</strong></p>';
                         }
+
                         $('#get-button-data').slideUp(function() {
                             $(this).slideUp(function() {
                                 $(this).html(htmlNotification).slideDown();
                             });
                         });
                     }
+               });
+
+               $.post('/bucket_names', {
+                   firebaseToken: sessionStorage.getItem('firebaseToken')
+               }, function(data) {
+                   if (data == null) {
+                       var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
+                       // Render the error
+                       $('#get-button-data').slideUp(function() {
+                           $(this).slideUp(function() {
+                               $(this).html(errorHtml).slideDown();
+                           });
+                       });
+                   } else if (data.error != null) {
+                       if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
+                           checkTokenStatus(false);
+                       }
+                       // Format the error
+                       var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
+                       // Render the error
+                       $('#get-button-data').slideUp(function() {
+                           $(this).slideUp(function() {
+                               $(this).html(errorHtml).slideDown();
+                           });
+                       });
+                   } else {
+                       checkTokenStatus(true);
+                       console.log('pulling names...');
+                       for (var key in data) {
+                           var selector = '[id="' + key + '"]';
+                           $(selector).find('.top-bills,.top').text(data[key]['name']).end();
+                           sessionStorage.setItem(key, data[key]['name']);
+                       }
+                   }
                });
 
                $('#threeMonths').on('click', function(e) {

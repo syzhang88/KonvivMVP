@@ -47,11 +47,11 @@
         html { width: 100%; height:100%; overflow:hidden; font-family: 'Open Sans', sans-serif;
         }
 
-        .back {
+        /*.back {
             font-size: 12px;
             text-decoration: none!important;
             color: #444;
-        }
+        }*/
 
         .container {
         border: 0px solid #bdbdbd;
@@ -98,11 +98,23 @@
                 padding-bottom: 30px;
 
         }
+
+        .skip {
+            font-size: 18px;
+            text-decoration: none!important;
+            text-shadow: 0 0 10px rgba(0,0,0,0.3);
+            letter-spacing:1px;
+            align: right;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
         </style>
     </head>
 
     <body>
-        <p><a class="back" href="/">< Back</a></p> <br><br>
+        <p> <a class="back" href="/">< Back </a></p>
+        <br><br>
+
 
       <div class = "title">
             <h1> How to use Konviv </h1>
@@ -117,14 +129,31 @@
         <button id="btnSecurity" class="btn btn-block">Continue</button>
            </div>
 
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+       <script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
 
-    <script>
+        <script>
+            $(document).ready(function() {
+                var firebaseConfig = {
+                    apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
+                    authDomain: "konvivandroid.firebaseapp.com",
+                    databaseURL: "https://konvivandroid.firebaseio.com",
+                    projectId: "konvivandroid",
+                    storageBucket: "konvivandroid.appspot.com",
+                    messagingSenderId: "41760220514"
+                };
+                firebase.initializeApp(firebaseConfig);
 
-        btnSecurity.addEventListener('click', e => {
-            location.href="securityscreen.ejs";
-        });
+                $(".back").on("click", function() {
+                    firebase.auth().signOut();
+                    sessionStorage.clear();
+                    location.href="/";
+                })
 
-        //Sign up
+                btnSecurity.addEventListener('click', e => {
+                    location.href="securityscreen.ejs";
+                });
+            });
         </script>
     </body>
 </html>

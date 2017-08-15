@@ -47,11 +47,11 @@
         html { width: 100%; height:100%; overflow:hidden; font-family: 'Montserrat', sans-serif;
         }
 
-        .back {
+        /*.back {
             font-size: 12px;
             text-decoration: none!important;
             color: #444;
-        }
+        }*/
 
         .container {
         border: 0px solid #bdbdbd;
@@ -94,20 +94,31 @@
     }
 
 
-#string{
-      font-size: 18px;
-        line-height: 18px;
-        opacity: .7;
-        text-align: center;
-        justify-content:center;
-        top: -30px;
-        padding-bottom: 30px;
-}
+    #string{
+          font-size: 18px;
+            line-height: 18px;
+            opacity: .7;
+            text-align: center;
+            justify-content:center;
+            top: -30px;
+            padding-bottom: 30px;
+    }
+
+    .skip {
+        font-size: 18px;
+        text-decoration: none!important;
+        text-shadow: 0 0 10px rgba(0,0,0,0.3);
+        letter-spacing:1px;
+        align: right;
+        color: #fff;
+        text-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
         </style>
     </head>
 
     <body>
-        <p><a class="back" href="/">< Back</a></p> <br><br>
+        <p><a class="back" href="/guidescreen.ejs">< Back </a></p> <br><br>
 
 
       <div class = "title">
@@ -127,52 +138,53 @@
         <button id="btnSecurity" class="btn btn-block">Link Bank Account</button>
            </div>
 
-    <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+        <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
 
-    <script>
-        // $(document).ready(function() {
-        //     console.log("security page loaded");
-        //     if (sessionStorage.token && sessionStorage.userId) {
-        //         console.log('currently not signing in');
-        //     } else {
-        //         location.href="/newuser.ejs";
-        //     }
-        // });
+        <script>
+            $(document).ready(function() {
+            //     console.log("security page loaded");
+            //     if (sessionStorage.token && sessionStorage.userId) {
+            //         console.log('currently not signing in');
+            //     } else {
+            //         location.href="/newuser.ejs";
+            //     }
 
-
-        btnSecurity.addEventListener('click', e => {
-            handler.open();
-        });
-
-        //Sign up
-        var plaidEnv = '';
-        var plaidKey = '';
-
-        $.get('/plaid_info', function(data) {
-            plaidEnv = data.env;
-            plaidKey = data.key;s
-        });
-
-        var defaultTimePeriod = 6;
-        var textDisplay = '';
-
-        var plaidHandler = Plaid.create({
-            apiVersion: 'v2',
-            clientName: 'Konviv MVP',
-            env: plaidEnv,
-            product: ['transactions'],
-            key: plaidKey,
-            onSuccess: function(public_token) {
-                // alert('calling /get_access_token...')
-                $.post('/get_access_token', {
-                    firebaseToken: sessionStorage.getItem("firebaseToken"),
-                    publicToken: public_token,
-                    userId: sessionStorage.getItem("userId")
-                }, function() {
-                    location.href="index.ejs";
+                btnSecurity.addEventListener('click', e => {
+                    handler.open();
                 });
-            }
-        });
+
+                //Sign up
+                var plaidEnv = '';
+                var plaidKey = '';
+                var plaidHandler = null;
+
+                $.get('/plaid_info', function(data) {
+                    // console.log('plaidKey');
+                    //
+                    // console.log(data);
+                    plaidEnv = data.env;
+                    plaidKey = data.key;
+
+                    plaidHandler = plaidHandler = Plaid.create({
+                        apiVersion: 'v2',
+                        clientName: 'Konviv MVP',
+                        env: plaidEnv,
+                        product: ['transactions'],
+                        key: plaidKey,
+                        onSuccess: function(public_token) {
+                            // alert('calling /get_access_token...')
+                            $.post('/get_access_token', {
+                                firebaseToken: sessionStorage.getItem("firebaseToken"),
+                                publicToken: public_token,
+                                userId: sessionStorage.getItem("userId")
+                            }, function() {
+                                location.href="index.ejs";
+                            });
+                        }
+                    });
+                });
+            });
+
         </script>
     </body>
 </html>

@@ -663,6 +663,16 @@ h1 {
     letter-spacing:1px;
 }
 
+.skip {
+    font-size: 18px;
+    text-decoration: none!important;
+    text-shadow: 0 0 10px rgba(0,0,0,0.3);
+    letter-spacing:1px;
+    align: right;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
 body {
     width: 100%;
     height:100%;
