@@ -44,7 +44,7 @@
         </style>
     </head>
     <body>
-        <div id="navigation-top" style="background-color:white;">
+               <div id="navigation-top" style="background-color:white;">
             <div id="menu">
                 <div class="box">
                     <div class="nubox">
@@ -59,7 +59,7 @@
                     <div class="nubox">
                         <p><a href="/"><button class="upbutton" id="logout-btn">Logout</button></a></p>
                         <p><a href="newsfeed.ejs"><button class="upbutton">Newsfeed</button></a></p>
-                        <p><a href="settings.ejs"><button class="upbutton">Settings</button></a></p>
+                        <p><a href="#"><button id="myBtn" class="upbutton">Settings</button></a></p>
                     </div>
                 </div>
             </div>
@@ -76,6 +76,7 @@
                 </div>
             </div>
         </div>
+               <div id="get-button-data"></div>
 
         <div class ="box" style="margin-bottom:200px; margin-top:0px;">
             <div class="head">
@@ -120,8 +121,6 @@
                 </div>
             </div>
         </div>
-
-       <div id="get-button-data"></div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
         <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
