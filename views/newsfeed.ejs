@@ -27,30 +27,22 @@
           background-color:white;
           }
         #navigation-footer {
-             border-top:1px solid #EEE;
-             position:fixed;
-             top:490px;
-             right:0;
-             left:0;
-             z-index:99;
+             display:none;
              }
-
-        .smallcircle {
-                border-radius: 50%;
-                behavior: url(PIE.htc); /* remove if you don't care about IE8 */
-
-                width: 15px;
-                height: 15px;
-                padding: 1px;
-
-                background: #fff;
-                border: 1px solid #DDD;
-                color: #666;
-                text-align: center;
-
-                font: 10px Arial, sans-serif;
-            }
-
+	     
+	p {
+	   font-size:14px;
+	   line-height:16px;
+	}
+	h1 {
+	   font-size:22px;
+	   font-weight:bold;
+	   color:black;
+	}
+	img {
+            border:1px solid #EEE;
+	    padding:10px;
+	}
         #modal {
             position: fixed;
             font-family: Arial, Helvetica, sans-serif;
@@ -71,75 +63,6 @@
             padding: 20px;
             border-radius:4px;
           }
-
-      .slider {
-      	width: 100%;
-      	overflow: hidden;
-      	position: relative;
-      	height: 400px;
-      }
-
-      .slider-wrapper {
-      	width: 100%;
-      	height: 100%;
-      	position: relative;
-      }
-
-      .slide {
-      	float: left;
-      	position: absolute;
-      	width: 75%;
-      	height: 50%;
-      	background-repeat: no-repeat;
-      	background-size: cover;
-      	opacity: 0;
-      	transition: opacity 500ms linear;
-        margin-top:50px;
-        text-align:center;
-        padding:40px;
-        margin-left:50px;
-        border-radius:4px;
-        border:1px solid #999;
-      }
-
-      .slider-wrapper > .slide:first-child {
-      	opacity: 1;
-      }
-
-    .slider-nav {
-    	height: 64px;
-    	width: 100%;
-      color:white;
-    	position: absolute;
-    	top: 50%;
-    	left: 0;
-    	margin-top: -32px;
-    	z-index: 1000;
-    	display: none;
-    }
-
-      .slider-nav button {
-      	display: block;
-      	width: 64px;
-      	height: 64px;
-        border-radius:100px;
-      	cursor: pointer;
-      	background-color: black;
-        opacity:0.5;
-      	background-repeat: no-repeat;
-      }
-
-      .slider-nav button:focus {
-      	outline-style: none;
-      }
-
-      .slider-nav button.slider-previous {
-      	float: left;
-        }
-
-      .slider-nav button.slider-next {
-      	float: right;
-      }
         </style>
     </head>
     <body>
@@ -179,33 +102,23 @@
 
         <div class ="box" style="background-color:white; margin-top:-5px;">
             <div class="head">
-                <h1> Smart Insights <h1>
+                <h1>News Feed<h1>
             </div>
-            <div class = "body">
+            <div class = "body" style="padding:20px;">
+		<h1>1. Say no to the Tapas!</h1>
+		<p><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/pic1.png?raw=true" style="width:95%;" /></p>
+		<p>Going out to eat with friends usually ends poorly for our bank accounts. Waking up the next morning and realizing you emptied your bank account on tapas and sangria (damn you tapas!) is a feeling that somehow manages to rival your stomach ache. Try to limit yourself to an amount like $50 for example and keep track as the night goes on. Tools like Konviv will make this easier, and easier to do!</p>
+		<h1>2. Go out Cardless</h1>
+		<p><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/pic2.png?raw=true" style="width:95%;" /></p>
+		<p>One of the easiest ways to avoid this crisis is to just limit the amount of money you have access to (see point above). Before you go out with your friends, go to the ATM and decide how much cash you can afford to spend on a night out. Withdraw it, and when you go out, leave all your plastic at home and stick to this set amount of cash.</p>
+		<h1>3. Would you like extra butter?</h1>
+		<p><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/pic3.png?raw=true" style="width:95%;" /></p>
+		<p>Going out to the movies with your friends back when our parents were our age was super cheap. Now it can be north of $10 a ticket depending on where you live and the type of theater you are going to. If going out to the movies is something you really want to do, bring a student ID card with you, most theaters give student discounts. Also sneak your own snacks into the theater, the ones behind the counter are WAY overpriced.</p>
+		<h1>4. Welcome to mi casa! BYOB, BYOF</h1>
+		<p><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/pic4.png?raw=true" style="width:95%;" /></p>
+		<p>Eating out has also become insanely expensive. Sure you are paying for something you couldn’t necessarily make yourself but there are definitely great alternatives to going out to dinner with your friends. Instead try inviting your besties over and have a potluck, where everyone prepares something that they are good at and you can all get together and have a feast at a fraction of the cost while still having a great time!</p>
 
-              <div class="slider" id="main-slider"><!-- outermost container element -->
-          	<div class="slider-wrapper"><!-- innermost wrapper element -->
-          		<div class="slide">
-                <p><b>Insight One</b></p><br /><p>the capacity to gain an accurate and deep intuitive understanding of a person or thing</p>
-              </div>
-              <div class="slide">
-                <p><b>Insight Two</b></p><br /><p>the capacity to gain an accurate and deep intuitive understanding of a person or thing</p>
-              </div>
-              <div class="slide">
-                <p><b>Insight Three</b></p><br /><p>the capacity to gain an accurate and deep intuitive understanding of a person or thing</p>
-              </div>
-          	</div>
-          	<div class="slider-nav">
-          		<button class="slider-previous"><h1><</h1></button>
-          		<button class="slider-next"><h1>></h1></button>
-          	</div>
-          </div>
-          <center><div style="margin-top:-100px; height:400px; border-top:1px solid #EEE; padding:25px 50px;">
-            <p>Old Insight</p><br />
-            <p>Old Insight</p><br />
-            <p>Old Insight</p>
-          </div></center>
-
+            </div>
             </div>
         </div>
 
