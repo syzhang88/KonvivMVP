@@ -157,6 +157,17 @@
                 firebase.initializeApp(firebaseConfig);
                 checkLoginStatus();
 
+                function getInsights(){
+                    console.log("INSIGHTS INCOMING")
+                    $.post('/get_insights',{
+                        year_month:'2017-08',
+                        token:sessionStorage.token
+                    });
+                    console.log("values sent")
+                }
+                
+                getInsights()
+                
                 function checkLoginStatus() {
                     console.log("refresh check");
                     firebase.auth().onAuthStateChanged(function(user) {

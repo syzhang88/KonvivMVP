@@ -366,8 +366,13 @@ apiRoutes.post('/change_size',function(request,response,next){
 apiRoutes.post('/get_insights',function(request,response,next){
     console.log("RECEIVED")
     var user_id = request.body.userId
-    var path='users/'+user_id+'/Insights'
-    insights.showInsights(path)
+    //console.log(user_id)
+    var date=request.body.year_month
+    var path_check='users/'+user_id+'/Insights'
+    var current_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-08'
+    var last_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-08'
+    //console.log(path)
+    insights.showInsights(path_check,current_month_path,last_month_path)
 });
 
 apiRoutes.post('/get_access_token', function(request, response, next) {
