@@ -104,10 +104,10 @@
 
         <div id="menu">
             <div class="box">
-                <button class="headerbutton" style="margin:10px 10px 10px 14px; background-color:#999;" id="threeMonths"><span style="font-size:18px; color:#222;">3 Months</span></button>
-                <button class="headerbutton" style="margin:10px 10px; background-color:#999;" id="sixMonths"><span style="font-size:18px; color:#222;">6 Months</span></button>
-                <button class="headerbutton" style="margin:10px 10px; background-color:#999;" id="nineMonths"><span style="font-size:18px; color:#222;">9 Months</span></button>
-                <button class="headerbutton" style="margin:10px 10px; background-color:#999;" id="twelveMonths"><span style="font-size:18px; color:#222;">12 Months</span></button>
+                <button class="savingsbutton" style="margin:10px 10px 10px 14px; background-color:#999;" id="threeMonths"><span style="font-size:18px; color:#222;">3 Months</span></button>
+                <button class="savingsbutton" style="margin:10px 10px; background-color:#999;" id="sixMonths"><span style="font-size:18px; color:#222;">6 Months</span></button>
+                <button class="savingsbutton" style="margin:10px 10px; background-color:#999;" id="nineMonths"><span style="font-size:18px; color:#222;">9 Months</span></button>
+                <button class="savingsbutton" style="margin:10px 10px; background-color:#999;" id="twelveMonths"><span style="font-size:18px; color:#222;">12 Months</span></button>
             </div>
         </div>
 <br /><br /><br />
@@ -265,50 +265,13 @@
                     });
                 }
 
-                $.post('/bucket_names', {
-                    firebaseToken: sessionStorage.getItem('firebaseToken')
-                }, function(data) {
-                    if (data == null) {
-                        var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
-                        // Render the error
-                        $('#get-button-data').slideUp(function() {
-                            $(this).slideUp(function() {
-                                $(this).html(errorHtml).slideDown();
-                            });
-                        });
-                    } else if (data.error != null) {
-                        if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
-                            checkTokenStatus(false);
-                        }
-                        // Format the error
-                        var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
-                        // Render the error
-                        $('#get-button-data').slideUp(function() {
-                            $(this).slideUp(function() {
-                                $(this).html(errorHtml).slideDown();
-                            });
-                        });
-                        // Using for loo
-                    } else {
-                        checkTokenStatus(true);
-                        for (var key in data) {
-                            var selector = '[id="' + key + '"]';
-                            $(selector).find('.top-bills,.top').text(data[key]['name']).end();
-                            sessionStorage.setItem(key, data[key]['name']);
-                        }
-                    }
-                });
-
                 $.post('/buckets', {
                     firebaseToken: sessionStorage.getItem('firebaseToken')
                 }, function(data) {
                     // alert('bug check');
                     // console.log(data);
-                    // Catching error
+                    // Catching errors
                     if (data == null) {
-                        // alert('bug check #1');
-
-                        // Format the error
                         var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
                         // Render the error
                         $('#get-button-data').slideUp(function() {
@@ -408,22 +371,30 @@
 
                $('#threeMonths').on('click', function(e) {
                    savingsCall(3);
+                   $(".savingsActive").removeClass("savingsActive");
+                   $('#threeMonths').addClass("savingsActive");
                });
 
                $('#sixMonths').on('click', function(e) {
                    savingsCall(6);
+                   $(".savingsActive").removeClass("savingsActive");
+                   $('#sixMonths').addClass("savingsActive");
                });
 
                $('#nineMonths').on('click', function(e) {
                    savingsCall(9);
+                   $(".savingsActive").removeClass("savingsActive");
+                   $('#nineMonths').addClass("savingsActive");
                });
 
                $('#twelveMonths').on('click', function(e) {
                    savingsCall(12);
+                   $(".savingsActive").removeClass("savingsActive");
+                   $('#twelveMonths').addClass("savingsActive");
                });
 
                $('#get-link-btn').on('click', function(e) {
-                   plaidHandler.open()
+                   plaidHandler.open();
                });
 
                $('#logout-btn').on('click', function(e) {
@@ -499,31 +470,6 @@
                         }
                     });
                 });
-
-                // $('#get-item-btn').on('click', function(e) {
-                //     if ($('#get-button-data').is(':visible') && textDisplay == "item") {
-                //         textDisplay = "";
-                //         return $('#get-button-data').slideUp();
-                //     }
-                //     $.post('/item', {
-                //         token: sessionStorage.getItem('firebaseToken')
-                //     }, function(data) {
-                //         textDisplay = "item";
-                //         $('#get-button-data').slideUp(function() {
-                //             if (data.error) {
-                //                 $(this).html('<p>' + data.error + '</p>').slideDown();
-                //             } else {
-                //                 var html = '<div class="inner">';
-                //                 // html += '<p><b>BASIC INFORMATION ABOUT YOUR BANK ACCOUNT<b></p> <br>';
-                //                 html += '<p><b>Bank Account</b> ' + data.institution.name + '</p>';
-                //                 // html += '<p>Billed products: ' + data.item.billed_products.join(', ') + '</p>';
-                //                 // html += '<p>Available products: ' + data.item.available_products.join(', ') + '</p>';
-                //                 html += '</div>';
-                //                 $(this).html(html).slideDown();
-                //             }
-                //         });
-                //     });
-                // });
 
                 $('#get-transactions-btn').on('click', function(e) {
                     if ($('#get-button-data').is(':visible') && textDisplay == "transactions") {
