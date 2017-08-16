@@ -10,7 +10,7 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
     ref.once("value").then(function(snapshot) {
         if (snapshot.exists()===true){
             console.log("Insight section exists")
-            SHOW INSIGHTS
+            //SHOW INSIGHTS
         }
         else{
             console.log("Create Insight section")
