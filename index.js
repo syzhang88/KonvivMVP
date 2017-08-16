@@ -403,7 +403,7 @@ apiRoutes.post('/reset_bucket_names',function(request,response,next) {
     var postData = {};
     for (var key in buckets.nameBuckets) {
         if (buckets.nameBuckets.hasOwnProperty(key)) {
-            postData['key'] = {name: buckets.nameBuckets[key]};
+            postData[key] = {name: buckets.nameBuckets[key]};
         }
     }
     admin.database().ref("users/" + request.body.userId + "/bucketNames/").set(postData).catch(function(error) {
