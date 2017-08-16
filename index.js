@@ -46,7 +46,7 @@ var APP_PORT = envvar.number('APP_PORT', Number(process.env.PORT || 8000 ));
 var PLAID_CLIENT_ID = envvar.string('PLAID_CLIENT_ID', '57c4acc20259902a3980f7d2');
 var PLAID_SECRET = envvar.string('PLAID_SECRET', '10fb233c2a93dfcd42aa1a9d8a01d1');
 var PLAID_PUBLIC_KEY = envvar.string('PLAID_PUBLIC_KEY', 'ebc098404b162edaadb2b8c6c45c8f');
-var PLAID_ENV = envvar.string('PLAID_ENV', 'development');
+var PLAID_ENV = envvar.string('PLAID_ENV', 'sandbox');
 
 // Initialize Plaid client
 var plaidClient = new plaid.Client(
