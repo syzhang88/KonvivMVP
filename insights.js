@@ -67,12 +67,12 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                     var result_one
                     if (diff<0){
                         console.log("YOU SAVED $"+diff.toFixed(2)+" THIS MONTH")
-                        result_one="As of today, you’ve spent $" + (-1*diff).toFixed(2) + " less than at this point last month on Eating Out category"
+                        result_one="As of today, you’ve spent $" + (-1*diff).toFixed(2) + " less than at this point last month for Eating Out."
 
                     }
                     else{
                         console.log("YOU SPENT $"+diff.toFixed(2)+" MORE THIS MONTH")
-                        result_one="As of today, you’ve spent $" + diff.toFixed(2) + " more than at this point last month on Eating Out"
+                        result_one="As of today, you’ve spent $" + diff.toFixed(2) + " less than at this point last month for Eating Out."
                     }
                     //SAVE INSIGHT --1 ON FIREBASE
                     ref.update({
@@ -140,8 +140,8 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                     }
                 console.log("FIXED+SPENDING "+total_spending)
                 var spending_per_day = total_spending/day_of_month
-                console.log("You’ve spent $" + total_spending.toFixed(2) + " till today which is an average of $" + spending_per_day.toFixed(2) + " per day.")
-                var result_three = "You’ve spent $" + total_spending.toFixed(2) + " till today which is an average of $" + spending_per_day.toFixed(2) + " per day."
+                console.log("this month, you’ve spent $" + total_spending.toFixed(2) + " so far, which is an average of $" + spending_per_day.toFixed(2) + " per day.")
+                var result_three = "this month, you’ve spent $" + total_spending.toFixed(2) + " so far, which is an average of $" + spending_per_day.toFixed(2) + " per day."
 
                 //SAVE INSIGHT --3 ON FIREBASE
                 ref.update({
