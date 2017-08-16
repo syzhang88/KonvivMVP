@@ -293,13 +293,16 @@
                         textDisplay = "account";
                         $('#get-button-data').slideUp(function() {
                             console.log("bills data printing");
-
                             var html = '<div class="inner">';
-                            html += '<p><strong> Bills we have found: </strong></p>';
-                            for (var billName in data) {
-                                if (data.hasOwnProperty(billName)) {
-                                    html += '<p> ' + shortenBillName(data[billName]['name']) + '</p>';
+                            html += '<p><strong> Bills we have found: </strong></p><br>';
+                            if (Object.keys(data).length > 0) {
+                                for (var billName in data) {
+                                    if (data.hasOwnProperty(billName)) {
+                                        html += '<p> ' + shortenBillName(data[billName]['name']) + '</p>';
+                                    }
                                 }
+                            } else {
+                                html += '<p> None found! </p>';
                             }
                             html += '</div>';
                             $(this).html(html).slideDown();

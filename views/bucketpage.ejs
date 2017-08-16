@@ -17,7 +17,12 @@
     <body>
         <div class ="box">
 
+
             <p><a class="back" href="/index.ejs">< Back</a></p> <br><br>
+
+            <!-- <div class="head">
+                <h1 id= "pageTitle" style="font-size:35px;"> </h1>
+            </div> -->
 
              <div class="head">
                     <h1 style="font-size:18px; font-family:'Lato'; font-weight:300;"> Transactions <h1>
@@ -49,12 +54,6 @@
 
     <script>
         $(document).ready(function() {
-            if (sessionStorage.getItem("firebaseToken") && sessionStorage.getItem("bucketPage")) {
-                console.log("bucket page loaded for " + sessionStorage.getItem(sessionStorage.getItem("bucketPage")));
-            } else {
-                location.href("/index.ejs");
-            }
-
             // Initialize Firebase
             var firebaseConfig = {
                 apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
@@ -136,9 +135,10 @@
                 $.post('/transactions_for_bucket',{
                     which_bucket: sessionStorage.getItem("bucketPage"),
                     firebaseToken: sessionStorage.getItem("firebaseToken")
+
                 }, function(data) {
                     if (data == null) {
-                        var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
+                        var errorHtml = '<div class="inner"><strong> No transactions this month yet! </strong><br>';
                         // Render the error
                         $('#get-button-data').slideUp(function() {
                             $(this).slideUp(function() {
@@ -208,7 +208,7 @@
                     $.post('/rename_bucket',{
                         which_bucket:sessionStorage.getItem("bucketPage"),
                         new_name:editName.value,
-                        token: sessionStorage.token
+                        firebaseToken: sessionStorage.getItem("firebaseToken")
                     }, callResult);
                 }
             }
@@ -222,7 +222,7 @@
                         amount:editSizeAmount.value,
                         from_bucket:sessionStorage.getItem("bucketPage"),
                         to_bucket:editSizeBucket.value,
-                        token: sessionStorage.token
+                        firebaseToken: sessionStorage.getItem("firebaseToken")
                     }, callResult);
                 }
             }
@@ -236,7 +236,7 @@
                     to_bucket:bucketname.value,
                     transaction_id:trans_id,
                     year_month:date,
-                    token:sessionStorage.token
+                    firebaseToken: sessionStorage.getItem("firebaseToken")
                 }, callResult);
             }
 

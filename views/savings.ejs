@@ -385,6 +385,8 @@
                         var totalSpending = Math.max(totalEstimatedSpending, totalActualSpending);
                         var amountLeft = totalBalance - totalBills - totalSpending + totalActualBills + totalActualSpending;
 
+                        // Default savings goal is six months
+                        $("#sixMonths").addClass("savingsActive");
                         $("#left-to-spend").text("$" + amountLeft.toFixed(2));
                         $("#total-bills").text("Total Bills: $" + totalActualBills.toFixed(2) + " | Estimated Bills: $" + totalEstimatedBills.toFixed(2));
                         $("#total-spending").text("Total Spending: $" + totalActualSpending.toFixed(2)  + " | Estimated Spending: $" + totalEstimatedSpending.toFixed(2));
@@ -392,8 +394,6 @@
                     }
                });
 
-               // Default savings goal is six months
-               $("#sixMonths").addClass("savingsActive");
 
                $('#threeMonths').on('click', function(e) {
                    savingsCall(3);

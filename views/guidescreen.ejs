@@ -82,7 +82,7 @@
         }
 
     .title h1{
-      text-align:center; 
+      text-align:center;
       margin:10px 5px;
       padding-top:-20px;
       color:white;
@@ -143,7 +143,18 @@
                     storageBucket: "konvivandroid.appspot.com",
                     messagingSenderId: "41760220514"
                 };
+
+                function checkLoginStatus() {
+                    console.log("refresh check");
+                    firebase.auth().onAuthStateChanged(function(user) {
+                        if (user) {
+                            location.href="/index.ejs";
+                        }
+                    });
+                }
+
                 firebase.initializeApp(firebaseConfig);
+                checkLoginStatus();
 
                 $(".back").on("click", function() {
                     firebase.auth().signOut();
