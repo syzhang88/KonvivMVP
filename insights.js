@@ -140,8 +140,8 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                     }
                 console.log("FIXED+SPENDING "+total_spending)
                 var spending_per_day = total_spending/day_of_month
-                console.log("this month, you’ve spent $" + total_spending.toFixed(2) + " so far, which is an average of $" + spending_per_day.toFixed(2) + " per day.")
-                var result_three = "this month, you’ve spent $" + total_spending.toFixed(2) + " so far, which is an average of $" + spending_per_day.toFixed(2) + " per day."
+                console.log("This month, you’ve spent $" + total_spending.toFixed(2) + " so far, which is an average of $" + spending_per_day.toFixed(2) + " per day.")
+                var result_three = "This month, you’ve spent $" + total_spending.toFixed(2) + " so far, which is an average of $" + spending_per_day.toFixed(2) + " per day."
 
                 //SAVE INSIGHT --3 ON FIREBASE
                 ref.update({
