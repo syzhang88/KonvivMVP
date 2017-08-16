@@ -103,8 +103,8 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                         }
                     }
                 }
-                console.log("The number of transactions above $100 is "+num_of_transactions.toFixed(2))
-                var result_two = "There are " +num_of_transactions.toFixed(2) + " transactions this month that were over $100.00."
+                console.log("The number of transactions above $100 is "+num_of_transactions)
+                var result_two = "There are " +num_of_transactions + " transactions this month that were over $100.00."
                 //SAVE INSIGHT --2 ON FIREBASE
                 ref.update({
                         Second_Insight: result_two
