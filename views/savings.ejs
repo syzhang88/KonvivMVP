@@ -274,7 +274,6 @@
                             bucketTotal = Math.round(bucket['Total']*100)/100;
                             newPercent = fillPercent;
 
-                            $("[id='sixMonths']").addClass("savingsActive");
                             $("[id='savings-account']")
                                 .find(".top-savings").text("Savings Account").end()
                                 .find(".bottom-savings").text("$" + bucketSavings + " of $" + bucketTotal).end()
@@ -389,6 +388,9 @@
                         $("#overall-stats").text("+ $" + totalIncome.toFixed(2)  + " income | - $" + totalActual.toFixed(2) + " costs");
                     }
                });
+
+               // Default savings goal is six months
+               $("#sixMonths").addClass("savingsActive");
 
                $('#threeMonths').on('click', function(e) {
                    savingsCall(3);
