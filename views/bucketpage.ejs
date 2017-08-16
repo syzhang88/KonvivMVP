@@ -229,8 +229,8 @@
 
             function move_trans(){
             //console.log(trans_id)
-            //console.log(bucketname.value)
-            //console.log(sessionStorage.getItem("bucketPage"))
+            console.log(bucketname.value)
+            console.log(sessionStorage.getItem("bucketPage"))
                 $.post('/move_transaction',{
                     from_bucket:sessionStorage.getItem("bucketPage"),
                     to_bucket:bucketname.value,
