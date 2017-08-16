@@ -376,6 +376,7 @@
                         var totalActualSpending = 0;
                         var totalBalance = 0;
                         var emptyNotif = 0;
+                        var tenthNotif = 0;
                         var quarterNotif = 0;
                         var halfNotif = 0;
                         var mostNotif = 0;
@@ -413,6 +414,13 @@
                                             .find(".perc-bills,.perc")
                                             .css("border", "1px solid #e30544")
                                             .css("background-color", "#e30544")
+                                    } else if (newPercent >= 90){
+                                        console.log('low bucket found: ' + newPercent);
+                                        tenthNotif += 1;
+                                        $(selector)
+                                            .find(".perc-bills,.perc")
+                                            .css("border", "1px solid #e1006a")
+                                            .css("background-color", "#e1006a")
                                     } else if (newPercent >= 75) {
                                         console.log('low bucket found: ' + newPercent);
                                         quarterNotif += 1;
@@ -478,11 +486,14 @@
                             var htmlNotification = '<div class="inner"><p style="color:maroon;"><strong> Just a heads up - </strong></p>';
                             htmlNotification += '<p style="color:#e30544;"><strong>' + notificationText(emptyNotif) + ' completely empty </strong></p>';
                         }
+                        if (tenthNotif > 0) {
+                            htmlNotification += '<p style="color:#e30544;"><strong>' + notificationText(emptyNotif) + ' just about empty </strong></p>';
+                        }
                         if (quarterNotif > 0) {
-                            htmlNotification += '<p style="color:#e1006a;"><strong>' + notificationText(quarterNotif) + ' just about empty </strong></p>';
+                            htmlNotification += '<p style="color:#e1006a;"><strong>' + notificationText(quarterNotif) + ' over three-fourth empty </strong></p>';
                         }
                         if (halfNotif > 0) {
-                            htmlNotification += '<p style="color:#f0e308;"><strong>' + notificationText(halfNotif) + ' almost empty</strong></p>';
+                            htmlNotification += '<p style="color:#f0e308;"><strong>' + notificationText(halfNotif) + ' over half empty </strong></p>';
                         }
 
                         $('#get-button-data').slideUp(function() {
