@@ -166,17 +166,31 @@
             <div class="head">
                 <h1> Smart Insights <h1>
             </div>
-            
-            <div class = "body" style="margin-bottom:10px; text-align:center;">
-          	 <div>
-                <p><b>Insight One</b></p><br /><p><div id="first-slide">1</div></p>
-             </div>
-              <div>
-                <p><b>Insight Two</b></p><br /><p><div id="second-slide">2</div></p>
+            <div class = "body">
+
+              <div class="slider" id="main-slider"><!-- outermost container element -->
+          	<div class="slider-wrapper"><!-- innermost wrapper element -->
+          		<div class="slide">
+                <p><b>Insight </b></p><br /><p><div id="first-slide"></div></p>
               </div>
-              <div>
-                <p><b>Insight Three</b></p><br /><p><div id="third-slide">3</div></p>
+              <div class="slide">
+                <p><b>Insight </b></p><br /><p><div id="second-slide"></div></p>
               </div>
+              <div class="slide">
+                <p><b>Insight </b></p><br /><p><div id="third-slide"></div></p>
+              </div>
+          	</div>
+          	<div class="slider-nav">
+          		<button class="slider-previous"><h1><</h1></button>
+          		<button class="slider-next"><h1>></h1></button>
+          	</div>
+          </div>
+          <center><div style="margin-top:-100px; height:400px; border-top:1px solid #EEE; padding:25px 50px;">
+            <p>Old Insight</p><br />
+            <p>Old Insight</p><br />
+            <p>Old Insight</p>
+          </div></center>
+
             </div>
         </div>
 
@@ -355,9 +369,9 @@
             				self.index++;
             				self.previous.style.display = "block";
 
-            				if( self.index == self.total - 1 ) {
-            					self.index = self.total - 1;
-            					self.next.style.display = "none";
+            				if( self.index > self.total - 1) {
+            					self.index = 0;
+            					// self.next.style.display = "none";
             				}
 
             				self._slideTo( self.index );
@@ -368,9 +382,9 @@
             				self.index--;
             				self.next.style.display = "block";
 
-            				if( self.index == 0 ) {
-            					self.index = 0;
-            					self.previous.style.display = "none";
+            				if( self.index < 0 ) {
+            					self.index = self.total - 1;
+            					// self.previous.style.display = "none";
             				}
 
             				self._slideTo( self.index );
@@ -394,11 +408,9 @@
 
             	};
 
-            	document.addEventListener( "DOMContentLoaded", function() {
 
             		var slider = new Slideshow( "#main-slider" );
 
-            	});
 
             });
 

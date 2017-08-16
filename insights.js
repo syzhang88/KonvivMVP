@@ -11,8 +11,8 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
         if (snapshot.exists()===true){
             console.log("Insight section exists")
             //SHOW INSIGHTS
-        }
-        else{
+        // }
+        // else{
             console.log("Create Insight section")
             //CREATE INSIGHT -- 1
             var this_month_amount=0
@@ -37,7 +37,7 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                             //console.log(bucket_transactions[key]['amount'])
                             this_month_amount=this_month_amount+bucket_transactions[key]['amount']
                         }
-                        
+
                     }
                 }
 
@@ -58,7 +58,7 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                                 //console.log(bucket_transactions[key]['amount'])
                                 last_month_amount=last_month_amount+bucket_transactions[key]['amount']
                             }
-                            
+
                         }
                     }
                     console.log(this_month_amount)
@@ -66,23 +66,23 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                     diff=this_month_amount-last_month_amount
                     var result_one
                     if (diff<0){
-                        console.log("YOU SAVED $"+diff+" THIS MONTH")
-                        result_one="As of today, you’ve spent $" + (-1*diff) + " less than at this point last month on Eating Out category"
+                        console.log("YOU SAVED $"+diff.toFixed(2)+" THIS MONTH")
+                        result_one="As of today, you’ve spent $" + (-1*diff).toFixed(2) + " less than at this point last month on Eating Out category"
 
                     }
                     else{
-                        console.log("YOU SPENT $"+diff+" MORE THIS MONTH")
-                        result_one="As of today, you’ve spent $" + diff + " more than at this point last month on Eating Out"
+                        console.log("YOU SPENT $"+diff.toFixed(2)+" MORE THIS MONTH")
+                        result_one="As of today, you’ve spent $" + diff.toFixed(2) + " more than at this point last month on Eating Out"
                     }
-                    //SAVE INSIGHT --1 ON FIREBASE 
+                    //SAVE INSIGHT --1 ON FIREBASE
                     ref.update({
                         First_Insight: result_one
                     });
 
                 })
             })
-                 
-            
+
+
             // CREATE INSIGHT -- 2
             var num_of_transactions=0
             var transaction_path='users/'+user_id+'/bucketTransactions'
@@ -103,14 +103,14 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                         }
                     }
                 }
-                console.log("The number of transactions above $100 is "+num_of_transactions)
-                var result_two="There are " +num_of_transactions+ " transactions this month that were over $100.00."
+                console.log("The number of transactions above $100 is "+num_of_transactions.toFixed(2))
+                var result_two = "There are " +num_of_transactions.toFixed(2) + " transactions this month that were over $100.00."
                 //SAVE INSIGHT --2 ON FIREBASE
                 ref.update({
                         Second_Insight: result_two
                     });
             })
-            
+
             //CREATE INSIGHT --3
             var total_spending=0
             var fixed_buckets_path='users/'+user_id+'/bucketMoney/Fixed Buckets'
@@ -139,10 +139,10 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                         }
                     }
                 console.log("FIXED+SPENDING "+total_spending)
-                var spending_per_day=total_spending/day_of_month
-                console.log("You’ve spent $" + total_spending + " till today which is an average of $" + spending_per_day + " per day.")
-                var result_three="You’ve spent $" + total_spending + " till today which is an average of $" + spending_per_day + " per day."
-               
+                var spending_per_day = total_spending/day_of_month
+                console.log("You’ve spent $" + total_spending.toFixed(2) + " till today which is an average of $" + spending_per_day.toFixed(2) + " per day.")
+                var result_three = "You’ve spent $" + total_spending.toFixed(2) + " till today which is an average of $" + spending_per_day.toFixed(2) + " per day."
+
                 //SAVE INSIGHT --3 ON FIREBASE
                 ref.update({
                         Third_Insight: result_three
