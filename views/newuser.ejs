@@ -198,11 +198,11 @@
                         if (user) {
                             user.getIdToken().then(function(token) {
                                 sessionStorage.setItem('firebaseToken', token);
-                                alert('grabbed token...');
+                                // alert('grabbed token...');
                                 $.post('/reset_bucket_names',{
                                     firebaseToken: token
                                 }, function(data) {
-                                    alert('returning server call...');
+                                    // alert('returning server call...');
                                     if (data.error) {
                                         console.log(data.error);
                                     } else {

@@ -46,7 +46,7 @@ var APP_PORT = envvar.number('APP_PORT', Number(process.env.PORT || 8000 ));
 var PLAID_CLIENT_ID = envvar.string('PLAID_CLIENT_ID', '57c4acc20259902a3980f7d2');
 var PLAID_SECRET = envvar.string('PLAID_SECRET', '10fb233c2a93dfcd42aa1a9d8a01d1');
 var PLAID_PUBLIC_KEY = envvar.string('PLAID_PUBLIC_KEY', 'ebc098404b162edaadb2b8c6c45c8f');
-var PLAID_ENV = envvar.string('PLAID_ENV', 'development');
+var PLAID_ENV = envvar.string('PLAID_ENV', 'sandbox');
 
 // Initialize Plaid client
 var plaidClient = new plaid.Client(
@@ -399,8 +399,9 @@ apiRoutes.post('/rename_bucket',function(request,response,next){
 });
 
 apiRoutes.post('/reset_bucket_names',function(request,response,next) {
-    console.log("received /bucket_names call");
+    console.log("received /reset_bucket_names call");
     var postData = {};
+    var errorData = {reset: true};
     for (var key in buckets.nameBuckets) {
         if (buckets.nameBuckets.hasOwnProperty(key)) {
             postData[key] = {name: buckets.nameBuckets[key]};
@@ -408,8 +409,9 @@ apiRoutes.post('/reset_bucket_names',function(request,response,next) {
     }
     admin.database().ref("users/" + request.body.userId + "/bucketNames/").set(postData).catch(function(error) {
         console.log("error with names: " + error.message);
-        response.json({error: error});
+        errorData = error;
     });
+    response.json(errorData);
 });
 
 apiRoutes.post('/bucket_names',function(request,response,next){

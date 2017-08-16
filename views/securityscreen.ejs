@@ -88,7 +88,7 @@
         }
 
     .title h1{
-      text-align:center; 
+      text-align:center;
       margin:-20px;
       padding-top:10px;
       color:white;
@@ -150,10 +150,6 @@
             //         location.href="/newuser.ejs";
             //     }
 
-                btnSecurity.addEventListener('click', e => {
-                    handler.open();
-                });
-
                 //Sign up
                 var plaidEnv = '';
                 var plaidKey = '';
@@ -166,7 +162,7 @@
                     plaidEnv = data.env;
                     plaidKey = data.key;
 
-                    plaidHandler = plaidHandler = Plaid.create({
+                    plaidHandler = Plaid.create({
                         apiVersion: 'v2',
                         clientName: 'Konviv MVP',
                         env: plaidEnv,
@@ -184,8 +180,11 @@
                         }
                     });
                 });
-            });
 
+                btnSecurity.addEventListener('click', e => {
+                    plaidHandler.open();
+                });
+            });
         </script>
     </body>
 </html>
