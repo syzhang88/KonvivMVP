@@ -142,7 +142,7 @@
                         <div id="string" style="font-size:16px; padding-top:5px; color:#61cb43;">Left to Spend</div>
                     </div>
                     <div class="nubox">
-                        <p><a href="/"><button class="upbutton" id="logout-btn">Logout</button></a></p>
+                        <p><button class="upbutton" id="logout-btn">Logout</button></p>
                         <p><a href="newsfeed.ejs"><button class="upbutton">Newsfeed</button></a></p>
                         <p><a href="#"><button id="myBtn" class="upbutton">Settings</button></a></p>
                     </div>
@@ -202,25 +202,39 @@
 
         <script>
             $(document).ready(function() {
+                var plaidEnv = '';
+                var plaidKey = '';
+                var plaidHandler = null;
+
+                $.get('/plaid_info', function(data) {
+                    // console.log('plaidKey');
+                    //
+                    // console.log(data);
+                    plaidEnv = data.env;
+                    plaidKey = data.key;
+
+                    plaidHandler = plaidHandler = Plaid.create({
+                        apiVersion: 'v2',
+                        clientName: 'Konviv MVP',
+                        env: plaidEnv,
+                        product: ['transactions'],
+                        key: plaidKey,
+                        onSuccess: function(public_token) {
+                            // alert('calling /get_access_token...')
+                            $.post('/get_access_token', {
+                                firebaseToken: sessionStorage.getItem("firebaseToken"),
+                                publicToken: public_token,
+                                userId: sessionStorage.getItem("userId")
+                            }, function() {
+                                location.href="index.ejs";
+                            });
+                        }
+                    });
+                });
+
                 var defaultTimePeriod = 6;
                 var textDisplay = '';
-                var plaidHandler = Plaid.create({
-                    apiVersion: 'v2',
-                    clientName: 'Konviv MVP',
-                    env: PLAID_ENV,
-                    product: ['transactions'],
-                    key: PLAID_PUBLIC_KEY,
-                    onSuccess: function(public_token) {
-                        // alert('calling /get_access_token...')
-                        $.post('/get_access_token', {
-                            firebaseToken: sessionStorage.getItem("firebaseToken"),
-                            publicToken: public_token,
-                            userId: sessionStorage.getItem("userId")
-                        }, function() {
-                            location.href="index.ejs";
-                        });
-                    }
-                });
+
                 var firebaseConfig = {
                     apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
                     authDomain: "konvivandroid.firebaseapp.com",
@@ -233,6 +247,12 @@
                 firebase.initializeApp(firebaseConfig);
                 checkLoginStatus();
 
+                $('#logout-btn').on('click', function(e) {
+                    firebase.auth().signOut();
+                 //    alert("logging out");
+                    sessionStorage.clear();
+                    location.href='/';
+                 });
 
                 $.post('/get_insights',{
                     year_month:'2017-08',

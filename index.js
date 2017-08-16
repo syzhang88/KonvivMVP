@@ -173,7 +173,6 @@ app.get('/bucketpage.ejs', function(request, response, next) {
 });
 
 app.get('/plaid_info', function(request, response, next) {
-    console.log(PLAID_PUBLIC_KEY);
     response.json({
         env: PLAID_ENV,
         key: PLAID_PUBLIC_KEY,
@@ -219,56 +218,56 @@ app.post('/log_in', function(request, response, next) {
     });
 });
 
-app.post('/sign_up', function(request, response, next) {
-    console.log('attempting sign up...');
-
-    // gets object to database service
-    var database = firebase.database();
-    var username = request.body.username;
-    var password = request.body.password;
-    var promise = firebase.auth().createUserWithEmailAndPassword(username, password).then(function() {
-        // grabs admin session token
-        var user = firebase.auth().currentUser;
-        user.getIdToken().then(function(token) {
-            for (var key in buckets.nameBuckets) {
-                admin.database().ref("users/" + user.uid + "/bucketNames/" + key).set({
-                    'name': buckets.nameBuckets[key]
-                }).catch(
-                    console.log("error with names")
-                );
-            }
-            response.json({
-                login: true,
-                token: token,
-                userId: user.uid,
-                error: null
-            });
-            firebase.auth().signOut();
-            console.log('successfully created user in Firebase: ' + user.uid);
-        }).catch(function(error) {
-            // Handle Errors here.
-            user.delete();
-            firebase.auth().signOut();
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            console.log('failed to create user in Firebase: ' + errorMessage);
-            return response.json({
-                login: false,
-                error: errorMessage
-            });
-        });
-    }).catch(function(error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        console.log('failed to create user in Firebase: ' + errorMessage);
-        response.json({
-            login: false,
-            error: errorMessage
-        });
-    });
-    promise.catch(e => console.log(e.message));
-});
+// app.post('/sign_up', function(request, response, next) {
+//     console.log('attempting sign up...');
+//
+//     // gets object to database service
+//     var database = firebase.database();
+//     var username = request.body.username;
+//     var password = request.body.password;
+//     var promise = firebase.auth().createUserWithEmailAndPassword(username, password).then(function() {
+//         // grabs admin session token
+//         var user = firebase.auth().currentUser;
+//         for (var key in buckets.nameBuckets) {
+//             admin.database().ref("users/" + user.uid + "/bucketNames/" + key).set({
+//                 'name': buckets.nameBuckets[key]
+//             }).catch(
+//                 console.log("error with names")
+//             );
+//         }
+//         user.getIdToken().then(function(token) {
+//             response.json({
+//                 login: true,
+//                 token: token,
+//                 userId: user.uid,
+//                 error: null
+//             });
+//             firebase.auth().signOut();
+//             console.log('successfully created user in Firebase: ' + user.uid);
+//         }).catch(function(error) {
+//             // Handle Errors here.
+//             user.delete();
+//             firebase.auth().signOut();
+//             var errorCode = error.code;
+//             var errorMessage = error.message;
+//             console.log('failed to create user in Firebase: ' + errorMessage);
+//             return response.json({
+//                 login: false,
+//                 error: errorMessage
+//             });
+//         });
+//     }).catch(function(error) {
+//         // Handle Errors here.
+//         var errorCode = error.code;
+//         var errorMessage = error.message;
+//         console.log('failed to create user in Firebase: ' + errorMessage);
+//         response.json({
+//             login: false,
+//             error: errorMessage
+//         });
+//     });
+//     promise.catch(e => console.log(e.message));
+// });
 
 // ---------------------------------------------------------
 // route middleware to authenticate and check token
@@ -276,7 +275,7 @@ app.post('/sign_up', function(request, response, next) {
 apiRoutes.use(function(request, response, next) {
     // console.log("validating token: " + request.body.token);
     var token = request.body.firebaseToken;
-    console.log(token);
+    // console.log(token);
 
     if (token) {
         admin.auth().verifyIdToken(token).then(function(decodedToken) {
@@ -301,6 +300,7 @@ apiRoutes.use(function(request, response, next) {
             });
         });
 	} else {
+        console.log('failed to find token.');
         return response.json({
             error: new Error('Failed to find token.'),
             message: 'Failed to find token.'
@@ -330,7 +330,7 @@ apiRoutes.post('/bills',function(request,response,next){
                     var perc = 0;
                     for (var bill in billsList) {
                         perc = Math.max(perc, stringSimilarity.compareTwoStrings(bill, monthlyBucket[transaction]['name']));
-                        console.log('/bills: ' + perc);
+                        // console.log('/bills: ' + perc);
                     }
                     if (perc < 0.5) {
                         billsList[monthlyBucket[transaction]['name']] = monthlyBucket[transaction];
@@ -396,6 +396,20 @@ apiRoutes.post('/rename_bucket',function(request,response,next){
     });
     admin.database().ref(bucket_path).update({name: new_name});
     // buckets.renameBucket(bucket_path, new_name)
+});
+
+apiRoutes.post('/reset_bucket_names',function(request,response,next) {
+    console.log("received /bucket_names call");
+    var postData = {};
+    for (var key in buckets.nameBuckets) {
+        if (buckets.nameBuckets.hasOwnProperty(key)) {
+            postData['key'] = {name: buckets.nameBuckets[key]};
+        }
+    }
+    admin.database().ref("users/" + request.body.userId + "/bucketNames/").set(postData).catch(function(error) {
+        console.log("error with names: " + error.message);
+        response.json({error: error});
+    });
 });
 
 apiRoutes.post('/bucket_names',function(request,response,next){

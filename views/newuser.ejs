@@ -194,13 +194,20 @@
                     firebase.auth().createUserWithEmailAndPassword(email, password).then(function() {
                         // grabs admin session token
                         var user = firebase.auth().currentUser;
+                        // alert(user);
                         if (user) {
                             user.getIdToken().then(function(token) {
                                 sessionStorage.setItem('firebaseToken', token);
+                                alert('grabbed token...');
                                 $.post('/reset_bucket_names',{
-                                    token: sessionStorage.getItem('firebaseToken')
-                                }, function() {
-                                    location.href = 'guidescreen.ejs';
+                                    firebaseToken: token
+                                }, function(data) {
+                                    alert('returning server call...');
+                                    if (data.error) {
+                                        console.log(data.error);
+                                    } else {
+                                        location.href = 'guidescreen.ejs';
+                                    }
                                 });
                                  // sessionStorage.setItem('userId', user.userId);
                             });

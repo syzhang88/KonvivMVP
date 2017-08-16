@@ -63,7 +63,7 @@
                         <div id="string" style="font-size:16px; padding-top:5px; color:#61cb43;">Left to Spend</div>
                     </div>
                     <div class="nubox">
-                        <p><a href="/"><button class="upbutton" id="logout-btn">Logout</button></a></p>
+                        <p><button class="upbutton" id="logout-btn">Logout</button></p>
                         <p><a href="newsfeed.ejs"><button class="upbutton">Newsfeed</button></a></p>
                         <p><a href="#"><button id="myBtn" class="upbutton">Settings</button></a></p>
                     </div>
@@ -274,6 +274,7 @@
                             bucketTotal = Math.round(bucket['Total']*100)/100;
                             newPercent = fillPercent;
 
+                            $("[id='sixMonths']").addClass("savingsActive");
                             $("[id='savings-account']")
                                 .find(".top-savings").text("Savings Account").end()
                                 .find(".bottom-savings").text("$" + bucketSavings + " of $" + bucketTotal).end()
