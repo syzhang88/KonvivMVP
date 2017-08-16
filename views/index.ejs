@@ -497,7 +497,7 @@
                    firebaseToken: sessionStorage.getItem('firebaseToken')
                }, function(data) {
                    if (data == null) {
-                       var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
+                       var errorHtml = '<div class="inner"><p><strong> Could not fetch bucket names </strong></p></div>';
                        // Render the error
                        $('#get-button-data').slideUp(function() {
                            $(this).slideUp(function() {
