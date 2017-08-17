@@ -55,7 +55,6 @@ var plaidClient = new plaid.Client(
   PLAID_PUBLIC_KEY,
   plaid.environments[PLAID_ENV]
 );
-// End Plaid setup
 
 // Express setup
 var app = express();
@@ -66,7 +65,6 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 app.set('public token', null);
-// End Express setup
 
 // AI routes set up: get an instance of the router for api routes
 var apiRoutes = express.Router();
@@ -75,14 +73,12 @@ var apiRoutes = express.Router();
 app.use(express.static('load_test'));
 
 // Here is where we define actual RESTful calls, using Express:
-
 app.get('/', function(request, response, next) {
     console.log("app loading...");
     response.render('login.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
     });
-    console.log("app loaded");
 });
 
 app.get('/login.ejs', function(request, response, next) {
@@ -93,7 +89,6 @@ app.get('/login.ejs', function(request, response, next) {
 });
 
 app.get('/bills.ejs', function(request, response, next) {
-    // console.log(request.body.firebaseToken);
     response.render('bills.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
@@ -101,7 +96,6 @@ app.get('/bills.ejs', function(request, response, next) {
 });
 
 app.get('/savings.ejs', function(request, response, next) {
-    // console.log(request.body.firebaseToken);
     response.render('savings.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
@@ -109,7 +103,6 @@ app.get('/savings.ejs', function(request, response, next) {
 });
 
 app.get('/index.ejs', function(request, response, next) {
-    // console.log(request.body.firebaseToken);
     response.render('index.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
@@ -117,30 +110,24 @@ app.get('/index.ejs', function(request, response, next) {
 });
 
 app.get('/insights.ejs', function(request, response, next) {
-    console.log("app loading...");
     response.render('insights.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
     });
-    console.log("app loaded");
 });
 
 app.get('/newsfeed.ejs', function(request, response, next) {
-    console.log("app loading...");
     response.render('newsfeed.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
     });
-    console.log("app loaded");
 });
 
 app.get('/settings.ejs', function(request, response, next) {
-    console.log("app loading...");
     response.render('settings.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
     });
-    console.log("app loaded");
 });
 
 app.get('/newuser.ejs', function(request, response, next) {
@@ -165,7 +152,6 @@ app.get('/securityscreen.ejs', function(request, response, next) {
 });
 
 app.get('/bucketpage.ejs', function(request, response, next) {
-    console.log('/bucketpage.ejs called');
     response.render('bucketpage.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
@@ -187,7 +173,6 @@ app.get('/test/login.ejs', function(request, response, next) {
 });
 
 app.get('/test/bills.ejs', function(request, response, next) {
-    // console.log(request.body.firebaseToken);
     response.render('test/bills.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
@@ -195,7 +180,6 @@ app.get('/test/bills.ejs', function(request, response, next) {
 });
 
 app.get('/test/savings.ejs', function(request, response, next) {
-    // console.log(request.body.firebaseToken);
     response.render('test/savings.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
@@ -203,7 +187,6 @@ app.get('/test/savings.ejs', function(request, response, next) {
 });
 
 app.get('/test/index.ejs', function(request, response, next) {
-    // console.log(request.body.firebaseToken);
     response.render('test/index.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
@@ -211,30 +194,23 @@ app.get('/test/index.ejs', function(request, response, next) {
 });
 
 app.get('/test/insights.ejs', function(request, response, next) {
-    console.log("app loading...");
     response.render('test/insights.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
     });
-    console.log("app loaded");
 });
 
-app.get('/test/newsfeed.ejs', function(request, response, next) {
-    console.log("app loading...");
-    response.render('test/newsfeed.ejs', {
+app.get('/test/newsfeed.ejs', function(request, response, next) {    response.render('test/newsfeed.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
     });
-    console.log("app loaded");
 });
 
 app.get('/test/settings.ejs', function(request, response, next) {
-    console.log("app loading...");
     response.render('test/settings.ejs', {
         PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
         PLAID_ENV: PLAID_ENV,
     });
-    console.log("app loaded");
 });
 
 app.get('/test/newuser.ejs', function(request, response, next) {
@@ -312,64 +288,11 @@ app.post('/log_in', function(request, response, next) {
     });
 });
 
-// app.post('/sign_up', function(request, response, next) {
-//     console.log('attempting sign up...');
-//
-//     // gets object to database service
-//     var database = firebase.database();
-//     var username = request.body.username;
-//     var password = request.body.password;
-//     var promise = firebase.auth().createUserWithEmailAndPassword(username, password).then(function() {
-//         // grabs admin session token
-//         var user = firebase.auth().currentUser;
-//         for (var key in buckets.nameBuckets) {
-//             admin.database().ref("users/" + user.uid + "/bucketNames/" + key).set({
-//                 'name': buckets.nameBuckets[key]
-//             }).catch(
-//                 console.log("error with names")
-//             );
-//         }
-//         user.getIdToken().then(function(token) {
-//             response.json({
-//                 login: true,
-//                 token: token,
-//                 userId: user.uid,
-//                 error: null
-//             });
-//             firebase.auth().signOut();
-//             console.log('successfully created user in Firebase: ' + user.uid);
-//         }).catch(function(error) {
-//             // Handle Errors here.
-//             user.delete();
-//             firebase.auth().signOut();
-//             var errorCode = error.code;
-//             var errorMessage = error.message;
-//             console.log('failed to create user in Firebase: ' + errorMessage);
-//             return response.json({
-//                 login: false,
-//                 error: errorMessage
-//             });
-//         });
-//     }).catch(function(error) {
-//         // Handle Errors here.
-//         var errorCode = error.code;
-//         var errorMessage = error.message;
-//         console.log('failed to create user in Firebase: ' + errorMessage);
-//         response.json({
-//             login: false,
-//             error: errorMessage
-//         });
-//     });
-//     promise.catch(e => console.log(e.message));
-// });
-
 // ---------------------------------------------------------
 // route middleware to authenticate and check token
 // ---------------------------------------------------------
 apiRoutes.use(function(request, response, next) {
-    // console.log("validating token: " + request.body.token);
     var token = request.body.firebaseToken;
-    // console.log(token);
 
     if (token) {
         admin.auth().verifyIdToken(token).then(function(decodedToken) {
@@ -403,7 +326,6 @@ apiRoutes.use(function(request, response, next) {
 });
 
 //BUCKET FUNCTIONALITIES HERE ...
-
 apiRoutes.post('/bank_access',function(request,response,next){
     admin.database().ref('/users/' + request.body.userId).once('value', function(snapshot) {
         if (snapshot.val() && snapshot.val()['firebaseToken']) {
@@ -438,7 +360,6 @@ apiRoutes.post('/bills',function(request,response,next){
                 var perc = 0;
                 for (var bill in billsList) {
                     perc = Math.max(perc, stringSimilarity.compareTwoStrings(bill, monthlyBucket[transaction]['name']));
-                    console.log('/bills: ' + perc);
                 }
                 if (perc < 0.5) {
                     billsList[monthlyBucket[transaction]['name']] = monthlyBucket[transaction];
@@ -450,13 +371,11 @@ apiRoutes.post('/bills',function(request,response,next){
 });
 
 apiRoutes.post('/transactions_for_bucket',function(request,response,next){
-    console.log("Grabbing Transactions")
     var user_id = request.body.userId
     var bucket=request.body.which_bucket
     var bucket_path = 'users/' + user_id + '/bucketTransactions/' + bucket
 
     admin.database().ref(bucket_path).once('value').then(function(snapshot) {
-        console.log("Bucket Info called")
         var bucket_transactions = snapshot.val();
         console.log(bucket_transactions)
 
@@ -471,13 +390,10 @@ apiRoutes.post('/transactions_for_bucket',function(request,response,next){
 });
 
 apiRoutes.post('/rename_bucket',function(request,response,next){
-    console.log("RECEIVED")
     var user_id = request.body.userId
     var bucket = request.body.which_bucket
     var new_name = request.body.new_name
-    console.log(request.body.token)
-    console.log(bucket)
-    console.log("USER ID IS: "+user_id)
+    // console.log(request.body.token)
     var bucket_path = 'users/'+user_id+'/bucketNames/' + bucket
     admin.database().ref('users/' + request.body.userId + '/bucketNames').once('value', function(snapshot) {
         for (var bucket in snapshot.val()) {
@@ -489,11 +405,9 @@ apiRoutes.post('/rename_bucket',function(request,response,next){
         }
     });
     admin.database().ref(bucket_path).update({name: new_name});
-    // buckets.renameBucket(bucket_path, new_name)
 });
 
 apiRoutes.post('/reset_bucket_names',function(request,response,next) {
-    console.log("received /reset_bucket_names call");
     var postData = {};
     var errorData = {reset: true};
     for (var key in buckets.nameBuckets) {
@@ -509,22 +423,8 @@ apiRoutes.post('/reset_bucket_names',function(request,response,next) {
 });
 
 apiRoutes.post('/bucket_names',function(request,response,next){
-    // console.log("received /bucket_names call");
-    // for (var key in buckets.nameBuckets) {
-    //     admin.database().ref("users/" + request.body.userId + "/bucketNames/" + key).set({'name': buckets.nameBuckets[key]}).catch(
-    //         console.log("error with names")
-    //     );
-    // }
-    var user_id = request.body.userId
-    var bucket=request.body.which_bucket
-    //console.log(request.body.token)
-    // console.log(bucket)
-    // console.log("USER ID IS : " + user_id)
-
     admin.database().ref('users/' + request.body.userId + '/bucketNames').once('value', function(snapshot) {
 
-        // console.log( "INSIDE NAMES IN INDEX.JS SENDING SNAPSHOT")
-        //console.log(snapshot.val());
         response.json(snapshot.val());
     }).catch(function(error) {
         var errorMessage = error.message;
@@ -539,23 +439,17 @@ apiRoutes.post('/change_bucket_size',function(request,response,next){
     console.log("RECEIVED")
     var user_id = request.body.userId
     var from_bucket=request.body.from_bucket
-    // var to_bucket=request.body.to_bucket
     var amount=request.body.amount
 
     // Checks bucketNames for a user-set name
     admin.database().ref('users/' + request.body.userId + '/bucketNames').once('value', function(snapshot) {
         for (var true_bucket in snapshot.val()) {
-            // if (to_bucket == true_bucket) {
-            //     to_bucket = snapshot.val()[true_bucket]['name'];
-            // }
             var from_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+from_bucket;
-            // var to_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+to_bucket;
             return response.json(buckets.changeBucketsize(from_bucket_path,amount));
         }
         response.json(buckets.changeBucketsize(from_bucket_path,amount));
     }).catch(function(error) {
         var errorMessage = error.message;
-        console.log('failed to call bucketInfo: ' + errorMessage);
         response.json({
             error: error,
         });
@@ -563,17 +457,13 @@ apiRoutes.post('/change_bucket_size',function(request,response,next){
 });
 
 apiRoutes.post('/move_transaction',function(request,response,next){
-    console.log("RECIEVED")
     var user_id = request.body.userId
     var from_bucket=request.body.from_bucket
     var to_bucket=request.body.to_bucket
     var transaction_id=request.body.transaction_id
     var date=request.body.year_month
-    console.log(date)
     var from_bucket_path='users/'+user_id+'/bucketTransactions/'+ from_bucket + '/' + date + '/' + transaction_id
     var to_bucket_path='users/'+user_id+'/bucketTransactions/'+ to_bucket + '/' + date + '/' + transaction_id
-    console.log(from_bucket_path)
-    console.log(to_bucket_path)
     buckets.moveTransaction(from_bucket_path,to_bucket_path)
 });
 
@@ -581,12 +471,10 @@ apiRoutes.post('/get_insights',function(request,response,next){
     console.log("RECEIVED")
     console.log("HELLO")
     var user_id = request.body.userId
-    //console.log(user_id)
     var date=request.body.year_month
     var path_check='users/'+user_id+'/Insights'
     var current_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-08'
     var last_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-07'
-    //console.log(path)
     insights.getInsights(path_check,current_month_path,last_month_path,user_id);
 });
 
@@ -664,7 +552,6 @@ apiRoutes.post('/transactions', function(request, response, next) {
         });
         response.json(transactionsResponse);
     });
-
     updateTransactions(SIX_MONTHS, request.body.plaidToken, request.body.userId, () => {});
 });
 
@@ -682,7 +569,6 @@ apiRoutes.post('/savings', function(request, response, next) {
         for (var account in authResponse.accounts) {
             if (account['subtype'] == 'savings' &&  authResponse.accounts[account]['balances'] != null) {
                 savingsAccount += account['balances']['current'];
-                // console.log(savingsAccount);
             }
         }
 
@@ -691,13 +577,10 @@ apiRoutes.post('/savings', function(request, response, next) {
             for (var bucketClass in snapshot.val()) {
                 if (bucketClass != "Savings Buckets" && bucketClass != "Income Buckets" ) {
                     for (var bucketName in snapshot.val()[bucketClass]) {
-                        // console.log("savingsTotal: " + bucketName + " " +
-                        //     snapshot.val()[bucketClass][bucketName]['Total']);
                         savingsTotal += parseInt(snapshot.val()[bucketClass][bucketName]['Total']);
                     }
                 }
             }
-            // console.log(savingsTotal * request.body.months);
             var postData = {
                 'Savings': savingsAccount,
                 'Total': savingsTotal * request.body.months
@@ -706,7 +589,6 @@ apiRoutes.post('/savings', function(request, response, next) {
             response.json(postData);
         });
     });
-
     updateAccounts(request.body.plaidToken, request.body.userId, () => {});
 });
 
@@ -714,10 +596,6 @@ apiRoutes.post('/buckets', function(request, response, next) {
     var bucketClasses = {}
     updateTransactions(SIX_MONTHS, request.body.plaidToken, request.body.userId, function(data) {
         admin.database().ref('users/' + request.body.userId + '/Total Balance').once('value', function(snapshot) {
-
-            console.log( "INSIDE BUCKETS IN INDEX.JS SENDING SNAPSHOT");
-            console.log(data);
-
             response.json({
                 bucketMoney: data,
                 totalBalance: snapshot.val()
@@ -727,7 +605,7 @@ apiRoutes.post('/buckets', function(request, response, next) {
 });
 
 function updateAccounts(plaidToken, userId, callbackFunction) {
-    console.log('updateAccounts');
+    console.log('updating account information on Firebase');
     plaidClient.getItem(plaidToken, function(error, itemResponse) {
         if (error != null) {
             console.log(error);
@@ -736,7 +614,6 @@ function updateAccounts(plaidToken, userId, callbackFunction) {
             };
         }
         var item = itemResponse.item;
-        console.log('getItem');
 
         // Also pull information about the institution
         plaidClient.getInstitutionById(itemResponse.item.institution_id, function(err, instRes) {
@@ -749,8 +626,6 @@ function updateAccounts(plaidToken, userId, callbackFunction) {
             }
             var institution = instRes.institution;
 
-            console.log('getInstitutionById');
-
             plaidClient.getAuth(plaidToken, function(error, authResponse) {
                 if (error != null) {
                     var msg = 'Unable to pull accounts from the Plaid API.';
@@ -762,11 +637,6 @@ function updateAccounts(plaidToken, userId, callbackFunction) {
                 var accounts = authResponse.accounts;
                 var numbers = authResponse.numbers;
 
-                console.log("getAuth: " + item.item_id);
-                // [object Object],[object Object],[object Object],[object Object]
-                // These are the different checking/cc banking accounts
-
-                // Admin section for updating account info on Firebase
                 var accountData = {
                     'accounts': accounts,
                     'numbers': numbers,
@@ -784,8 +654,6 @@ function updateAccounts(plaidToken, userId, callbackFunction) {
                 admin.database().ref('users/' + userId).update({
                     'Total Balance': totalBalance
                 });
-                console.log('posted item for: ' + userId);
-
                 callbackFunction(accountData);
             });
         });
@@ -793,6 +661,7 @@ function updateAccounts(plaidToken, userId, callbackFunction) {
 }
 
 function updateTransactions(timePeriod, plaidToken, userId, callbackFunction) {
+    'updating transactions on Firebase'
     var startDate = moment().subtract(timePeriod, 'months').format('YYYY-MM-DD');
     var endDate = moment().format('YYYY-MM-DD');
     var updatedTransactions = 'transactions are working';
@@ -804,7 +673,6 @@ function updateTransactions(timePeriod, plaidToken, userId, callbackFunction) {
       count: 500,
       offset: 0,
     }, function(error, transactionsResponse) {
-        console.log('updateTransactions');
         if (error != null) {
             return console.log(error);
         }
@@ -814,9 +682,7 @@ function updateTransactions(timePeriod, plaidToken, userId, callbackFunction) {
         var bucketIncome = buckets.clone(buckets.incomeAmounts);
         var bucketSavings = buckets.clone(buckets.savingsAmounts);
         var bucketTotal = buckets.clone(buckets.allAmounts);
-        // Sam: Begin admin section for updating transaction data
 
-        // console.log(bucketTotal);
         transactionsResponse.transactions.forEach(function(transaction) {
             var bucketSelect = buckets.selectBucket(transaction);
             var bucketName = bucketSelect['bucketName'];
@@ -828,8 +694,6 @@ function updateTransactions(timePeriod, plaidToken, userId, callbackFunction) {
             var transactionOrder = txnDate.substr(8,2);
             var newPostKey = transactionOrder + transaction.transaction_id;
 
-            // console.log("transactions orders");
-            // console.log(transactionOrder);
             transaction.bucket = bucketName;
             postData[newPostKey] = transaction;
 
@@ -849,12 +713,8 @@ function updateTransactions(timePeriod, plaidToken, userId, callbackFunction) {
         });
 
         admin.database().ref('users/' + userId + '/lastEstimateUpdate').once('value', function(snapshot) {
-            console.log('/lastEstimateUpdate');
-
             var returnVal = false;
             if (snapshot.val()) {
-                console.log('/lastEstimateUpdate/bucketMoney');
-                console.log(thisMonth <= Date.parse(snapshot.val()["Month"]));
                 if (thisMonth <= Date.parse(snapshot.val()["Month"])){
                     returnVal = true;
                     admin.database().ref('users/' + userId + '/bucketMoney').once('value', function(snapshot) {
@@ -865,8 +725,7 @@ function updateTransactions(timePeriod, plaidToken, userId, callbackFunction) {
                     return;
                 }
             }
-            console.log('updated bucket totals for this month:');
-            console.log(bucketTotal);
+            console.log('updated bucket totals for this month');
 
             var allBucketData = {
                 "Spending Buckets": {},
@@ -875,13 +734,11 @@ function updateTransactions(timePeriod, plaidToken, userId, callbackFunction) {
             }
             for (var bucket in bucketSpending) {
                 if (!isNaN(bucketTotal[bucket])) {
-                   // console.log("updateTransactions for " + bucket + ": " + bucketTotal[bucket] + "/" + timePeriod);
                    allBucketData["Spending Buckets"][bucket] = {
                             Spending: bucketSpending[bucket],
                             Total: bucketTotal[bucket]/timePeriod
                         };
                 }
-                // bucketSavings += allBucketData["Spending Buckets"][bucket][Total];
             }
             for (var bucket in bucketFixed) {
                 if (!isNaN(bucketTotal[bucket])) {
@@ -889,8 +746,7 @@ function updateTransactions(timePeriod, plaidToken, userId, callbackFunction) {
                             Spending: bucketFixed[bucket],
                             Total: bucketTotal[bucket]/timePeriod
                         };
-                }
-                // bucketSavings += allBucketData["Fixed Buckets"][bucket][Total];
+                }``
             }
             for (var bucket in bucketIncome) {
                 if (!isNaN(bucketTotal[bucket])) {
@@ -906,9 +762,6 @@ function updateTransactions(timePeriod, plaidToken, userId, callbackFunction) {
                 "Month": thisMonth
             });
             callbackFunction(allBucketData);
-            console.log("updated bucket estimates: " );
-            console.log(allBucketData);
-
         });
         console.log('saved ' + transactionsResponse.transactions.length + ' transactions under ' + userId);
     });
