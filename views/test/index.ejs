@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Konviv MVP</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+       <!-- <script>
+        $(function() {
+          $('.btn-notify').ready(function() {
+            $('.notify-bubble').show(400);
+            });
+        });
+        </script> -->
+
+        <style>
+        @import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+        body {
+         font-family: 'Open Sans', sans-serif;
+           background-image: url('https://github.com/Konviv/konviv.github.io/blob/master/img/whitebox.jpg?raw=true');
+        }
+        #navigation-top {
+          position:relative;
+          z-index:99;
+          background-color:white;
+          margin-bottom:-15px;
+          }
+
+              #sticky {
+                width:100%;
+                padding:20px;
+                padding-bottom:4px;
+                background:black;
+                color:white;
+                font-weight:bold;
+                font-size:18px;
+                position:fixed;    /*Here's what sticks it*/
+                bottom:0;          /*to the bottom of the body*/
+                left:0;            /*and to the left of the body.*/
+                z-index:9999;
+                text-align:center; /*this will center the containers*/
+              }
+
+              #sticky * {
+                margin:0;
+                padding:0;
+              }
+
+              #sticky .container {
+                display:inline-block; /*required for centering containers and allowing wrap*/
+                margin-bottom:16px;
+                width:20%; /*relative unit for responsive design*/
+                min-width:150px; /*containers won't get smaller than 200px*/
+                vertical-align:top;
+              }
+
+        </style>
+    </head>
+    <body>
+        <div id="navigation-top" style="background-color:white;">
+            <div id="menu">
+                <div class="box">
+                    <div class="nubox">
+                        <p><a href="index.ejs"><button class="upbutton">Main</button></a></p>
+                        <p><a href="bills.ejs"><button class="upbutton">Bills</button></a></p>
+                        <p><a href="savings.ejs"><button class="upbutton">Savings</button></a></p>
+                    </div>
+                    <div class="nubox">
+                        <div id="left-to-spend">loading</div>
+                        <div id="string" style="font-size:16px; padding-top:5px; color:#61cb43;">Left to Spend</div>
+                    </div>
+                    <div class="nubox">
+                        <p><button class="upbutton" id="logout-btn">Logout</button></p>
+                        <p><a href="newsfeed.ejs"><button class="upbutton">Newsfeed</button></a></p>
+                        <p><a href="#"><button id="myBtn" class="upbutton">Settings</button></a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div id="low-bucket-alert"></div> -->
+
+        <div id="sticky" style="background-color:white;">
+            <div id="menu">
+                <div class="box">
+                    <button class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br />
+                    <p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Accounts</p></button>
+                    <button class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Transactions</p></button>
+                    <button class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Edit Bank</p></button>
+                    <button class="headerbutton" id="get-insights-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.jpg?raw=true" alt="Insights" desc="Insights" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Insights</p></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="get-button-data" style="background-color:#DDD;"></div>
+
+       <div class="box">
+           <div class="body" style="border-top:1px solid #EEE; font-size:13px; margin-top:-5px;">
+               <div class = "wrap">
+                   <div class = "bucket-heading" id = "total-spending">
+                       loading
+                   </div>
+
+                   <div class="circle" id="Variable Bills"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
+                       <div class="perc">
+                           <div class="perc-value"></div>
+                       </div>
+                       <span class="top"></span>
+                       <span class="bottom"></span>
+                   </div>
+                   <div class="circle" id="Eating Out"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
+                       <div class="perc">
+                           <div class="perc-value"></div>
+                       </div>
+                       <span class="top"></span>
+                       <span class="bottom"></span>
+                   </div>
+                   <div class="circle" id="Entertainment"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
+                       <div class="perc">
+                           <div class="perc-value"></div>
+                       </div>
+                       <span class="top"></span>
+                       <span class="bottom"></span>
+                   </div>
+                   <div class="circle" id="Groceries"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
+                       <div class="perc">
+                           <div class="perc-value"></div>
+                       </div>
+                       <span class="top"></span>
+                       <span class="bottom"></span>
+                   </div>
+                   <div class="circle" id="Other Spending"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
+                       <div class="perc">
+                           <div class="perc-value"></div>
+                       </div>
+                       <span class="top"></span>
+                       <span class="bottom"></span>
+                   </div>
+                   <div class="circle" id="Shopping"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
+                       <div class="perc">
+                           <div class="perc-value"></div>
+                       </div>
+                       <span class="top"></span>
+                       <span class="bottom"></span>
+                   </div>
+                   <div class="circle" id="Transportation"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
+                       <div class="perc">
+                           <div class="perc-value"></div>
+                       </div>
+                       <span class="top"></span>
+                       <span class="bottom"></span>
+                   </div>
+               </div>
+           </div>
+       </div>
+
+        <div class ="box" style="background-color:white; padding-bottom:190px;">
+            <div class="head">
+                <h1> Monthly Income <h1>
+            </div>
+            <div class = "body">
+                <div id="monthly-income" style="cursor: pointer;">
+                    loading
+                </div>
+                 <div id="string"> amount of money received this month so far </div>
+            </div>
+        </div>
+
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+
+          <!-- Modal content -->
+          <div class="modal-content">
+            <span class="close" style="margin-top:-5px;">&times;</span>
+            <p>Settings...</p><br />
+          </div>
+
+        </div>
+
+      <!-- scripts -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+        <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
+
+
+    <!-- Modal script -->
+    <script>
+          // Get the modal
+      var modal = document.getElementById('myModal');
+
+      // Get the button that opens the modal
+      var btn = document.getElementById("myBtn");
+
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close")[0];
+
+      // When the user clicks on the button, open the modal
+      btn.onclick = function() {
+          modal.style.display = "block";
+      }
+
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+          modal.style.display = "none";
+      }
+
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+          if (event.target == modal) {
+              modal.style.display = "none";
+          }
+      }
+    </script>
+
+        <script>
+            $(document).ready(function() {
+                var plaidEnv = '';
+                var plaidKey = '';
+                var plaidHandler = null;
+
+                $.get('/plaid_info', function(data) {
+                    // console.log('plaidKey');
+                    //
+                    // console.log(data);
+                    plaidEnv = data.env;
+                    plaidKey = data.key;
+
+                    plaidHandler = Plaid.create({
+                        apiVersion: 'v2',
+                        clientName: 'Konviv MVP',
+                        env: plaidEnv,
+                        product: ['transactions'],
+                        key: plaidKey,
+                        onSuccess: function(public_token) {
+                            // alert('calling /get_access_token...')
+                            $.post('/get_access_token', {
+                                firebaseToken: sessionStorage.getItem("firebaseToken"),
+                                publicToken: public_token,
+                                userId: sessionStorage.getItem("userId")
+                            }, function() {
+                                location.href="index.ejs";
+                            });
+                        }
+                    });
+                });
+
+                var defaultTimePeriod = 6;
+                var textDisplay = '';
+
+                var firebaseConfig = {
+                    apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
+                    authDomain: "konvivandroid.firebaseapp.com",
+                    databaseURL: "https://konvivandroid.firebaseio.com",
+                    projectId: "konvivandroid",
+                    storageBucket: "konvivandroid.appspot.com",
+                    messagingSenderId: "41760220514"
+                };
+
+                firebase.initializeApp(firebaseConfig);
+                // checkLoginStatus();
+
+                function checkLoginStatus() {
+                    console.log("refresh check");
+                    firebase.auth().onAuthStateChanged(function(user) {
+                        if (!user){
+                            sessionStorage.clear();
+                            location.href="/";
+                        }
+                    });
+                }
+
+                function checkTokenStatus(success) {
+                    console.log('verifying user token...')
+
+                    if (success) {
+                        firebase.auth().onAuthStateChanged(function(user) {
+                            if (user) {
+                                user.getIdToken(true).then(function(token) {
+                                    sessionStorage.setItem('firebaseToken', token);
+                                });
+                            } else {
+                                sessionStorage.clear();
+                                location.href="/";
+                            }
+                        });
+                    } else {
+                        firebase.auth().signOut();
+                        sessionStorage.clear();
+                        location.href="/";
+                    }
+                }
+
+                function logOutSuccess(logout) {
+                    if (logout == true) {
+                        location.href='/';
+                        console.log('currently logged out');
+                    } else {
+                        // console.log('unable to log out');
+                        // console.log('token: ' + sessionStorage.getItem('firebaseToken'));
+                    }
+                };
+
+                // Bucket Functionalities START here...
+                function openBucketPage(bucketPage) {
+                    // console.log(bucketPage);
+                    return function () {
+                        // console.log(bucketPage);
+                        sessionStorage.setItem('bucketPage', bucketPage);
+                        location.href = '/bucketpage.ejs';
+                    }
+                }
+                //  Bucket Functionalities END here...
+
+                // RESTful calls to index.js server using post function
+                $.post('/bank_access', {
+                    firebaseToken: sessionStorage.getItem('firebaseToken')
+                }, function(data) {
+                    if (data.bank == false) {
+                        var errorHtml = '<div class="inner"><p><strong> You have not added a bank account yet. Add a bank to see data! </strong></p></div>';
+                        // Render the error
+                        $('#get-button-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(errorHtml).slideDown();
+                            });
+                        });
+                    }
+                });
+
+                $.post('/buckets', {
+                    firebaseToken: sessionStorage.getItem('firebaseToken')
+                }, function(data) {
+                    // alert('bug check');
+                    console.log(data);
+                    // Catching error
+                    if (data == null) {
+                        // alert('bug check #1');
+
+                        // Format the error
+                        var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
+                        // Render the error
+                        $('#get-button-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(errorHtml).slideDown();
+                            });
+                        });
+                    } else if (data.error != null) {
+                        var errorHtml = '<div class="inner"><p><strong> Add a bank account to your data! </strong></p></div>';
+                        // Render the error
+                        $('#get-button-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(errorHtml).slideDown();
+                            });
+                        });
+                    } else if (data.error != null) {
+                        // alert('bug check #2');
+
+                        if (data.message == 'Failed to authenticate Firebase token.' || data.message == 'Failed to find Firebase token.') {
+                            checkTokenStatus(false);
+                        }
+                        // Format the error
+                        var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
+                        // Render the error
+                        $('#get-button-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(errorHtml).slideDown();
+                            });
+                        });
+                        // Using for loop to pull information for each bucket from data
+                    } else {
+                        console.log(data)
+                        var totalEstimatedBills = 0;
+                        var totalEstimatedSpending = 0;
+                        var totalActualBills = 0;
+                        var totalActualSpending = 0;
+                        var totalBalance = 0;
+                        var emptyNotif = 0;
+                        var tenthNotif = 0;
+                        var quarterNotif = 0;
+                        var halfNotif = 0;
+                        var mostNotif = 0;
+
+                        checkTokenStatus(true);
+                        bucketMoney = data['bucketMoney']
+                        for (var bucketClass in bucketMoney) {
+                            totalAmount = 0;
+                            for (var key in bucketMoney[bucketClass]) {
+                                if (bucketMoney[bucketClass].hasOwnProperty(key)) {
+                                    var bucket = bucketMoney[bucketClass][key];
+                                    var fillPercent = 0;
+
+                                    // Accounting for divide-by-zero error
+                                    if (bucket['Total'] > 0) {
+                                        fillPercent = (bucket['Spending']/bucket['Total'])*100
+                                    }
+
+                                    bucketSpent = Math.round((bucket['Total'] - bucket['Spending'])*100)/100;
+                                    bucketTotal = Math.round(bucket['Total']*100)/100;
+                                    newPercent = fillPercent;
+
+                                    var selector = '[id="' + key + '"]';
+
+                                    $(selector)
+                                        // .find(".top-bills,.top").text(key).end()
+                                        .find(".bottom-bills,.bottom").text("$" + bucketSpent + " of $" + bucketTotal).end()
+                                        .find(".perc-value-bills,.perc-value").css("height", newPercent + "%")
+                                    $(selector)
+                                        .on('click', openBucketPage(key));
+
+                                    if (newPercent >= 100){
+                                        emptyNotif += 1;
+                                        $(selector)
+                                            .find(".perc-bills,.perc")
+                                            .css("border", "1px solid #e30544")
+                                            .css("background-color", "#e30544")
+                                    } else if (newPercent >= 90){
+                                        console.log('low bucket found: ' + newPercent);
+                                        tenthNotif += 1;
+                                        $(selector)
+                                            .find(".perc-bills,.perc")
+                                            .css("border", "1px solid #e1006a")
+                                            .css("background-color", "#e1006a")
+                                    } else if (newPercent >= 75) {
+                                        console.log('low bucket found: ' + newPercent);
+                                        quarterNotif += 1;
+                                        $(selector)
+                                            .find(".perc-bills,.perc")
+                                            .css("border", "1px solid #e1006a")
+                                            .css("background-color", "#e1006a")
+                                    } else if (newPercent >= 50) {
+                                        console.log('low bucket found: ' + newPercent);
+                                        halfNotif += 1;
+                                        $(selector)
+                                            .find(".perc-bills,.perc")
+                                            .css("border", "1px solid #f0e308")
+                                            .css("background-color", "#f0e308")
+                                    } else if (newPercent >= 25){
+                                        console.log('low bucket found: ' + newPercent);
+                                        mostNotif += 1;
+                                        $(selector)
+                                            .find(".perc-bills,.perc")
+                                            .css("border", "1px solid #008d9e")
+                                            .css("background-color", "#008d9e")
+                                    }
+
+                                    /*edit: bucketTotal*/
+                                    totalAmount += bucketSpent;
+                                    if (bucketClass == 'Fixed Buckets'){
+                                        totalEstimatedBills += bucketMoney[bucketClass][key]['Total'];
+                                        totalActualBills += bucketMoney[bucketClass][key]['Spending'];
+                                    } else if (bucketClass == 'Spending Buckets'){
+                                        totalEstimatedSpending += bucketMoney[bucketClass][key]['Total'];
+                                        totalActualSpending += bucketMoney[bucketClass][key]['Spending'];
+                                    }
+                                }
+                            }
+                        }
+
+                        /* INCOME CLASS */
+                        var totalIncome = -(bucketMoney['Income Buckets']['Income']['Spending']);
+                        $("#monthly-income").text("$" + totalIncome.toFixed(2));
+                        $("#monthly-income").on('click', openBucketPage('Income'));
+
+                        /* TOTAL BALANCE */
+                        var totalBalance = data['totalBalance'];
+                        var totalActual = totalActualBills + totalActualSpending;
+                        var totalBills = Math.max(totalEstimatedBills, totalActualBills);
+                        var totalSpending = Math.max(totalEstimatedSpending, totalActualSpending);
+                        var amountLeft = totalBalance - totalBills - totalSpending + totalActualBills + totalActualSpending;
+
+                        $("#left-to-spend").text("$" + amountLeft.toFixed(2));
+                        $("#total-bills").text("Total Bills: $" + totalActualBills.toFixed(2) + " | Estimated Bills: $" + totalEstimatedBills.toFixed(2));
+                        $("#total-spending").text("Total Spending: $" + totalActualSpending.toFixed(2)  + " | Estimated Spending: $" + totalEstimatedSpending.toFixed(2));
+                        $("#overall-stats").text("+ $" + totalIncome.toFixed(2)  + " income | - $" + totalActual.toFixed(2) + " costs");
+
+                        /* NOTIFICATIONS */
+                        console.log('notifications update...');
+                        function notificationText(buckets) {
+                            if (buckets == 1) {
+                                return buckets + ' bucket is';
+                            }
+                            return buckets + ' buckets are';
+                        }
+                        if (emptyNotif > 0) {
+                            var htmlNotification = '<div class="inner"><p style="color:maroon;"><strong> Just a heads up - </strong></p>';
+                            htmlNotification += '<p style="color:#e30544;"><strong>' + notificationText(emptyNotif) + ' completely empty </strong></p>';
+                        }
+                        if (tenthNotif > 0) {
+                            htmlNotification += '<p style="color:#e30544;"><strong>' + notificationText(emptyNotif) + ' just about empty </strong></p>';
+                        }
+                        if (quarterNotif > 0) {
+                            htmlNotification += '<p style="color:#e1006a;"><strong>' + notificationText(quarterNotif) + ' over three-fourth empty </strong></p>';
+                        }
+                        if (halfNotif > 0) {
+                            htmlNotification += '<p style="color:#f0e308;"><strong>' + notificationText(halfNotif) + ' over half empty </strong></p>';
+                        }
+
+                        $('#get-button-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(htmlNotification).slideDown();
+                            });
+                        });
+                    }
+               });
+
+               $.post('/bucket_names', {
+                   firebaseToken: sessionStorage.getItem('firebaseToken')
+               }, function(data) {
+                   if (data == null) {
+                       var errorHtml = '<div class="inner"><p><strong> Could not fetch bucket names </strong></p>';
+
+                       $.post('/reset_bucket_names', {
+                           firebaseToken: sessionStorage.getItem('firebaseToken')
+                       }, function(data) {
+                           errorHtml += '<p> Attempting to reset bucket names</p>';
+                       });
+                       errorHtml += '</div>';
+                       // Render the error
+                       $('#get-button-data').slideUp(function() {
+                           $(this).slideUp(function() {
+                               $(this).html(errorHtml).slideDown();
+                           });
+                       });
+                   } else if (data.error != null) {
+                       if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
+                           checkTokenStatus(false);
+                       }
+                       // Format the error
+                       var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
+                       // Render the error
+                       $('#get-button-data').slideUp(function() {
+                           $(this).slideUp(function() {
+                               $(this).html(errorHtml).slideDown();
+                           });
+                       });
+                   } else {
+                       checkTokenStatus(true);
+                       console.log('pulling names...');
+                       for (var key in data) {
+                           var selector = '[id="' + key + '"]';
+                           $(selector).find('.top-bills,.top').text(data[key]['name']).end();
+                           sessionStorage.setItem(key, data[key]['name']);
+                       }
+                   }
+               });
+
+               $('#threeMonths').on('click', function(e) {
+                   savingsCall(3);
+               });
+
+               $('#sixMonths').on('click', function(e) {
+                   savingsCall(6);
+               });
+
+               $('#nineMonths').on('click', function(e) {
+                   savingsCall(9);
+               });
+
+               $('#twelveMonths').on('click', function(e) {
+                   savingsCall(12);
+               });
+
+               $('#get-link-btn').on('click', function(e) {
+                   plaidHandler.open();
+               });
+
+               $('#get-insights-btn').on('click', function(e) {
+                   location.href='/insights.ejs';
+               });
+
+               $('#logout-btn').on('click', function(e) {
+                   firebase.auth().signOut();
+                //    alert("logging out");
+                   sessionStorage.clear();
+                   location.href='/';
+                });
+
+                $('#get-accounts-btn').on('click', function(e) {
+                    if ($('#get-button-data').is(':visible') && textDisplay == "account") {
+                        textDisplay = "";
+                        return $('#get-button-data').slideUp();
+                    }
+                    console.log('accounts called...')
+
+                    $.post('/accounts', {
+                        firebaseToken: sessionStorage.getItem('firebaseToken')
+                    }, function(data) {
+                        if (data == null) {
+                            var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
+                            // Render the error
+                            $('#get-button-data').slideUp(function() {
+                                $(this).slideUp(function() {
+                                    $(this).html(errorHtml).slideDown();
+                                });
+                            });
+                        } else if (data.error != null) {
+                            if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
+                                checkTokenStatus(false);
+                            }
+                            // Format the error
+                            var errorHtml = '<div class="inner"><p>' +
+                            '<strong>' + data.error.error_code + ':</strong> ' +
+                            data.error.error_message + '</p></div>';
+                            if (data.error.error_code === 'PRODUCT_NOT_READY') {
+                                // Add additional context for `PRODUCT_NOT_READY` errors
+                                errorHtml += '<div class="inner"><p>The PRODUCT_NOT_READY ' +
+                                'error is returned when a request to retrieve Transaction data ' +
+                                'is made before Plaid finishes the <a href="https://plaid.com/' +
+                                'docs/quickstart/#transaction-data-with-webhooks">initial ' +
+                                'transaction pull.</a></p></div>';
+                            }
+                            // Render the error
+                            $('#get-button-data').slideUp(function() {
+                                $(this).slideUp(function() {
+                                    $(this).html(errorHtml).slideDown();
+                                });
+                            });
+                        } else {
+                            checkTokenStatus(true);
+                            console.log("Account info: " + data)
+                            textDisplay = "account";
+                            $('#get-button-data').slideUp(function() {
+                                var html = '<div class="inner">';
+                                // html += '<p><b>BASIC INFORMATION ABOUT YOUR BANK ACCOUNT<b></p> <br>';
+                                html += '<p><strong>Bank Account: </strong> ' + data.institution.name + '</p>';
+                                html += '<p>Billed products: ' + data.item.billed_products.join(', ') + '</p>';
+                                html += '<p>Available products: ' + data.item.available_products.join(', ') + '</p>';
+                                html += '<br>';
+                                data.accounts.forEach(function(account, idx) {
+                                    // html += '<div class="inner">';
+                                    html += '<strong>' + account.name +
+                                    ' $' + (account.balances.current) + '</strong><br>';
+                                    html += account.subtype + ' ' + account.mask;
+                                    // html += '</div>';
+                                    html += '<br>';
+                                });
+                                html += '</div>';
+
+                                $(this).html(html).slideDown();
+                            });
+                        }
+                    });
+                });
+
+                // $('#get-item-btn').on('click', function(e) {
+                //     if ($('#get-button-data').is(':visible') && textDisplay == "item") {
+                //         textDisplay = "";
+                //         return $('#get-button-data').slideUp();
+                //     }
+                //     $.post('/item', {
+                //         token: sessionStorage.getItem('firebaseToken')
+                //     }, function(data) {
+                //         textDisplay = "item";
+                //         $('#get-button-data').slideUp(function() {
+                //             if (data.error) {
+                //                 $(this).html('<p>' + data.error + '</p>').slideDown();
+                //             } else {
+                //                 var html = '<div class="inner">';
+                //                 // html += '<p><b>BASIC INFORMATION ABOUT YOUR BANK ACCOUNT<b></p> <br>';
+                //                 html += '<p><b>Bank Account</b> ' + data.institution.name + '</p>';
+                //                 // html += '<p>Billed products: ' + data.item.billed_products.join(', ') + '</p>';
+                //                 // html += '<p>Available products: ' + data.item.available_products.join(', ') + '</p>';
+                //                 html += '</div>';
+                //                 $(this).html(html).slideDown();
+                //             }
+                //         });
+                //     });
+                // });
+
+                $('#get-transactions-btn').on('click', function(e) {
+                    if ($('#get-button-data').is(':visible') && textDisplay == "transactions") {
+                        textDisplay = "";
+                        return $('#get-button-data').slideUp();
+                    }
+                    $.post('/transactions', {
+                        firebaseToken: sessionStorage.getItem('firebaseToken')
+                    }, function(data) {
+                        textDisplay = "transactions";
+                        if (data == null) {
+                            var errorHtml = '<div class="inner"><p><strong> Could not fetch data </strong></p></div>';
+                            // Render the error
+                            $('#get-button-data').slideUp(function() {
+                                $(this).slideUp(function() {
+                                    $(this).html(errorHtml).slideDown();
+                                });
+                            });
+                        } else if (data.error != null) {
+                            if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
+                                checkTokenStatus(false);
+                            }
+                            // Format the error
+                            var errorHtml = '<div class="inner"><p>' +
+                            '<strong>' + data.error.error_code + ':</strong> ' +
+                            data.error.error_message + '</p></div>';
+                            if (data.error.error_code === 'PRODUCT_NOT_READY') {
+                                // Add additional context for `PRODUCT_NOT_READY` errors
+                                errorHtml += '<div class="inner"><p>The PRODUCT_NOT_READY ' +
+                                'error is returned when a request to retrieve Transaction data ' +
+                                'is made before Plaid finishes the <a href="https://plaid.com/' +
+                                'docs/quickstart/#transaction-data-with-webhooks">initial ' +
+                                'transaction pull.</a></p></div>';
+                            }
+                            // Render the error
+                            $('#get-button-data').slideUp(function() {
+                                $(this).slideUp(function() {
+                                    $(this).html(errorHtml).slideDown();
+                                });
+                            });
+                        } else {
+                            checkTokenStatus(true);
+                            $('#get-button-data').slideUp(function() {
+                                var html = '';
+                                data.transactions.forEach(function(txn, idx) {
+                                    //code for displaying category for each transaction
+                                    html += '<div class="inner">';
+                                    html += '<strong>' + txn.name + '</strong><br>';
+                                    html += '<em>' + txn.bucket + '</em><br>';
+                                    html += '$' + txn.amount + '<br>';
+                                    html += '<em>' + txn.date + '</em>';
+                                    html += '</div>';
+                                });
+                                $(this).slideUp(function() {
+                                    $(this).html(html).slideDown();
+                                });
+                            });
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

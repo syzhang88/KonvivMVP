@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>Konviv App</title>
+            <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+        <style>
+
+            .btn {
+              background-color: #fba40c;
+              background-image: -webkit-linear-gradient(top, #fba40c, #ffb606);
+              background-image: linear-gradient(to bottom, #fba40c, #ffb606);
+              border-width: 0px;
+              box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 1px 2px rgba(19, 49, 69, 0.2);
+              color: #fff;
+              text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              padding: 10px 30px;
+              font-size: 18px;
+              border-radius: 4px;
+              display: inline-block;
+              float: left;
+              overflow:auto;
+              margin:6px 0px;
+                }
+            /*
+            .btn:hover, .btn:active, .btn.active, .btn.disabled, .btn[disabled] { background-color: red; }*/
+
+            .btn-large { padding: 9px 14px; line-height: normal; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; }
+
+            /* SIGNUP word color after hover*/
+            .btn:hover { color: white; text-decoration: none; background-color: #a8a8a8; background-position: 0 -15px; -webkit-transition: background-position 0.1s linear; -moz-transition: background-position 0.1s linear; -ms-transition: background-position 0.1s linear; -o-transition: background-position 0.1s linear; transition: background-position 0.1s linear; }
+            .btn-primary {
+              background-color: #fba40c;
+              background-image: -webkit-linear-gradient(top, #fba40c, #ffb606);
+              background-image: linear-gradient(to bottom, #fba40c, #ffb606);
+              border-width: 0px;
+              box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 1px 2px rgba(19, 49, 69, 0.2);
+              color: #fff;
+              text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              padding: 10px 30px;
+              font-size: 18px;
+              border-radius: 4px;
+              display: inline-block;
+              float: left;
+              overflow:auto;
+            }
+            .btn-primary:hover {
+              color: #f1f1f1;
+              cursor: pointer;
+            }
+
+            .btn-primary:hover, .btn-primary:active, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled]
+            { background-color: #a8a8a8; /* COLOR OF LOGIN AFTER HOVER */
+            }
+
+            .btn-block { width: 100%; display:block; }
+
+            * { -webkit-box-sizing:border-box; -moz-box-sizing:border-box; -ms-box-sizing:border-box; -o-box-sizing:border-box; box-sizing:border-box; }
+
+            html { width: 100%; height:100%; overflow:hidden; font-family: 'Open Sans', sans-serif;
+            }
+
+            .back {
+                font-size: 12px;
+                text-decoration: none!important;
+                color: #444;
+            }
+
+        body {
+            width: 100%;
+            height:100%;
+            font-family: 'Open Sans', sans-serif;
+            background-image: url('https://github.com/Konviv/konviv.github.io/blob/master/img/finalbackground.jpg?raw=true');
+            background-position: center;
+            padding:0px 15px;
+            }
+
+        p {
+            font-family:'Arial';
+            color:#999;
+
+        }
+
+            .login {
+                position: absolute;
+                top: 30%;
+                left: 50%;
+                bottom: 20%;
+                margin: -150px 0 0 -150px;
+                width:300px;
+                height:300px;
+            }
+
+            .login h1{
+
+            text-align: center;
+            vertical-align: middle;
+            color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3);
+                letter-spacing:1px;
+                 font-size: 3em;
+                font-family: 'Montserrat', sans-serif;
+
+            }
+
+            .back{
+              color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3);
+                letter-spacing:1px;
+            }
+
+            input {
+                width: 100%;
+                margin-bottom: 10px;
+                border:1px solid #EEE;
+                padding: 12px;
+                font-size: 12px;
+                color: #494949;
+                border-radius: 4px;
+            }
+
+            input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+                background-color: black;
+                background-image: none;
+                color: rgb(0, 0, 0);
+
+            input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgba(255,255,255,0.2); }
+
+        </style>
+    </head>
+    <body>
+        <div class="login">
+            <p><a class="back" href="/">< Back</a></p> <br><br>
+            <h1 style="font-size:45px;">Create an account</h1>
+
+            <input id="enterEmail" type="email" placeholder="Email" required="required" />
+            <input id="enterPassword" type="Password" placeholder="Password" required="required" />
+            <input id="checkPassword" type="Password" placeholder="Confirm Password" required="required" />
+
+            <br />
+
+            <button id="btnSignup" class="btn btn-secondary btn-block btn-large">S i g n u p</button>
+            <div id='get-button-data'> </div>
+            <br /><br /><br />
+            <div style="margin-top:300px; text-align:center; margin:10px 5px;">
+                <p style="font-size:14px; color:#DDD;">
+                    Konviv uses a secure connection and 256-bit encryption just like your bank!
+                </p>
+            </div>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                console.log('sign up page loaded');
+
+                var firebaseConfig = {
+                    apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
+                    authDomain: "konvivandroid.firebaseapp.com",
+                    databaseURL: "https://konvivandroid.firebaseio.com",
+                    projectId: "konvivandroid",
+                    storageBucket: "konvivandroid.appspot.com",
+                    messagingSenderId: "41760220514"
+                };
+                firebase.initializeApp(firebaseConfig);
+
+                firebase.auth().onAuthStateChanged(function(user) {
+                    if (user) {
+                        location.href="/index.ejs";
+                    } else {
+                        sessionStorage.clear();
+                    }
+                });
+
+                btnSignup.addEventListener('click', e => {
+                    var errorCode = null;
+                    var errorMsg = null;
+
+                    if (enterPassword.value != checkPassword.value) {
+                        errorMsg = 'Passwords do not match!';
+                        console.log(errorMsg);
+                        // Format the error
+                        var errorHtml = '<div class="inner"><p>' +
+                        '<strong>' + errorMsg + '</strong> ' + '</p></div>';
+                        // Render the error
+                        $('#get-button-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(errorHtml).slideDown();
+                            });
+                        });
+                        return console.log('passwords do not match');
+                    }
+
+                    var email = enterEmail.value; //EMAIL VALIDATION
+                    var password = enterPassword.value;
+
+                    firebase.auth().createUserWithEmailAndPassword(email, password).then(function() {
+                        // grabs admin session token
+                        var user = firebase.auth().currentUser;
+                        // alert(user);
+                        if (user) {
+                            user.getIdToken().then(function(token) {
+                                sessionStorage.setItem('firebaseToken', token);
+                                // alert('grabbed token...');
+                                $.post('/reset_bucket_names',{
+                                    firebaseToken: token
+                                }, function(data) {
+                                    // alert('returning server call...');
+                                    if (data.error) {
+                                        console.log(data.error);
+                                    } else {
+                                        location.href = 'guidescreen.ejs';
+                                    }
+                                });
+                                 // sessionStorage.setItem('userId', user.userId);
+                            });
+                        }
+                    }).catch(function(error) {
+                        var user = firebase.auth().currentUser;
+                        if (user) {
+                            user.delete();
+                        }
+                        var errorMsg = error.message;
+                        // Format the error
+                        var errorHtml = '<div class="inner"><p>' +
+                        '<strong>' + errorMsg + '</strong> ' + '</p></div>';
+                        // Render the error
+                        $('#get-button-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(errorHtml).slideDown();
+                            });
+                        });
+                    });
+                });
+           });
+        </script>
+    </body>
+</html>

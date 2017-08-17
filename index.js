@@ -179,8 +179,102 @@ app.get('/plaid_info', function(request, response, next) {
     });
 });
 
+app.get('/test/login.ejs', function(request, response, next) {
+    response.render('test/login.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+});
+
+app.get('/test/bills.ejs', function(request, response, next) {
+    // console.log(request.body.firebaseToken);
+    response.render('test/bills.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+});
+
+app.get('/test/savings.ejs', function(request, response, next) {
+    // console.log(request.body.firebaseToken);
+    response.render('test/savings.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+});
+
+app.get('/test/index.ejs', function(request, response, next) {
+    // console.log(request.body.firebaseToken);
+    response.render('test/index.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+});
+
+app.get('/test/insights.ejs', function(request, response, next) {
+    console.log("app loading...");
+    response.render('test/insights.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+    console.log("app loaded");
+});
+
+app.get('/test/newsfeed.ejs', function(request, response, next) {
+    console.log("app loading...");
+    response.render('test/newsfeed.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+    console.log("app loaded");
+});
+
+app.get('/test/settings.ejs', function(request, response, next) {
+    console.log("app loading...");
+    response.render('test/settings.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+    console.log("app loaded");
+});
+
+app.get('/test/newuser.ejs', function(request, response, next) {
+    response.render('test/newuser.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+});
+
+app.get('/test/guidescreen.ejs', function(request, response, next) {
+    response.render('test/guidescreen.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+});
+
+app.get('/test/securityscreen.ejs', function(request, response, next) {
+    response.render('test/securityscreen.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+});
+
+app.get('/test/bucketpage.ejs', function(request, response, next) {
+    console.log('/bucketpage.ejs called');
+    response.render('test/bucketpage.ejs', {
+        PLAID_PUBLIC_KEY: PLAID_PUBLIC_KEY,
+        PLAID_ENV: PLAID_ENV,
+    });
+});
+
+app.get('/test/plaid_info', function(request, response, next) {
+    response.json({
+        env: PLAID_ENV,
+        key: PLAID_PUBLIC_KEY,
+    });
+});
+
 app.post('/log_in', function(request, response, next) {
-    console.log('attempting login...');
+    console.loge('attempting login...');
     var success = {
         login: false
     }

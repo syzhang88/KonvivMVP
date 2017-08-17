@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>Konviv App</title>
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+
+    <body>
+        <div class ="box">
+
+
+            <p><a class="back" href="/index.ejs">< Back</a></p> <br><br>
+
+            <!-- <div class="head">
+                <h1 id= "pageTitle" style="font-size:35px;"> </h1>
+            </div> -->
+
+             <div class="head">
+                    <h1 style="font-size:18px; font-family:'Lato'; font-weight:300;"> Transactions <h1>
+                </div>
+                <div id="get-button-data"></div>
+                <br />
+            <div class="template">
+                <input id="editName" placeholder="New Bucket Name"/>
+                <button id="btnName" class="btn btn-secondary btn-block btn-large">Edit Name</button>
+                <br/>
+                <input id="editSizeAmount" placeholder="Bucket Amount to Move" />
+                <br/>
+                <!-- <input id="editSizeBucket" placeholder="New Bucket for Amount" /> -->
+                <button id="btnSize" class="btn btn-secondary btn-block btn-large">Edit Size</button>
+                <br/>
+                <!-- <input id="moveTransactionName" placeholder="Transaction to Move" />
+                <br/>
+                <input id="moveTransactionBucket" placeholder="New Bucket to Move Transaction" />
+                <button id="btnMove" class="btn btn-secondary btn-block btn-large">Move Transaction</button>
+                <br/> -->
+                <input type="text" id="bucketname" placeholder="Bucket to move the transaction to" style="display:none">
+                <button id="moveTrans" class="btn btn-secondary btn-block btn-large" style="display:none">Move Transaction</button>
+
+            </div>
+        </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Initialize Firebase
+            var firebaseConfig = {
+                apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
+                authDomain: "konvivandroid.firebaseapp.com",
+                databaseURL: "https://konvivandroid.firebaseio.com",
+                projectId: "konvivandroid",
+                storageBucket: "konvivandroid.appspot.com",
+                messagingSenderId: "41760220514"
+            };
+
+            firebase.initializeApp(firebaseConfig);
+            // checkLoginStatus();
+            get_details();
+
+            var trans_id
+            var full_date
+            var date
+
+            $("[id='btnName']").on("click", rename_bucket);
+            $("[id='btnSize']").on("click", change_size);
+            $("[id='moveTrans']").on("click",move_trans);
+
+            $("[id='pageTitle']").text("Edit "  + sessionStorage.getItem(sessionStorage.getItem("bucketPage")) + " Bucket").end();
+
+
+            function move_trans_where(){
+
+                console.log("CHOOSE BUCKET")
+                console.log(this.id)
+                console.log(this.dataset.date)
+                trans_id=this.id
+                full_date= this.dataset.date
+
+                //Keep only the year and month from the date
+                date=full_date.slice(0,7)                    // removing the last two characters from full_date
+                console.log(date)
+                document.getElementById("bucketname").style.display='block';
+                document.getElementById("moveTrans").style.display='block';
+            }
+
+            function checkLoginStatus() {
+                console.log("refresh check");
+                firebase.auth().onAuthStateChanged(function(user) {
+                    if (user) {
+                        console.log(user);
+                        checkTokenStatus(true)
+                    } else {
+                        sessionStorage.clear();
+                        location.href="/";
+                    }
+                });
+            }
+
+            function checkTokenStatus(success) {
+                if (success) {
+                    firebase.auth().onAuthStateChanged(function(user) {
+                        if (user) {
+                            user.getIdToken(true).then(function(token) {
+                                sessionStorage.setItem('firebaseToken', token);
+                            });
+                        } else {
+                            sessionStorage.clear();
+                            location.href="/";
+                        }
+                    });
+                } else {
+                    firebase.auth().signOut();
+                    sessionStorage.clear();
+                    location.href="/";
+                }
+            }
+
+            function moveBucketPopUp() {
+                alert("Modal should show up here");
+            };
+
+            function get_details() {
+                // console.log("grabbing transactions...");
+                $.post('/transactions_for_bucket',{
+                    which_bucket: sessionStorage.getItem("bucketPage"),
+                    firebaseToken: sessionStorage.getItem("firebaseToken")
+
+                }, function(data) {
+                    if (data == null) {
+                        var errorHtml = '<div class="inner"><strong> No transactions this month yet! </strong><br>';
+                        // Render the error
+                        $('#get-button-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(errorHtml).slideDown();
+                            });
+                        });
+                    } else if (data.error != null) {
+                        if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
+                            checkTokenStatus(false);
+                        }
+                        // Format the error
+                        var errorHtml = '<div class="inner"><p>' +
+                        '<strong>' + data.error.error_code + ':</strong> ' +
+                        data.error.error_message + '</p></div>';
+                        if (data.error.error_code === 'PRODUCT_NOT_READY') {
+                            // Add additional context for `PRODUCT_NOT_READY` errors
+                            errorHtml += '<div class="inner"><p>The PRODUCT_NOT_READY ' +
+                            'error is returned when a request to retrieve Transaction data ' +
+                            'is made before Plaid finishes the <a href="https://plaid.com/' +
+                            'docs/quickstart/#transaction-data-with-webhooks">initial ' +
+                            'transaction pull.</a></p></div>';
+                        }
+                        // Render the error
+                        $('#get-button-data').slideUp(function() {
+                            $(this).slideUp(function() {
+                                $(this).html(errorHtml).slideDown();
+                            });
+                        });
+                    } else {
+                        checkTokenStatus(true);
+                        $('#get-button-data').slideUp(function() {
+                            var html = '';
+                            for (var month in data){
+                                html += '<div class="inner">';
+                                html += '<strong>' + month + '</strong><br>';
+                                for (var txnId in data[month]) {
+                                    // console.log(txnId)
+                                    if(data[month].hasOwnProperty(txnId)){
+                                        txn = data[month][txnId];
+                                        html += '<div id=' + txnId + ' data-date=' + txn.date+ ' class="clickTransaction" style="cursor:pointer"><br>';
+                                        //html += '<div id=clickTransaction ><br>';
+                                        html += '<strong>' + txn.name + '</strong><br>';
+                                        html += '$' + txn.amount + '<br>';
+                                        html += '<em>' + txn.date + '</em><br></div>';
+                                    }
+                                }
+                                html += '</div>';
+                                $(this).slideUp(function() {
+                                    $(this).html(html).slideDown();
+                                    var allTxns = document.getElementsByClassName("clickTransaction")
+                                    for (var txn in allTxns) {
+                                        allTxns[txn].onclick = move_trans_where;
+                                        // txn.addEventListener("click", moveBucketPopUp, false);
+                                    }
+                                });
+                            }
+                        });
+                    };
+                });
+            };
+
+            function rename_bucket(){
+                //modal.style.display = "block";
+                if (editName.value===''){
+                    $('[id=get-button-data]').text("Enter a Valid Bucket Name");
+                } else{
+                    $.post('/rename_bucket',{
+                        which_bucket:sessionStorage.getItem("bucketPage"),
+                        new_name:editName.value,
+                        firebaseToken: sessionStorage.getItem("firebaseToken")
+                    }, callResult);
+                }
+            }
+
+            function change_size(){
+                // if (sessionStorage.getItem("bucketPage")===editSizeBucket.value){
+                //     console.log("Cannot Change Size of Same Bucket!!")
+                // }
+                // else{
+                    $.post('/change_bucket_size',{
+                        amount:editSizeAmount.value,
+                        from_bucket:sessionStorage.getItem("bucketPage"),
+                        // to_bucket:editSizeBucket.value,
+                        firebaseToken: sessionStorage.getItem("firebaseToken")
+                    }, callResult);
+                // }
+            }
+
+            function move_trans(){
+            //console.log(trans_id)
+            console.log(bucketname.value)
+            console.log(sessionStorage.getItem("bucketPage"))
+                $.post('/move_transaction',{
+                    from_bucket:sessionStorage.getItem("bucketPage"),
+                    to_bucket:bucketname.value,
+                    transaction_id:trans_id,
+                    year_month:date,
+                    firebaseToken: sessionStorage.getItem("firebaseToken")
+                }, callResult);
+            }
+
+            function callResult(data) {
+                if (data.error != null) {
+                    if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
+                        checkTokenStatus(false);
+                    }
+                    // Format the error
+                    var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
+                    // Render the error
+                    $('#get-button-data').slideUp(function() {
+                        $(this).slideUp(function() {
+                            $(this).html(errorHtml).slideDown();
+                        });
+                    });
+                    // Using for loop to pull information for each bucket from data
+                } else {
+                    checkTokenStatus(true);
+                    var successHtml = '<div class="inner"><p><strong> Edit Success! </strong></p></div>';
+                    // Render the error
+
+                    $('#get-button-data').slideUp(function() {
+                        $(this).slideUp(function() {
+                            $(this).html(successHtml).slideDown();
+                        });
+                    });
+                }
+            };
+
+            // btnName.addEventListener('click', e => {
+            //     var errorCode = null;
+            //     var errorMsg = null;
+            //
+            //     //Sign up
+            //     $(function () {
+            //
+            //     });
+            // });
+         });
+     </script>
+
+     <style>
+        /*body.showSignUpModal {overflow: hidden;}
+        .modalMask {display: none;}
+        body.showSignUpModal .modalMask {display: block; position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 9997; background-color: rgba(0,0,0,0.75);}
+        body.showSignUpModal .modalMask .signUpModal {text-align: center; position: fixed; left: 50%; top: 50%; transform: translate(-50%,-50%); background-color: #fff; padding-bottom: 25px; box-shadow: 0 0 10px #fff; border-radius: 5px; z-index: 9998; min-height: 150px;}
+        input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgb
+        margin: 40px auto;
+        text-align: justify;
+        text-justify: inter-word;
+        }*/
+      </style>
+</body>
+</html>
