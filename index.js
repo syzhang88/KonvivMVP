@@ -46,7 +46,7 @@ var APP_PORT = envvar.number('APP_PORT', Number(process.env.PORT || 8000 ));
 var PLAID_CLIENT_ID = envvar.string('PLAID_CLIENT_ID', '57c4acc20259902a3980f7d2');
 var PLAID_SECRET = envvar.string('PLAID_SECRET', '10fb233c2a93dfcd42aa1a9d8a01d1');
 var PLAID_PUBLIC_KEY = envvar.string('PLAID_PUBLIC_KEY', 'ebc098404b162edaadb2b8c6c45c8f');
-var PLAID_ENV = envvar.string('PLAID_ENV', 'development');
+var PLAID_ENV = envvar.string('PLAID_ENV', 'sandbox');
 
 // Initialize Plaid client
 var plaidClient = new plaid.Client(
@@ -441,24 +441,24 @@ apiRoutes.post('/bucket_names',function(request,response,next){
     });
 });
 
-apiRoutes.post('/change_size',function(request,response,next){
+apiRoutes.post('/change_bucket_size',function(request,response,next){
     console.log("RECEIVED")
     var user_id = request.body.userId
     var from_bucket=request.body.from_bucket
-    var to_bucket=request.body.to_bucket
+    // var to_bucket=request.body.to_bucket
     var amount=request.body.amount
 
     // Checks bucketNames for a user-set name
     admin.database().ref('users/' + request.body.userId + '/bucketNames').once('value', function(snapshot) {
         for (var true_bucket in snapshot.val()) {
-            if (to_bucket == true_bucket) {
-                to_bucket = snapshot.val()[true_bucket]['name'];
-            }
+            // if (to_bucket == true_bucket) {
+            //     to_bucket = snapshot.val()[true_bucket]['name'];
+            // }
             var from_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+from_bucket;
-            var to_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+to_bucket;
-            return response.json(buckets.changeBucketsize(from_bucket_path,to_bucket_path,amount));
+            // var to_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+to_bucket;
+            return response.json(buckets.changeBucketsize(from_bucket_path,amount));
         }
-        response.json(buckets.changeBucketsize(from_bucket_path,to_bucket_path,amount));
+        response.json(buckets.changeBucketsize(from_bucket_path,amount));
     }).catch(function(error) {
         var errorMessage = error.message;
         console.log('failed to call bucketInfo: ' + errorMessage);
@@ -755,12 +755,20 @@ function updateTransactions(timePeriod, plaidToken, userId, callbackFunction) {
         });
 
         admin.database().ref('users/' + userId + '/lastEstimateUpdate').once('value', function(snapshot) {
-            if (snapshot.val() && snapshot.val()["bucketMoney"]) {
-                if (thisMonth <= Date.parse(snapshot.val()["lastEstimateUpdate"]["Month"])){
+            console.log('/lastEstimateUpdate');
+
+            var returnVal = false;
+            if (snapshot.val()) {
+                console.log('/lastEstimateUpdate/bucketMoney');
+                console.log(thisMonth <= Date.parse(snapshot.val()["Month"]));
+                if (thisMonth <= Date.parse(snapshot.val()["Month"])){
+                    returnVal = true;
                     admin.database().ref('users/' + userId + '/bucketMoney').once('value', function(snapshot) {
                         callbackFunction(snapshot.val());
-                        return;
                     });
+                }
+                if (returnVal) {
+                    return;
                 }
             }
             console.log('updated bucket totals for this month:');

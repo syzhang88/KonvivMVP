@@ -35,7 +35,7 @@
                 <br/>
                 <input id="editSizeAmount" placeholder="Bucket Amount to Move" />
                 <br/>
-                <input id="editSizeBucket" placeholder="New Bucket for Amount" />
+                <!-- <input id="editSizeBucket" placeholder="New Bucket for Amount" /> -->
                 <button id="btnSize" class="btn btn-secondary btn-block btn-large">Edit Size</button>
                 <br/>
                 <!-- <input id="moveTransactionName" placeholder="Transaction to Move" />
@@ -214,17 +214,17 @@
             }
 
             function change_size(){
-                if (sessionStorage.getItem("bucketPage")===editSizeBucket.value){
-                    console.log("Cannot Change Size of Same Bucket!!")
-                }
-                else{
+                // if (sessionStorage.getItem("bucketPage")===editSizeBucket.value){
+                //     console.log("Cannot Change Size of Same Bucket!!")
+                // }
+                // else{
                     $.post('/change_bucket_size',{
                         amount:editSizeAmount.value,
                         from_bucket:sessionStorage.getItem("bucketPage"),
-                        to_bucket:editSizeBucket.value,
+                        // to_bucket:editSizeBucket.value,
                         firebaseToken: sessionStorage.getItem("firebaseToken")
                     }, callResult);
-                }
+                // }
             }
 
             function move_trans(){

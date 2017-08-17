@@ -171,13 +171,13 @@
               <div class="slider" id="main-slider"><!-- outermost container element -->
           	<div class="slider-wrapper"><!-- innermost wrapper element -->
           		<div class="slide">
-                <p><b>Insight </b></p><br /><p><div id="first-slide"></div></p>
+                <p><b>Insight </b></p><br /><p><div id="first-slide">Loading data. Refresh to see</div></p>
               </div>
               <div class="slide">
-                <p><b>Insight </b></p><br /><p><div id="second-slide"></div></p>
+                <p><b>Insight </b></p><br /><p><div id="second-slide">Loading data. Refresh to see</div></p>
               </div>
               <div class="slide">
-                <p><b>Insight </b></p><br /><p><div id="third-slide"></div></p>
+                <p><b>Insight </b></p><br /><p><div id="third-slide">Loading data. Refresh to see</div></p>
               </div>
           	</div>
           	<div class="slider-nav">
@@ -185,7 +185,7 @@
           		<button class="slider-next"><h1>></h1></button>
           	</div>
           </div>
-         
+
             </div>
         </div>
 
@@ -260,6 +260,9 @@
                     year_month:'2017-08',
                     firebaseToken:sessionStorage.getItem("firebaseToken")
                 }, function(data) {
+                    if (data.error) {
+
+                    }
                     console.log(data);
                     $('[id="first-slide"]').text(data["First_Insight"]);
                     $('[id="second-slide"]').text(data["Second_Insight"]);

@@ -169,6 +169,14 @@
                 };
                 firebase.initializeApp(firebaseConfig);
 
+                firebase.auth().onAuthStateChanged(function(user) {
+                    if (user) {
+                        location.href="/index.ejs";
+                    } else {
+                        sessionStorage.clear();
+                    }
+                });
+
                 btnSignup.addEventListener('click', e => {
                     var errorCode = null;
                     var errorMsg = null;

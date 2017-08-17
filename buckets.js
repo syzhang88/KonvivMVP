@@ -222,27 +222,27 @@ function reclassification (transaction, oldBucket, newBucket) {
 // oldDbPath and newDbPath are manually entered because of abstraction, to
 // simplify modifying firebase structure
 exports.moveTransaction = function moveTransaction (oldBucketPath, newBucketPath) {
-    // Check if bucket is real 
+    // Check if bucket is real
     oldPath=admin.database().ref(oldBucketPath)
     newPath=admin.database().ref(newBucketPath)
     console.log("HERE")
-    
+
     oldPath.once('value', function(snap)  {
         newPath.update(snap.val(), function(error) {
             if( !error ) {
-                oldPath.remove(); 
+                oldPath.remove();
             }
-            else if( typeof(console) !== 'undefined' && console.error ) {  
-                console.error(error); 
+            else if( typeof(console) !== 'undefined' && console.error ) {
+                console.error(error);
             }
         });
     });
-    console.log("DONE")    
+    console.log("DONE")
 }
 
 // moveMoney returns false IF you subtract more money from a bucket than you
 // have remaining in it
-exports.changeBucketsize = function changeBucketsize (from_bucket_path,to_bucket_path,amount) {
+exports.changeBucketsize = function changeBucketsize (from_bucket_path,amount) {
     var oldBucket = {}
     var newBucket = {}
     console.log("NOW HERE")
@@ -250,8 +250,8 @@ exports.changeBucketsize = function changeBucketsize (from_bucket_path,to_bucket
     admin.database().ref(from_bucket_path).once('value').then(function(snapshot) {
         console.log(amount)
         console.log(snapshot.val()['Total'])
-        if (snapshot.val()['Total'] - amount >=0) {
-            oldBucket['Total'] = snapshot.val()['Total'] - amount;
+        if (parseInt(snapshot.val()['Total']) + parseInt(amount) >=0) {
+            oldBucket['Total'] = parseInt(snapshot.val()['Total']) + parseInt(amount);
         } else {
             console.log("Not Enough Money in the Bucket")
             return false;
@@ -261,14 +261,14 @@ exports.changeBucketsize = function changeBucketsize (from_bucket_path,to_bucket
         admin.database().ref(from_bucket_path).update(oldBucket);
 
     //add to that bucket
-        admin.database().ref(to_bucket_path).once('value').then(function(snapshot) {
-            console.log(amount)
-            console.log(snapshot.val()['Total'])
-            newBucket['Total'] = parseFloat(snapshot.val()['Total']) +parseFloat(amount);
-            console.log(newBucket['Total'])
-            admin.database().ref(to_bucket_path).update(newBucket);
-
-        });
+        // admin.database().ref(to_bucket_path).once('value').then(function(snapshot) {
+        //     console.log(amount)
+        //     console.log(snapshot.val()['Total'])
+        //     newBucket['Total'] = parseFloat(snapshot.val()['Total']) +parseFloat(amount);
+        //     console.log(newBucket['Total'])
+        //     admin.database().ref(to_bucket_path).update(newBucket);
+        //
+        // });
     });
 
     return true;
