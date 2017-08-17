@@ -169,13 +169,14 @@
                 };
                 firebase.initializeApp(firebaseConfig);
 
-                // firebase.auth().onAuthStateChanged(function(user) {
-                //     if (user) {
-                //         location.href="/index.ejs";
-                //     } else {
-                //         sessionStorage.clear();
-                //     }
-                // });
+                var unsubscribe = firebase.auth().onAuthStateChanged(function(user) {
+                    if (user) {
+                        location.href="/index.ejs";
+                    } else {
+                        sessionStorage.clear();
+                    }
+                    unsubscribe();
+                });
 
                 btnSignup.addEventListener('click', e => {
                     var errorCode = null;
