@@ -9,7 +9,7 @@ var trackReclassifications = {}
 
 var reclassifiedTransactions = {}
 
-var spendingBuckets = {
+var spendingBuckets = {                                 //DICTIONARY MAPPING PLAID CATEGORIES (on left) TO KONVIV CATEGORIES (on right)
     'Supermarkets and Groceries': 'Groceries',
     'Food and Drink': 'Eating Out',
     'Travel': 'Transportation',
@@ -22,7 +22,7 @@ var spendingBuckets = {
     'Subscription': 'Subscriptions'
 };
 
-var fixedBuckets = {
+var fixedBuckets = {                                    //DICTIONARY MAPPING PLAID CATEGORIES (on left) TO KONVIV CATEGORIES (on right)
     'Rent': 'Housing',
     'Loan and Mortgages': 'Housing',
     'Subscription': 'Subscriptions',
@@ -30,7 +30,7 @@ var fixedBuckets = {
     'Loan': 'Loans'
 }
 
-var nameBuckets = {
+var nameBuckets = {                                     //DEFAULT NAMES FOR BUCKETS
     'Groceries': 'Groceries',
     'Eating Out': 'Eating Out',
     'Transportation': 'Transportation',
@@ -46,18 +46,18 @@ var nameBuckets = {
     'Other Spending': 'Other Spending'
 }
 
-var incomeAmounts = {
+var incomeAmounts = {                               //DEFAULT VALUES FOR INCOME BUCKET
     'Income': 0
 };
 
-var fixedAmounts = {
+var fixedAmounts = {                                //DEFAULT VALUES FOR FIXED BUCKETS
     'Housing': 0,
     'Subscriptions': 0,
     'Insurance': 0,
     'Loans': 0,
 };
 
-var spendingAmounts = {
+var spendingAmounts = {                             //DEFAULT VALUES FOR SPENDING BUCKETS
     'Groceries': 0,
     'Eating Out': 0,
     'Transportation': 0,
@@ -67,7 +67,7 @@ var spendingAmounts = {
     'Other Spending': 0
 };
 
-var allAmounts = {
+var allAmounts = {                                  ////DEFAULT VALUES FOR ALL BUCKETS
     'Housing': 0,
     'Groceries': 0,
     'Eating Out': 0,
@@ -103,32 +103,14 @@ exports.allAmounts = clone(allAmounts);
 
 exports.nameBuckets = nameBuckets;
 
-// Deprecated
-// Classifies which buckets transactions on a list of transactions belongs to
-exports.selectBuckets = function selectBuckets (transactions) {
-    // console.log('New Selection:');
-    buckets = {};
-
-    for (transaction in transactions) {
-        var bucket = selectBucket(transaction);
-        var newPostKey = transaction.transaction_id;
-        var postData = {}
-        postData[newPostKey] = transaction;
-        buckets[bucket] = postData
-    };
-    return buckets;
-}
 
 // Classifies which bucket a certain transaction belongs to
 exports.selectBucket = function selectBucket (transaction) {
-    // console.log('New Selection:');
     var bucket = {
         bucketName: 'Other Spending',
         bucketClass: 'Spending'
     };
-    // if (reclassifiedTransactions[transaction.name]) {
-    //     return reclassifiedTransactions[transaction.name];
-    // }
+
     if (transaction.amount < 0) {
         return {
             bucketName: 'Income',
@@ -159,9 +141,7 @@ exports.selectBucket = function selectBucket (transaction) {
     return bucket
 }
 
-// Deprecated
-// Estimates the size of a bucket given transactions from a given interval of
-// days, which is passed in as estimationPeriod
+// Estimates the size of a bucket given transactions from a given interval of days, which is passed in as estimationPeriod
 exports.estimateSize = function estimateSize (transactions, estimationPeriod, totalBalance) {
     console.log("calculating buckets sizes now...");
 
@@ -170,13 +150,10 @@ exports.estimateSize = function estimateSize (transactions, estimationPeriod, to
     var monthlyTotal = 0;
     for (var bucket in bucketAmounts) {
         var totalBucketAmount = 0;
-        // console.log("Bucket " + bucket + " calculating now...")
         for (var key in transactions[bucket]) {
             if (transactions[bucket][key]) {
                 var amount = transactions[bucket][key]['amount'];
-                // console.log("Bucket " + bucket + ": + amount " + amount);
                 totalBucketAmount += amount;
-                // console.log("Bucket " + bucket + ": " + totalBucketAmount);
             }
         }
         var monthlyBucketAmount = totalBucketAmount/estimationPeriod * MONTH_PERIOD;
@@ -201,28 +178,8 @@ exports.estimateSize = function estimateSize (transactions, estimationPeriod, to
     return bucketAmounts;
 }
 
-/*** REMAINING FUNCTIONS HAVE NOT BEEN TESTED AND MAY BE BUGGY ***/
-
-// If the bucket the user is moving this transaction to matches the last
-// bucket the user moved a transaction with this name to (i.e., the user
-// moves transactions with the same name to the same bucket twice in a row),
-// automatically store that bucket in reclassifiedTransactions to categorize all
-// transactions sharing this name to that bucket in the future.
-function reclassification (transaction, oldBucket, newBucket) {
-    if (oldBucket != newBuckets) {
-        if (trackReclassifications[transaction.name] == newBucket) {
-            reclassifiedTransactions[transaction.name] = newBucket;
-        } else {
-            trackReclassifications[transaction.name] = newBucket;
-        }
-    }
-};
-
-// oldDbPath and newDbPath each are firebase.database().ref('...')
-// oldDbPath and newDbPath are manually entered because of abstraction, to
-// simplify modifying firebase structure
+// MOVE A TRANSACTION FROM ONE BUCKET TO ANOTHER
 exports.moveTransaction = function moveTransaction (oldBucketPath, newBucketPath) {
-    // Check if bucket is real
     oldPath=admin.database().ref(oldBucketPath)
     newPath=admin.database().ref(newBucketPath)
     console.log("HERE")
@@ -240,8 +197,7 @@ exports.moveTransaction = function moveTransaction (oldBucketPath, newBucketPath
     console.log("DONE")
 }
 
-// moveMoney returns false IF you subtract more money from a bucket than you
-// have remaining in it
+// CHANGE SIZE OF THE BUCKET. ADD/SUBTRACT SOME AMOUNT OF MONEY FROM ONE BUCKET AND SUBTRACT/ADD THAT AMOUNT TO ANOTHER BUCKET
 exports.changeBucketsize = function changeBucketsize (from_bucket_path,amount) {
     var oldBucket = {}
     var newBucket = {}
@@ -259,18 +215,7 @@ exports.changeBucketsize = function changeBucketsize (from_bucket_path,amount) {
         console.log(oldBucket['Total'])
         console.log("YOOOOOO!!!")
         admin.database().ref(from_bucket_path).update(oldBucket);
-
-    //add to that bucket
-        // admin.database().ref(to_bucket_path).once('value').then(function(snapshot) {
-        //     console.log(amount)
-        //     console.log(snapshot.val()['Total'])
-        //     newBucket['Total'] = parseFloat(snapshot.val()['Total']) +parseFloat(amount);
-        //     console.log(newBucket['Total'])
-        //     admin.database().ref(to_bucket_path).update(newBucket);
-        //
-        // });
-    });
-
+  });
     return true;
 }
 
@@ -282,9 +227,9 @@ exports.renameBucket = function renameBucket (path, newName) {
      ref.update({
         "Name":newName
     })
-
 }
 
+// GET ALL THE TRANSACTIONS FOR THAT BUCKET
 exports.bucketInfo = function bucketInfo(bucketpath){
     admin.database().ref(bucketpath).once('value').then(function(snapshot) {
         console.log("Bucket Info called")
@@ -292,14 +237,7 @@ exports.bucketInfo = function bucketInfo(bucketpath){
         console.log(bucket_transactions)
 
         return bucket_transactions
-        // for (var key in bucket_transactions){
-        //     if(bucket_transactions.hasOwnProperty(key)){
-        //         return
-        //         console.log('Transaction Name: '+bucket_transactions[key]['name'])
-        //         console.log('Amount: '+bucket_transactions[key]['amount'])
-        //         console.log('Date: '+bucket_transactions[key]['date'])
-        //     }
-        // }
+       
     }).catch(function(error) {
         var errorMessage = error.message;
         console.log('failed to call bucketInfo: ' + errorMessage);

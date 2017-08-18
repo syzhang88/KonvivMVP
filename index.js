@@ -468,6 +468,7 @@ apiRoutes.post('/move_transaction',function(request,response,next){
 });
 
 apiRoutes.post('/get_insights',function(request,response,next){
+<<<<<<< HEAD
     var user_id = request.body.userId;
     var date = request.body.year_month;
     var path_check = 'users/' + user_id + '/Insights';
@@ -476,6 +477,13 @@ apiRoutes.post('/get_insights',function(request,response,next){
     var current_month_path='users/' + user_id + '/bucketTransactions/Eating Out/' + current_month;
     var last_month_path='users/' + user_id + '/bucketTransactions/Eating Out/' + last_month;
 
+=======
+    var user_id = request.body.userId
+    var date=request.body.year_month
+    var path_check='users/'+user_id+'/Insights'
+    var current_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-08'
+    var last_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-07'
+>>>>>>> deea783d5334c024400c74906bfe5d7cbfff628d
     insights.getInsights(path_check,current_month_path,last_month_path,user_id);
 });
 
@@ -747,7 +755,7 @@ function updateTransactions(timePeriod, plaidToken, userId, callbackFunction) {
                             Spending: bucketFixed[bucket],
                             Total: bucketTotal[bucket]/timePeriod
                         };
-                }``
+                }
             }
             for (var bucket in bucketIncome) {
                 if (!isNaN(bucketTotal[bucket])) {

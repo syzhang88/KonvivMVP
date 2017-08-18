@@ -5,15 +5,6 @@
         <title>Konviv MVP</title>
         <link rel="stylesheet" type="text/css" href="style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
-             <!--   <script>
-        window.onload = function () {
-        document.getElementById('button').onclick = function () {
-        document.getElementById('modal').style.display = "none"
-            };
-        };
-        </script> -->
-
         <style>
         @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
@@ -189,8 +180,6 @@
             </div>
         </div>
 
-
-
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
         <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
         <script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
@@ -202,9 +191,6 @@
                 var plaidHandler = null;
 
                 $.get('/plaid_info', function(data) {
-                    // console.log('plaidKey');
-                    //
-                    // console.log(data);
                     plaidEnv = data.env;
                     plaidKey = data.key;
 
@@ -215,7 +201,6 @@
                         product: ['transactions'],
                         key: plaidKey,
                         onSuccess: function(public_token) {
-                            // alert('calling /get_access_token...')
                             $.post('/get_access_token', {
                                 firebaseToken: sessionStorage.getItem("firebaseToken"),
                                 publicToken: public_token,
@@ -244,12 +229,11 @@
 
                 $('#logout-btn').on('click', function(e) {
                     firebase.auth().signOut();
-                 //    alert("logging out");
                     sessionStorage.clear();
                     location.href='/';
                  });
 
-                $.post('/get_insights',{
+                $.post('/get_insights',{              // GET INSIGHTS ON CLICKING THE INSIGHT BUTTON ON MAIN PAGE
                     year_month:'2017-08',
                     firebaseToken:sessionStorage.getItem("firebaseToken")
                 }, function() {
@@ -369,7 +353,6 @@
 
             				if( self.index > self.total - 1) {
             					self.index = 0;
-            					// self.next.style.display = "none";
             				}
 
             				self._slideTo( self.index );
@@ -382,7 +365,6 @@
 
             				if( self.index < 0 ) {
             					self.index = self.total - 1;
-            					// self.previous.style.display = "none";
             				}
 
             				self._slideTo( self.index );
@@ -402,14 +384,8 @@
 
             			}, false);
             		}
-
-
             	};
-
-
             		var slider = new Slideshow( "#main-slider" );
-
-
             });
 
         </script>
