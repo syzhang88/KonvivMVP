@@ -247,15 +247,15 @@
                 }
 
                 function checkTokenStatus(success) {
-                    if (success) {
-                        user.getIdToken(true).then(function(token) {
-                            sessionStorage.setItem('firebaseAccessToken', token);
-                        })
-                    } else {
-                        firebase.auth().signOut();
-                        sessionStorage.clear();
-                        location.href="/";
-                    }
+                    // if (success) {
+                    //     user.getIdToken(true).then(function(token) {
+                    //         sessionStorage.setItem('firebaseAccessToken', token);
+                    //     })
+                    // } else {
+                    //     firebase.auth().signOut();
+                    //     sessionStorage.clear();
+                    //     location.href="/";
+                    // }
                 }
 
                 $.post('/reset_bucket_names', {

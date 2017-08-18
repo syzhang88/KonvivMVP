@@ -155,6 +155,9 @@
         <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
 
         <script>
+            const TEST_EMAIL = "load-testing@konviv.com"
+            const TEST_PASSWORD = "password"
+        
             $(document).ready(function() {
                 console.log("log in page loaded");
 
@@ -169,14 +172,36 @@
                 };
                 firebase.initializeApp(firebaseConfig);
 
-                firebase.auth().onAuthStateChanged(function(user) {
-                    if (user) {
-                        location.href="/index.ejs";
-                    } else {
-                        sessionStorage.clear();
-                    }
-                });
+                // firebase.auth().onAuthStateChanged(function(user) {
+                //     if (user) {
+                //         location.href="/index.ejs";
+                //     } else {
+                //         sessionStorage.clear();
+                //     }
+                // });
 
+                firebase.auth().signInWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD).catch(function(error) {
+                    // Handle Errors here
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    console.log('unable to log in');
+                    var errorHtml = '<div class="inner"><p>' +
+                    '<strong>' + (errorMessage || 'Could not login!') + '</strong> ' + '</p></div>';
+                    // Render the error
+                    $('#get-button-data').slideUp(function() {
+                        $(this).slideUp(function() {
+                            $(this).html(errorHtml).slideDown();
+                        });
+                    });
+                }).then(function() {
+                    var user = firebase.auth().currentUser;
+                    // Grab individual user session token
+                    user.getIdToken().then(function(token) {
+                        sessionStorage.setItem('firebaseToken', token);
+                        console.log(sessionStorage.getItem('firebaseToken'));
+                        // location.href="index.ejs";
+                    })
+                });
                 // $.get('/log_in_status', function(data) {
                 //     logInSuccess(data.login);
                 // });
@@ -196,7 +221,7 @@
                     //Sign in
                     console.log('log in called...');
 
-                    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+                    firebase.auth().signInWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD).catch(function(error) {
                         // Handle Errors here
                         var errorCode = error.code;
                         var errorMessage = error.message;

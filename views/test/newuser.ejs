@@ -170,11 +170,11 @@
                 firebase.initializeApp(firebaseConfig);
 
                 firebase.auth().onAuthStateChanged(function(user) {
-                    if (user) {
-                        location.href="/index.ejs";
-                    } else {
-                        sessionStorage.clear();
-                    }
+                    // if (user) {
+                    //     location.href="/index.ejs";
+                    // } else {
+                    //     sessionStorage.clear();
+                    // }
                 });
 
                 btnSignup.addEventListener('click', e => {

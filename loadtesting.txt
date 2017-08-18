@@ -1,0 +1,58 @@
+GET (these are the web app’s pages):
+/test/login.ejs (run before other GET calls)
+/test/bills.ejs
+/test/savings.ejs
+/test/index.ejs
+/test/insights.ejs
+/test/bills.ejs
+/test/newsfeed.ejs
+/test/settings.ejs
+/test/newuser.ejs
+/test/guidescreen.ejs
+/test/securityscreen.ejs
+/test/bucketpage.ejs
+
+POST (with params):
+/log_in
+	username: “load-testing@konviv.com”
+	password: “password”
+/bank_access
+	firebaseToken:
+/bills
+	firebaseToken:
+transactions_for_bucket
+	firebaseToken:
+	which_bucket: “Entertainment”
+/rename_bucket
+	firebaseToken:
+	which_bucket: “Entertainment”
+	new_name: “Fun”
+/reset_bucket_names
+	firebaseToken:
+/bucket_names
+	firebaseToken:
+/change_bucket_size
+	firebaseToken:
+	from_bucket: “Entertainment”
+	amount: 5
+/move_transactions
+	firebaseToken:
+	from_bucket: “Entertainment”
+	to_bucket: “Eating Out”
+	transaction_id: “02EgpOQzq3j8CMqDPx08MjIMQ9MPJxQ7CJ9n9XO”
+	year_month: “2017-04”
+/get_insights:
+	firebaseToken:
+	year_month:
+/get_sample_insights:
+	firebaseToken:
+/get_access_token
+	firebaseToken:
+/accounts
+	firebaseToken:
+/transactions
+	firebaseToken:
+/savings
+	firebaseToken:
+/buckets
+	firebaseToken: 

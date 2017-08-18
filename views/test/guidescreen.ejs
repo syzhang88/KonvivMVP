@@ -134,6 +134,8 @@
        <script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
 
         <script>
+        const TEST_FIREBASE_TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM0NTBiMGJhOWUzMTcyMmUwOTBlZDIxMzViY2RiN2MxNzdhMzJmMjcifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20va29udml2YW5kcm9pZCIsImF1ZCI6ImtvbnZpdmFuZHJvaWQiLCJhdXRoX3RpbWUiOjE1MDMwMTE2NTgsInVzZXJfaWQiOiJYOVk5d0dwenpVWlBKT0hOT1RiVVVIdWp5ZUEzIiwic3ViIjoiWDlZOXdHcHp6VVpQSk9ITk9UYlVVSHVqeWVBMyIsImlhdCI6MTUwMzAxMTY1OCwiZXhwIjoxNTAzMDE1MjU4LCJlbWFpbCI6ImxvYWQtdGVzdGluZ0Brb252aXYuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbImxvYWQtdGVzdGluZ0Brb252aXYuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.Bj-3BIroSMryPGzKmmcnA9ip2aDPaGmVUZvMZSafXrFKHEak_Qy9tI0GbVISAhtC32a0El-EuvGVLCrGHOaKxW_3PwHoCpYsXzw03XBBMdq8rouD-gb4CCFxrT2Qm3BHC7LGmh1gRaojfLG3PdDsU31AhlOFb1EiouUnEZA_wCfNZuylknwtjkFphmDkB_jM2JHrcoxBxSrEsoIqmrL6rUfO1WcsGtCj7pTEePlYsfHbtLslVkpE65BmXpN7Ll9_dleVaR9Qu9H2yII5cYp9boHb0QUmWRDxLpY3JFXsQsafSBdGnoXXAiUhapArgvZboxVE5AuY8SAMgqkzcI4rNA";
+        
             $(document).ready(function() {
                 var firebaseConfig = {
                     apiKey: "AIzaSyASB9RhrUzNme-rGkVrzEXmF3nL7PwMgvQ",
@@ -148,7 +150,7 @@
                     console.log("refresh check");
                     firebase.auth().onAuthStateChanged(function(user) {
                         if (user) {
-                            location.href="/index.ejs";
+                            location.href="test/index.ejs";
                         }
                     });
                 }
@@ -159,11 +161,11 @@
                 $(".back").on("click", function() {
                     firebase.auth().signOut();
                     sessionStorage.clear();
-                    location.href="/";
+                    location.href="/test/login.ejs";
                 })
 
                 btnSecurity.addEventListener('click', e => {
-                    location.href="securityscreen.ejs";
+                    location.href="test/securityscreen.ejs";
                 });
             });
         </script>
