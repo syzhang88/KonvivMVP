@@ -106,7 +106,6 @@ exports.nameBuckets = nameBuckets;
 // Deprecated
 // Classifies which buckets transactions on a list of transactions belongs to
 exports.selectBuckets = function selectBuckets (transactions) {
-    // console.log('New Selection:');
     buckets = {};
 
     for (transaction in transactions) {
@@ -121,14 +120,11 @@ exports.selectBuckets = function selectBuckets (transactions) {
 
 // Classifies which bucket a certain transaction belongs to
 exports.selectBucket = function selectBucket (transaction) {
-    // console.log('New Selection:');
     var bucket = {
         bucketName: 'Other Spending',
         bucketClass: 'Spending'
     };
-    // if (reclassifiedTransactions[transaction.name]) {
-    //     return reclassifiedTransactions[transaction.name];
-    // }
+
     if (transaction.amount < 0) {
         return {
             bucketName: 'Income',
@@ -170,13 +166,10 @@ exports.estimateSize = function estimateSize (transactions, estimationPeriod, to
     var monthlyTotal = 0;
     for (var bucket in bucketAmounts) {
         var totalBucketAmount = 0;
-        // console.log("Bucket " + bucket + " calculating now...")
         for (var key in transactions[bucket]) {
             if (transactions[bucket][key]) {
                 var amount = transactions[bucket][key]['amount'];
-                // console.log("Bucket " + bucket + ": + amount " + amount);
                 totalBucketAmount += amount;
-                // console.log("Bucket " + bucket + ": " + totalBucketAmount);
             }
         }
         var monthlyBucketAmount = totalBucketAmount/estimationPeriod * MONTH_PERIOD;
@@ -259,18 +252,7 @@ exports.changeBucketsize = function changeBucketsize (from_bucket_path,amount) {
         console.log(oldBucket['Total'])
         console.log("YOOOOOO!!!")
         admin.database().ref(from_bucket_path).update(oldBucket);
-
-    //add to that bucket
-        // admin.database().ref(to_bucket_path).once('value').then(function(snapshot) {
-        //     console.log(amount)
-        //     console.log(snapshot.val()['Total'])
-        //     newBucket['Total'] = parseFloat(snapshot.val()['Total']) +parseFloat(amount);
-        //     console.log(newBucket['Total'])
-        //     admin.database().ref(to_bucket_path).update(newBucket);
-        //
-        // });
-    });
-
+  });
     return true;
 }
 
@@ -282,7 +264,6 @@ exports.renameBucket = function renameBucket (path, newName) {
      ref.update({
         "Name":newName
     })
-
 }
 
 exports.bucketInfo = function bucketInfo(bucketpath){
@@ -292,14 +273,7 @@ exports.bucketInfo = function bucketInfo(bucketpath){
         console.log(bucket_transactions)
 
         return bucket_transactions
-        // for (var key in bucket_transactions){
-        //     if(bucket_transactions.hasOwnProperty(key)){
-        //         return
-        //         console.log('Transaction Name: '+bucket_transactions[key]['name'])
-        //         console.log('Amount: '+bucket_transactions[key]['amount'])
-        //         console.log('Date: '+bucket_transactions[key]['date'])
-        //     }
-        // }
+       
     }).catch(function(error) {
         var errorMessage = error.message;
         console.log('failed to call bucketInfo: ' + errorMessage);
