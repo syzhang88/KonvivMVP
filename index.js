@@ -475,7 +475,7 @@ apiRoutes.post('/calculate_insights',function(request,response,next){
     var current_month = moment().format('YYYY-MM-DD').substr(0,7);
     var current_month_path='users/' + user_id + '/bucketTransactions/Eating Out/' + current_month;
     var last_month_path='users/' + user_id + '/bucketTransactions/Eating Out/' + last_month;
-    insights.getInsights(path_check,current_month_path,last_month_path,user_id);
+    insights.getInsights(path_check,current_month_path,last_month_path,user_id,current_month);
 });
 
 apiRoutes.post('/show_insights',function(request,response,next){

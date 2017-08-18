@@ -2,11 +2,8 @@ var admin = require("firebase-admin");
 var firebase = require("firebase");
 var serviceAccount = require("./konvivandroid-firebase-adminsdk-re0l3-f09e6af5d7.json");
 
-exports.getInsights=function getInsights(path_check,current_month_path,last_month_path,user_id){
+exports.getInsights=function getInsights(path_check,current_month_path,last_month_path,user_id,current_month){
     var day_of_month = new Date().getDate();
-    //console.log(path_check)
-    //console.log(current_month_path)
-    //console.log(last_month_path)
     var ref = admin.database().ref(path_check);
     ref.once("value").then(function(snapshot) {
         if (snapshot.exists()===true){                      //CHECK IF THE "INSIGHT" SECTION EXIST IN FIREBASE 
@@ -18,14 +15,12 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                     About:"Provides insights based on your spending"                //CREATE AN "INSIGHT" SECTION IN FIREBASE IF THE INSIGHT DOESN'T EXIST
             });
         }
-            if(snapshot.hasChild("First_Insight")===false){                 //CHECK IF FIRST INSIGHT EXISTS
-                console.log("TRUE YES !!!!!!!!!!!!!!")
+            
+            //if(snapshot.hasChild("First_Insight")===false){                 //CHECK IF FIRST INSIGHT EXISTS
                 //CREATE INSIGHT -- 1 -->     COMPARE SPENDING OF THIS MONTH TO LAST MONTH FOR THE SAME DATE
                 var this_month_amount=0                         
                 var last_month_amount=0
                 var day
-                var current_date='2017-08-15'
-                var last_month_date='2017-07-15'
                 var current_month = firebase.database().ref(current_month_path);
                 var last_month = firebase.database().ref(last_month_path);
                 admin.database().ref(current_month_path).once('value').then(function(snapshot) {
@@ -34,7 +29,7 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                         if(bucket_transactions.hasOwnProperty(key)){
                             date=bucket_transactions[key]['date']
                             day=parseInt(date.slice(8,9))
-                            if (day<day_of_month){
+                            if (day<=day_of_month){
                                 this_month_amount=this_month_amount+bucket_transactions[key]['amount']
                             }
 
@@ -46,7 +41,7 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                             if(bucket_transactions.hasOwnProperty(key)){
                                 date=bucket_transactions[key]['date']
                                 day=parseInt(date.slice(8,10))
-                                if (day<day_of_month){
+                                if (day<=day_of_month){
                                     last_month_amount=last_month_amount+bucket_transactions[key]['amount']
                                 }
 
@@ -70,10 +65,9 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
 
                     })
                 })
-            }
+            //}
 
-            if(snapshot.hasChild("Second_Insight")===false){                //CHECK IF SECOND INSIGHT EXISTS
-                console.log("TRUE YES !!!!!!!!!!!!!!")
+            //if(snapshot.hasChild("Second_Insight")===false){                //CHECK IF SECOND INSIGHT EXISTS
                 // CREATE INSIGHT -- 2 -->  CALCULATE THE NUMBER OF TRANSACTIONS OVER $100 
                 var num_of_transactions=0                                   
                 var transaction_path='users/'+user_id+'/bucketTransactions'
@@ -81,9 +75,9 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                     var buckets = snapshot.val();
                     for (var category in buckets){
                         if(buckets.hasOwnProperty(category)){
-                            transactions=buckets[category]['2017-08']
+                            transactions=buckets[category][current_month]
                             for (var trans in transactions){
-                                if (buckets[category]['2017-08'][trans]['amount']>100){
+                                if (buckets[category][current_month][trans]['amount']>100){
                                     num_of_transactions=num_of_transactions+1
                                 }
                             }
@@ -96,10 +90,9 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                             Second_Insight: result_two
                         });
                 })
-            }
+            //}
 
-            if(snapshot.hasChild("Third_Insight")===false){                     //CHECK IF THIRD INSIGHT EXISTS
-                console.log("TRUE YES !!!!!!!!!!!!!!")
+            //if(snapshot.hasChild("Third_Insight")===false){                     //CHECK IF THIRD INSIGHT EXISTS
                 //CREATE INSIGHT --3  --> CALCULATE AVERAGE SPENDING PER DAY UPTO A CERTAIN DAY OF THAT MONTH 
                 var total_spending=0
                 var fixed_buckets_path='users/'+user_id+'/bucketMoney/Fixed Buckets'
@@ -131,10 +124,9 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                         });
                     })
                 })
-            }
+            //}
             
-            if(snapshot.hasChild("Fourth_Insight")===false){                        //CHECK IF FOURTH INSIGHT EXISTS
-                console.log("TRUE YES !!!!!!!!!!!!!!")
+            //if(snapshot.hasChild("Fourth_Insight")===false){                        //CHECK IF FOURTH INSIGHT EXISTS
                 //CREATE INSIGHT -- 4  -->   FINDS OUT IF YOUR FOOD EXPENSES MORE THAN 25% OF THE TOTAL SPENDING (EXCLUDING "OTHER SPENDING").
                 var total_spending=0
                 var food_spending=0
@@ -157,13 +149,13 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                     console.log(food_spending)
                     var percent_food_spending = (food_spending/total_spending)*100
                     if (percent_food_spending>=25){
-                        var result_four = "You’re a total foodie! Did you know that " + percent_food_spending + "% of your income goes to eating out"
+                        var result_four = "You’re a total foodie! Did you know that " + percent_food_spending.toFixed(2) + "% of your income goes to eating out"
                     //SAVE INSIGHT --4 ON FIREBASE
                         ref.update({
                                 Fourth_Insight: result_four
                             });
                     }
                 })
-            }
+            //}
     });
 }

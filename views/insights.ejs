@@ -170,6 +170,9 @@
               <div class="slide">
                 <p><b>Insight </b></p><br /><p><div id="third-slide">Loading data. Refresh to see</div></p>
               </div>
+              <div class="slide">
+                <p><b>Insight </b></p><br /><p><div id="fourth-slide">Loading data. Refresh to see</div></p>
+              </div>
           	</div>
           	<div class="slider-nav">
           		<button class="slider-previous"><h1><</h1></button>
@@ -241,7 +244,6 @@
                 });
 
                 $.post('/show_insights',{
-                    year_month:'2017-08',
                     firebaseToken:sessionStorage.getItem("firebaseToken")
                 }, function(data) {
                     if (data.error) {
@@ -251,6 +253,7 @@
                     $('[id="first-slide"]').text(data["First_Insight"]);
                     $('[id="second-slide"]').text(data["Second_Insight"]);
                     $('[id="third-slide"]').text(data["Third_Insight"]);
+                    $('[id="fourth-slide"]').text(data["Fourth_Insight"]);
                 });
 
                 function checkLoginStatus() {
