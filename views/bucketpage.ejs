@@ -35,17 +35,10 @@
                 <br/>
                 <input id="editSizeAmount" placeholder="Bucket Amount to Move" />
                 <br/>
-                <!-- <input id="editSizeBucket" placeholder="New Bucket for Amount" /> -->
                 <button id="btnSize" class="btn btn-secondary btn-block btn-large">Edit Size</button>
                 <br/>
-                <!-- <input id="moveTransactionName" placeholder="Transaction to Move" />
-                <br/>
-                <input id="moveTransactionBucket" placeholder="New Bucket to Move Transaction" />
-                <button id="btnMove" class="btn btn-secondary btn-block btn-large">Move Transaction</button>
-                <br/> -->
                 <input type="text" id="bucketname" placeholder="Bucket to move the transaction to" style="display:none">
                 <button id="moveTrans" class="btn btn-secondary btn-block btn-large" style="display:none">Move Transaction</button>
-
             </div>
         </div>
 
@@ -75,9 +68,7 @@
             $("[id='btnName']").on("click", rename_bucket);
             $("[id='btnSize']").on("click", change_size);
             $("[id='moveTrans']").on("click",move_trans);
-
             $("[id='pageTitle']").text("Edit "  + sessionStorage.getItem(sessionStorage.getItem("bucketPage")) + " Bucket").end();
-
 
             function move_trans_where(){
 
@@ -126,10 +117,6 @@
                 }
             }
 
-            function moveBucketPopUp() {
-                alert("Modal should show up here");
-            };
-
             function get_details() {
                 // console.log("grabbing transactions...");
                 $.post('/transactions_for_bucket',{
@@ -175,11 +162,9 @@
                                 html += '<div class="inner">';
                                 html += '<strong>' + month + '</strong><br>';
                                 for (var txnId in data[month]) {
-                                    // console.log(txnId)
                                     if(data[month].hasOwnProperty(txnId)){
                                         txn = data[month][txnId];
                                         html += '<div id=' + txnId + ' data-date=' + txn.date+ ' class="clickTransaction" style="cursor:pointer"><br>';
-                                        //html += '<div id=clickTransaction ><br>';
                                         html += '<strong>' + txn.name + '</strong><br>';
                                         html += '$' + txn.amount + '<br>';
                                         html += '<em>' + txn.date + '</em><br></div>';
@@ -191,7 +176,6 @@
                                     var allTxns = document.getElementsByClassName("clickTransaction")
                                     for (var txn in allTxns) {
                                         allTxns[txn].onclick = move_trans_where;
-                                        // txn.addEventListener("click", moveBucketPopUp, false);
                                     }
                                 });
                             }
@@ -201,7 +185,6 @@
             };
 
             function rename_bucket(){
-                //modal.style.display = "block";
                 if (editName.value===''){
                     $('[id=get-button-data]').text("Enter a Valid Bucket Name");
                 } else{
@@ -266,16 +249,6 @@
                     });
                 }
             };
-
-            // btnName.addEventListener('click', e => {
-            //     var errorCode = null;
-            //     var errorMsg = null;
-            //
-            //     //Sign up
-            //     $(function () {
-            //
-            //     });
-            // });
          });
      </script>
 

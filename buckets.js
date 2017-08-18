@@ -211,8 +211,6 @@ function reclassification (transaction, oldBucket, newBucket) {
     }
 };
 
-// oldDbPath and newDbPath each are firebase.database().ref('...')
-// oldDbPath and newDbPath are manually entered because of abstraction, to
 // simplify modifying firebase structure
 exports.moveTransaction = function moveTransaction (oldBucketPath, newBucketPath) {
     // Check if bucket is real

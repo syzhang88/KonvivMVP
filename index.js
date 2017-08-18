@@ -468,8 +468,6 @@ apiRoutes.post('/move_transaction',function(request,response,next){
 });
 
 apiRoutes.post('/get_insights',function(request,response,next){
-    console.log("RECEIVED")
-    console.log("HELLO")
     var user_id = request.body.userId
     var date=request.body.year_month
     var path_check='users/'+user_id+'/Insights'
