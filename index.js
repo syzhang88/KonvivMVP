@@ -744,7 +744,7 @@ function updateTransactions(timePeriod, plaidToken, userId, callbackFunction) {
                             Spending: bucketFixed[bucket],
                             Total: bucketTotal[bucket]/timePeriod
                         };
-                }``
+                }
             }
             for (var bucket in bucketIncome) {
                 if (!isNaN(bucketTotal[bucket])) {

@@ -8,16 +8,16 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
     console.log(last_month_path)
     var ref = admin.database().ref(path_check);
     ref.once("value").then(function(snapshot) {
-        if (snapshot.exists()===true){
+        if (snapshot.exists()===true){                      //CHECK IF THE "INSIGHT" SECTION EXIST IN FIREBASE 
             console.log("Insight section exists")
         }
         else{
             console.log("Create Insight section")
             ref.update({
-                    About:"Provides insights based on your spending"
+                    About:"Provides insights based on your spending"                //CREATE AN "INSIGHT" SECTION IN FIREBASE IF THE INSIGHT DOESN'T EXIST
             });
         }
-            if(snapshot.hasChild("First_Insight")===false){
+            if(snapshot.hasChild("First_Insight")===false){                 //CHECK IF FIRST INSIGHT EXISTS
                 console.log("TRUE YES !!!!!!!!!!!!!!")
                 //CREATE INSIGHT -- 1 -->     COMPARE SPENDING OF THIS MONTH TO LAST MONTH FOR THE SAME DATE
                 var this_month_amount=0                         
@@ -72,7 +72,7 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                 })
             }
 
-            if(snapshot.hasChild("Second_Insight")===false){
+            if(snapshot.hasChild("Second_Insight")===false){                //CHECK IF SECOND INSIGHT EXISTS
                 console.log("TRUE YES !!!!!!!!!!!!!!")
                 // CREATE INSIGHT -- 2 -->  CALCULATE THE NUMBER OF TRANSACTIONS OVER $100 
                 var num_of_transactions=0                                   
@@ -98,7 +98,7 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                 })
             }
 
-            if(snapshot.hasChild("Third_Insight")===false){
+            if(snapshot.hasChild("Third_Insight")===false){                     //CHECK IF THIRD INSIGHT EXISTS
                 console.log("TRUE YES !!!!!!!!!!!!!!")
                 //CREATE INSIGHT --3  --> CALCULATE AVERAGE SPENDING PER DAY UPTO A CERTAIN DAY OF THAT MONTH 
                 var total_spending=0
@@ -133,7 +133,7 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                 })
             }
             
-            if(snapshot.hasChild("Fourth_Insight")===false){
+            if(snapshot.hasChild("Fourth_Insight")===false){                        //CHECK IF FOURTH INSIGHT EXISTS
                 console.log("TRUE YES !!!!!!!!!!!!!!")
                 //CREATE INSIGHT -- 4  -->   FINDS OUT IF YOUR FOOD EXPENSES MORE THAN 25% OF THE TOTAL SPENDING (EXCLUDING "OTHER SPENDING").
                 var total_spending=0

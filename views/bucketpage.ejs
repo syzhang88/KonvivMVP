@@ -19,11 +19,6 @@
 
 
             <p><a class="back" href="/index.ejs">< Back</a></p> <br><br>
-
-            <!-- <div class="head">
-                <h1 id= "pageTitle" style="font-size:35px;"> </h1>
-            </div> -->
-
              <div class="head">
                     <h1 style="font-size:18px; font-family:'Lato'; font-weight:300;"> Transactions <h1>
                 </div>
@@ -118,7 +113,6 @@
             }
 
             function get_details() {
-                // console.log("grabbing transactions...");
                 $.post('/transactions_for_bucket',{
                     which_bucket: sessionStorage.getItem("bucketPage"),
                     firebaseToken: sessionStorage.getItem("firebaseToken")
@@ -211,7 +205,6 @@
             }
 
             function move_trans(){
-            //console.log(trans_id)
             console.log(bucketname.value)
             console.log(sessionStorage.getItem("bucketPage"))
                 $.post('/move_transaction',{
