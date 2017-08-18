@@ -326,6 +326,28 @@ apiRoutes.use(function(request, response, next) {
 });
 
 //BUCKET FUNCTIONALITIES HERE ...
+apiRoutes.post('/get_bucket_name',function(request,response,next) {
+    admin.database().ref('/users/' + request.body.userId + '/bucketNames').once('value', function(snapshot) {
+        for (var name in snapshot.val()) {
+            if (name == request.name) {
+                console.log('get_bucket_name');
+                console.log(snapshot.val()[name]['name']);
+                return response.json(snapshot.val()[name]['name']);
+            }
+        }
+    }).catch(function(error) {
+        console.log("error with names: " + error.message);
+        return response.json({
+            error: error,
+            message: error.message
+        })
+    });
+    return response.json({
+        error: new Error("Could not find name!"),
+        message: "Could not find name!"
+    })
+});
+
 apiRoutes.post('/bank_access',function(request,response,next){
     admin.database().ref('/users/' + request.body.userId).once('value', function(snapshot) {
         if (snapshot.val() && snapshot.val()['firebaseToken']) {
@@ -400,11 +422,16 @@ apiRoutes.post('/rename_bucket',function(request,response,next){
             if (new_name == snapshot.val()[bucket]['name']) {
                 return response.json({
                     error: new Error('Another bucket is already named this!'),
+                    message: 'Another bucket is already named this!'
                 });
             }
         }
+        admin.database().ref(bucket_path).update({name: new_name});
+        response.json({
+            success: true,
+        });
     });
-    admin.database().ref(bucket_path).update({name: new_name});
+
 });
 
 apiRoutes.post('/reset_bucket_names',function(request,response,next) {
@@ -468,7 +495,6 @@ apiRoutes.post('/move_transaction',function(request,response,next){
 });
 
 apiRoutes.post('/get_insights',function(request,response,next){
-<<<<<<< HEAD
     var user_id = request.body.userId;
     var date = request.body.year_month;
     var path_check = 'users/' + user_id + '/Insights';
@@ -477,13 +503,6 @@ apiRoutes.post('/get_insights',function(request,response,next){
     var current_month_path='users/' + user_id + '/bucketTransactions/Eating Out/' + current_month;
     var last_month_path='users/' + user_id + '/bucketTransactions/Eating Out/' + last_month;
 
-=======
-    var user_id = request.body.userId
-    var date=request.body.year_month
-    var path_check='users/'+user_id+'/Insights'
-    var current_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-08'
-    var last_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-07'
->>>>>>> deea783d5334c024400c74906bfe5d7cbfff628d
     insights.getInsights(path_check,current_month_path,last_month_path,user_id);
 });
 

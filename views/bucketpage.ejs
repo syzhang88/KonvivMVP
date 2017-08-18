@@ -19,7 +19,6 @@
 
 
             <p><a class="back" href="/index.ejs">< Back</a></p> <br><br>
-<<<<<<< HEAD
 
             <!-- <div class="head">
                 <h1 id= "pageTitle" style="font-size:35px;"> </h1>
@@ -30,31 +29,20 @@
             </div>
             <br />
 
-=======
-             <div class="head">
-                    <h1 style="font-size:18px; font-family:'Lato'; font-weight:300;"> Transactions <h1>
-                </div>
-                <div id="get-button-data"></div>
-                <br />
->>>>>>> deea783d5334c024400c74906bfe5d7cbfff628d
             <div class="template">
                 <input id="editName" placeholder="New Bucket Name"/>
                 <button id="btnName" class="btn btn-secondary btn-block btn-large">Edit Name</button>
                 <br/>
                 <input id="editSizeAmount" placeholder="Bucket Amount to Add or Subtract" />
                 <br/>
+                <!-- <input id="editSizeBucket" placeholder="New Bucket for Amount" /> -->
                 <button id="btnSize" class="btn btn-secondary btn-block btn-large">Edit Size</button>
                 <br/>
-<<<<<<< HEAD
                 <!-- <input id="moveTransactionName" placeholder="Transaction to Move" />
                 <br/>
                 <input id="moveTransactionBucket" placeholder="New Bucket to Move Transaction" />
                 <button id="btnMove" class="btn btn-secondary btn-block btn-large">Move Transaction</button>
                 <br/> -->
-=======
-                <input type="text" id="bucketname" placeholder="Bucket to move the transaction to" style="display:none">
-                <button id="moveTrans" class="btn btn-secondary btn-block btn-large" style="display:none">Move Transaction</button>
->>>>>>> deea783d5334c024400c74906bfe5d7cbfff628d
             </div>
             <br />
             <br />
@@ -93,61 +81,61 @@
 
             $("[id='btnName']").on("click", rename_bucket);
             $("[id='btnSize']").on("click", change_size);
-<<<<<<< HEAD
 
-            $("[id='pageTitle']").text("Edit "  + sessionStorage.getItem(sessionStorage.getItem("bucketPage")) + " Bucket").end();
+            $("[id='pageTitle']").text("Edit "  + sessionStorage.getItem("bucketPage") + " Bucket").end();
 
+            function getBucketName(name) {
+                $.post("/get_bucket_name", {
+                    name: sessionStorage.getItem("bucketPage"),
+                    firebaseToken: sessionStorage.getItem("firebaseToken")
+                }, function(data) {
+                    if (data.error != null) {
+                        console.log(data.error);
+                        if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
+                            checkTokenStatus(false);
+                        }
+                        return "{Name Code Error}"
+                        // Using for loop to pull information for each bucket from data
+                    } else {
+                        checkTokenStatus(true);
+                        return data;
+                    }
+                });
+            }
 
             function showMoveOption(){
 
-                console.log("MOVE BUCKET")
-                var nameBuckets = {
-                    'Groceries': 'Groceries',
-                    'Eating Out': 'Eating Out',
-                    'Transportation': 'Transportation',
-                    'Entertainment': 'Entertainment',
-                    'Shopping': 'Shopping',
-                    'Variable Bills': 'Variable Bills',
-                    'Subscriptions': 'Subscriptions',
-                    'Rent': 'Housing',
-                    'Insurance': 'Insurance',
-                    'Loans': 'Loans',
-                    'Housing': 'Housing',
-                    'Income': 'Income',
-                    'Other Spending': 'Other Spending'
-                }
+                console.log("CHOOSE BUCKET")
+                console.log(this.id)
+                console.log(this.dataset.date)
+                trans_id=this.id
+                full_date= this.dataset.date
+
+                //Keep only the year and month from the date
+                date=full_date.slice(0,7)                    // removing the last two characters from full_date
+                console.log(date)
 
                 $("[class=move-option]").slideUp();
                 $("[id=" + this.id + "move-option]").slideUp(function() {
                     var html = '';
-                    for (var bucket in nameBuckets) {
-                        html += '<button class="move-button" id="' + bucket + '">';
-                        html += sessionStorage.getItem(sessionStorage.getItem(bucket));
-                        html += '</button>'
-                        html += '</br>';
-                    }
+                    html += '<input type="name-text" name="bucket-name" class="bucketName" placeholder="Bucket to move the transaction to">';
+                    html += '<button class="moveTrans btn btn-secondary btn-block btn-large">Move Transaction</button>';
                     $(this).html(html).slideDown();
                 });
-=======
-            $("[id='moveTrans']").on("click",move_trans);
-            $("[id='pageTitle']").text("Edit "  + sessionStorage.getItem(sessionStorage.getItem("bucketPage")) + " Bucket").end();
-
-            function move_trans_where(){
->>>>>>> deea783d5334c024400c74906bfe5d7cbfff628d
-
-
             }
-            $(document).on('click', '.move-button', moveTransaction);
-            function moveTransaction(){
-                console.log("MOVING")
 
-                $.post('/move_transaction',{
-                    from_bucket:sessionStorage.getItem("bucketPage"),
-                    // to_bucket: ,
-                    transaction_id:trans_id,
-                    year_month:date,
-                    firebaseToken: sessionStorage.getItem("firebaseToken")
-                }, callResult);
+            $(document).on('click', '.moveTrans', moveTransaction);
+            function moveTransaction(){
+                //console.log(trans_id)
+                console.log("HULLO")
+                // console.log($('input[name="bucket-name"]').val());
+                // $.post('/move_transaction',{
+                //     from_bucket:sessionStorage.getItem("bucketPage"),
+                //     to_bucket:$('input[name="contacto"]').val();,
+                //     transaction_id:trans_id,
+                //     year_month:date,
+                //     firebaseToken: sessionStorage.getItem("firebaseToken")
+                // }, callResult);
             }
 
             function checkLoginStatus() {
@@ -182,7 +170,12 @@
                 }
             }
 
+            function moveBucketPopUp() {
+                alert("Modal should show up here");
+            };
+
             function get_details() {
+                // console.log("grabbing transactions...");
                 $.post('/transactions_for_bucket',{
                     which_bucket: sessionStorage.getItem("bucketPage"),
                     firebaseToken: sessionStorage.getItem("firebaseToken")
@@ -226,13 +219,10 @@
                                 html += '<div class="inner">';
                                 html += '<strong>' + month + '</strong><br>';
                                 for (var txnId in data[month]) {
+                                    // console.log(txnId)
                                     if(data[month].hasOwnProperty(txnId)){
                                         txn = data[month][txnId];
-<<<<<<< HEAD
                                         html += '<div id=' + txnId + ' data-date=' + txn.date+ ' class="click-transaction" style="cursor:pointer" onclick=""><br>';
-=======
-                                        html += '<div id=' + txnId + ' data-date=' + txn.date+ ' class="clickTransaction" style="cursor:pointer"><br>';
->>>>>>> deea783d5334c024400c74906bfe5d7cbfff628d
                                         html += '<strong>' + txn.name + '</strong><br>';
                                         html += '$' + txn.amount + '<br>';
                                         html += '<em>' + txn.date + '</em><br>';
@@ -248,12 +238,8 @@
                                     $(this).html(html).slideDown();
                                     var allTxns = document.getElementsByClassName("click-transaction")
                                     for (var txn in allTxns) {
-<<<<<<< HEAD
                                         allTxns[txn].onclick = showMoveOption;
                                         // txn.addEventListener("click", moveBucketPopUp, false);
-=======
-                                        allTxns[txn].onclick = move_trans_where;
->>>>>>> deea783d5334c024400c74906bfe5d7cbfff628d
                                     }
                                 });
                             }
@@ -263,6 +249,7 @@
             };
 
             function rename_bucket(){
+                //modal.style.display = "block";
                 if (editName.value===''){
                     $('[id=get-button-data]').text("Enter a Valid Bucket Name");
                 } else{
@@ -288,28 +275,14 @@
                 // }
             }
 
-<<<<<<< HEAD
-=======
-            function move_trans(){
-            console.log(bucketname.value)
-            console.log(sessionStorage.getItem("bucketPage"))
-                $.post('/move_transaction',{
-                    from_bucket:sessionStorage.getItem("bucketPage"),
-                    to_bucket:bucketname.value,
-                    transaction_id:trans_id,
-                    year_month:date,
-                    firebaseToken: sessionStorage.getItem("firebaseToken")
-                }, callResult);
-            }
-
->>>>>>> deea783d5334c024400c74906bfe5d7cbfff628d
             function callResult(data) {
                 if (data.error != null) {
+                    console.log(data.error);
                     if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
                         checkTokenStatus(false);
                     }
                     // Format the error
-                    var errorHtml = '<div class="inner"><p><strong>' + data.error.message + '</strong></p></div>';
+                    var errorHtml = '<div class="inner"><p><strong>' + data.message + '</strong></p></div>';
                     // Render the error
                     $('#get-button-data').slideUp(function() {
                         $(this).slideUp(function() {
@@ -329,6 +302,16 @@
                     });
                 }
             };
+
+            // btnName.addEventListener('click', e => {
+            //     var errorCode = null;
+            //     var errorMsg = null;
+            //
+            //     //Sign up
+            //     $(function () {
+            //
+            //     });
+            // });
          });
      </script>
 
