@@ -24,16 +24,16 @@
                 <h1 id= "pageTitle" style="font-size:35px;"> </h1>
             </div> -->
 
-             <div class="head">
-                    <h1 style="font-size:18px; font-family:'Lato'; font-weight:300;"> Transactions <h1>
-                </div>
-                <div id="get-button-data"></div>
-                <br />
+            <div class="head">
+                <h1 id= "pageTitle"> </h1>
+            </div>
+            <br />
+
             <div class="template">
                 <input id="editName" placeholder="New Bucket Name"/>
                 <button id="btnName" class="btn btn-secondary btn-block btn-large">Edit Name</button>
                 <br/>
-                <input id="editSizeAmount" placeholder="Bucket Amount to Move" />
+                <input id="editSizeAmount" placeholder="Bucket Amount to Add or Subtract" />
                 <br/>
                 <!-- <input id="editSizeBucket" placeholder="New Bucket for Amount" /> -->
                 <button id="btnSize" class="btn btn-secondary btn-block btn-large">Edit Size</button>
@@ -43,10 +43,17 @@
                 <input id="moveTransactionBucket" placeholder="New Bucket to Move Transaction" />
                 <button id="btnMove" class="btn btn-secondary btn-block btn-large">Move Transaction</button>
                 <br/> -->
-                <input type="text" id="bucketname" placeholder="Bucket to move the transaction to" style="display:none">
-                <button id="moveTrans" class="btn btn-secondary btn-block btn-large" style="display:none">Move Transaction</button>
-
             </div>
+            <br />
+            <br />
+            <br />
+            <br />
+
+
+            <div class="head">
+                   <h1 style="font-size:18px; font-weight:300;"> Transactions <h1>
+           </div>
+           <div id="get-button-data"></div>
         </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -74,24 +81,54 @@
 
             $("[id='btnName']").on("click", rename_bucket);
             $("[id='btnSize']").on("click", change_size);
-            $("[id='moveTrans']").on("click",move_trans);
 
             $("[id='pageTitle']").text("Edit "  + sessionStorage.getItem(sessionStorage.getItem("bucketPage")) + " Bucket").end();
 
 
-            function move_trans_where(){
+            function showMoveOption(){
 
-                console.log("CHOOSE BUCKET")
-                console.log(this.id)
-                console.log(this.dataset.date)
-                trans_id=this.id
-                full_date= this.dataset.date
+                console.log("MOVE BUCKET")
+                var nameBuckets = {
+                    'Groceries': 'Groceries',
+                    'Eating Out': 'Eating Out',
+                    'Transportation': 'Transportation',
+                    'Entertainment': 'Entertainment',
+                    'Shopping': 'Shopping',
+                    'Variable Bills': 'Variable Bills',
+                    'Subscriptions': 'Subscriptions',
+                    'Rent': 'Housing',
+                    'Insurance': 'Insurance',
+                    'Loans': 'Loans',
+                    'Housing': 'Housing',
+                    'Income': 'Income',
+                    'Other Spending': 'Other Spending'
+                }
 
-                //Keep only the year and month from the date
-                date=full_date.slice(0,7)                    // removing the last two characters from full_date
-                console.log(date)
-                document.getElementById("bucketname").style.display='block';
-                document.getElementById("moveTrans").style.display='block';
+                $("[class=move-option]").slideUp();
+                $("[id=" + this.id + "move-option]").slideUp(function() {
+                    var html = '';
+                    for (var bucket in nameBuckets) {
+                        html += '<button class="move-button" id="' + bucket + '">';
+                        html += sessionStorage.getItem(sessionStorage.getItem(bucket));
+                        html += '</button>'
+                        html += '</br>';
+                    }
+                    $(this).html(html).slideDown();
+                });
+
+
+            }
+            $(document).on('click', '.move-button', moveTransaction);
+            function moveTransaction(){
+                console.log("MOVING")
+
+                $.post('/move_transaction',{
+                    from_bucket:sessionStorage.getItem("bucketPage"),
+                    // to_bucket: ,
+                    transaction_id:trans_id,
+                    year_month:date,
+                    firebaseToken: sessionStorage.getItem("firebaseToken")
+                }, callResult);
             }
 
             function checkLoginStatus() {
@@ -178,19 +215,23 @@
                                     // console.log(txnId)
                                     if(data[month].hasOwnProperty(txnId)){
                                         txn = data[month][txnId];
-                                        html += '<div id=' + txnId + ' data-date=' + txn.date+ ' class="clickTransaction" style="cursor:pointer"><br>';
-                                        //html += '<div id=clickTransaction ><br>';
+                                        html += '<div id=' + txnId + ' data-date=' + txn.date+ ' class="click-transaction" style="cursor:pointer" onclick=""><br>';
                                         html += '<strong>' + txn.name + '</strong><br>';
                                         html += '$' + txn.amount + '<br>';
-                                        html += '<em>' + txn.date + '</em><br></div>';
+                                        html += '<em>' + txn.date + '</em><br>';
+                                        html += '</div>';
+
+                                        // html += '<input type="text" class="bucketName" placeholder="Bucket to move the transaction to" style="display:none">';
+                                        // html += '<button class="moveTrans btn btn-secondary btn-block btn-large" style="display:none">Move Transaction</button>';
+                                        html += '<div id=' + txnId + 'move-option class=move-option></div>';
                                     }
                                 }
                                 html += '</div>';
                                 $(this).slideUp(function() {
                                     $(this).html(html).slideDown();
-                                    var allTxns = document.getElementsByClassName("clickTransaction")
+                                    var allTxns = document.getElementsByClassName("click-transaction")
                                     for (var txn in allTxns) {
-                                        allTxns[txn].onclick = move_trans_where;
+                                        allTxns[txn].onclick = showMoveOption;
                                         // txn.addEventListener("click", moveBucketPopUp, false);
                                     }
                                 });
@@ -225,19 +266,6 @@
                         firebaseToken: sessionStorage.getItem("firebaseToken")
                     }, callResult);
                 // }
-            }
-
-            function move_trans(){
-            //console.log(trans_id)
-            console.log(bucketname.value)
-            console.log(sessionStorage.getItem("bucketPage"))
-                $.post('/move_transaction',{
-                    from_bucket:sessionStorage.getItem("bucketPage"),
-                    to_bucket:bucketname.value,
-                    transaction_id:trans_id,
-                    year_month:date,
-                    firebaseToken: sessionStorage.getItem("firebaseToken")
-                }, callResult);
             }
 
             function callResult(data) {
