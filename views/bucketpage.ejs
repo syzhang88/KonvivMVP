@@ -82,15 +82,17 @@
             $("[id='btnName']").on("click", rename_bucket);
             $("[id='btnSize']").on("click", change_size);
 
-            $("[id='pageTitle']").text("Edit "  + sessionStorage.getItem("bucketPage") + " Bucket").end();
+            $("[id='pageTitle']").text("Edit "  + getBucketName(sessionStorage.getItem("bucketPage")) + " Bucket").end();
 
             function getBucketName(name) {
+                // console.log(sessionStorage.getItem("bucketPage"));
                 $.post("/get_bucket_name", {
                     name: sessionStorage.getItem("bucketPage"),
                     firebaseToken: sessionStorage.getItem("firebaseToken")
                 }, function(data) {
+                    // console.log(data);
+
                     if (data.error != null) {
-                        console.log(data.error);
                         if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
                             checkTokenStatus(false);
                         }
@@ -98,10 +100,12 @@
                         // Using for loop to pull information for each bucket from data
                     } else {
                         checkTokenStatus(true);
-                        return data;
+                        console.log("check " + data);
+                        $("[id='pageTitle']").text("Edit "  + name + " Bucket").end();
                     }
                 });
             }
+            // console.log(getBucketName(sessionStorage.getItem("bucketPage")));
 
             function showMoveOption(){
 
@@ -127,7 +131,7 @@
             $(document).on('click', '.moveTrans', moveTransaction);
             function moveTransaction(){
                 //console.log(trans_id)
-                console.log("HULLO")
+                console.log("moving call...")
                 // console.log($('input[name="bucket-name"]').val());
                 // $.post('/move_transaction',{
                 //     from_bucket:sessionStorage.getItem("bucketPage"),

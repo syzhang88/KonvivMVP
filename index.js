@@ -328,13 +328,21 @@ apiRoutes.use(function(request, response, next) {
 //BUCKET FUNCTIONALITIES HERE ...
 apiRoutes.post('/get_bucket_name',function(request,response,next) {
     admin.database().ref('/users/' + request.body.userId + '/bucketNames').once('value', function(snapshot) {
+        console.log(request.body.name);
+
         for (var name in snapshot.val()) {
-            if (name == request.name) {
+            console.log(name);
+
+            if (name == request.body.name) {
                 console.log('get_bucket_name');
                 console.log(snapshot.val()[name]['name']);
                 return response.json(snapshot.val()[name]['name']);
             }
         }
+        return response.json({
+            error: new Error("Could not find name!"),
+            message: "Could not find name!"
+        })
     }).catch(function(error) {
         console.log("error with names: " + error.message);
         return response.json({
@@ -342,10 +350,7 @@ apiRoutes.post('/get_bucket_name',function(request,response,next) {
             message: error.message
         })
     });
-    return response.json({
-        error: new Error("Could not find name!"),
-        message: "Could not find name!"
-    })
+
 });
 
 apiRoutes.post('/bank_access',function(request,response,next){
@@ -399,7 +404,7 @@ apiRoutes.post('/transactions_for_bucket',function(request,response,next){
 
     admin.database().ref(bucket_path).once('value').then(function(snapshot) {
         var bucket_transactions = snapshot.val();
-        console.log(bucket_transactions)
+        // console.log(bucket_transactions)
 
         response.json(bucket_transactions);
     }).catch(function(error) {
@@ -451,7 +456,6 @@ apiRoutes.post('/reset_bucket_names',function(request,response,next) {
 
 apiRoutes.post('/bucket_names',function(request,response,next){
     admin.database().ref('users/' + request.body.userId + '/bucketNames').once('value', function(snapshot) {
-
         response.json(snapshot.val());
     }).catch(function(error) {
         var errorMessage = error.message;
@@ -491,7 +495,10 @@ apiRoutes.post('/move_transaction',function(request,response,next){
     var date=request.body.year_month
     var from_bucket_path='users/'+user_id+'/bucketTransactions/'+ from_bucket + '/' + date + '/' + transaction_id
     var to_bucket_path='users/'+user_id+'/bucketTransactions/'+ to_bucket + '/' + date + '/' + transaction_id
-    buckets.moveTransaction(from_bucket_path,to_bucket_path)
+
+    if (to_bucket && from_bucket) {
+        buckets.moveTransaction(from_bucket_path,to_bucket_path)
+    }
 });
 
 apiRoutes.post('/calculate_insights',function(request,response,next){
