@@ -468,10 +468,13 @@ apiRoutes.post('/move_transaction',function(request,response,next){
 });
 
 apiRoutes.post('/calculate_insights',function(request,response,next){
-    var user_id = request.body.userId
-    var path_check='users/'+user_id+'/Insights'
-    var current_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-08'
-    var last_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-07'
+    var user_id = request.body.userId;
+    var date = request.body.year_month;
+    var path_check = 'users/' + user_id + '/Insights';
+    var last_month = moment().subtract(1, 'months').format('YYYY-MM-DD').substr(0,7);
+    var current_month = moment().format('YYYY-MM-DD').substr(0,7);
+    var current_month_path='users/' + user_id + '/bucketTransactions/Eating Out/' + current_month;
+    var last_month_path='users/' + user_id + '/bucketTransactions/Eating Out/' + last_month;
     insights.getInsights(path_check,current_month_path,last_month_path,user_id);
 });
 
