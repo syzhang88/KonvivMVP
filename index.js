@@ -467,16 +467,15 @@ apiRoutes.post('/move_transaction',function(request,response,next){
     buckets.moveTransaction(from_bucket_path,to_bucket_path)
 });
 
-apiRoutes.post('/get_insights',function(request,response,next){
+apiRoutes.post('/calculate_insights',function(request,response,next){
     var user_id = request.body.userId
-    var date=request.body.year_month
     var path_check='users/'+user_id+'/Insights'
     var current_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-08'
     var last_month_path='users/'+user_id+'/bucketTransactions/Eating Out/2017-07'
     insights.getInsights(path_check,current_month_path,last_month_path,user_id);
 });
 
-apiRoutes.post('/get_sample_insights',function(request,response,next){
+apiRoutes.post('/show_insights',function(request,response,next){
     var user_id = request.body.userId
 
     admin.database().ref('users/' + user_id + '/Insights').once('value').then(function(snapshot) {

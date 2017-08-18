@@ -233,14 +233,14 @@
                     location.href='/';
                  });
 
-                $.post('/get_insights',{              // GET INSIGHTS ON CLICKING THE INSIGHT BUTTON ON MAIN PAGE
+                $.post('/calculate_insights',{              // GET INSIGHTS ON CLICKING THE INSIGHT BUTTON ON MAIN PAGE
                     year_month:'2017-08',
                     firebaseToken:sessionStorage.getItem("firebaseToken")
                 }, function() {
 
                 });
 
-                $.post('/get_sample_insights',{
+                $.post('/show_insights',{
                     year_month:'2017-08',
                     firebaseToken:sessionStorage.getItem("firebaseToken")
                 }, function(data) {

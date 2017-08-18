@@ -3,9 +3,10 @@ var firebase = require("firebase");
 var serviceAccount = require("./konvivandroid-firebase-adminsdk-re0l3-f09e6af5d7.json");
 
 exports.getInsights=function getInsights(path_check,current_month_path,last_month_path,user_id){
-    console.log(path_check)
-    console.log(current_month_path)
-    console.log(last_month_path)
+    var day_of_month = new Date().getDate();
+    //console.log(path_check)
+    //console.log(current_month_path)
+    //console.log(last_month_path)
     var ref = admin.database().ref(path_check);
     ref.once("value").then(function(snapshot) {
         if (snapshot.exists()===true){                      //CHECK IF THE "INSIGHT" SECTION EXIST IN FIREBASE 
@@ -22,7 +23,6 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                 //CREATE INSIGHT -- 1 -->     COMPARE SPENDING OF THIS MONTH TO LAST MONTH FOR THE SAME DATE
                 var this_month_amount=0                         
                 var last_month_amount=0
-                var day_of_month=15
                 var day
                 var current_date='2017-08-15'
                 var last_month_date='2017-07-15'
@@ -114,13 +114,13 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                     }
                     console.log("FIXED "+total_spending)
                     admin.database().ref(spending_buckets_path).once('value').then(function(snapshot) {
-                        var day_of_month=15
                         var spending_buckets = snapshot.val();
                         for (var category in spending_buckets){
                             if(spending_buckets.hasOwnProperty(category)){
                                 total_spending=total_spending+spending_buckets[category]['Spending']
                             }
                         }
+                    
                     var spending_per_day = total_spending/day_of_month
                     console.log("This month, you’ve spent $" + total_spending.toFixed(2) + " so far, which is an average of $" + spending_per_day.toFixed(2) + " per day.")
                     var result_three = "This month, you’ve spent $" + total_spending.toFixed(2) + " so far, which is an average of $" + spending_per_day.toFixed(2) + " per day."
