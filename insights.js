@@ -149,6 +149,37 @@ exports.getInsights=function getInsights(path_check,current_month_path,last_mont
                     });
                 })
             })
+
+            //CREATE INSIGHT -- 4
+            var total_spending=0
+            var food_spending=0
+            var spending_buckets_path='users/'+user_id+'/bucketMoney/Spending Buckets'
+            admin.database().ref(spending_buckets_path).once('value').then(function(snapshot) {
+                var spending_buckets = snapshot.val();
+                //console.log(fixed_buckets)
+                for (var category in spending_buckets){
+                    if(spending_buckets.hasOwnProperty(category)){
+                        console.log(category)
+                        if(category==='Other Spending'){
+                            continue;
+                        }
+                        if(category==='Eating Out'){
+                            food_spending=spending_buckets[category]['Spending']
+                        }
+                        total_spending=total_spending+spending_buckets[category]['Spending']
+                    }
+                }
+                console.log(total_spending)
+                console.log(food_spending)
+                var percent_food_spending = (food_spending/total_spending)*100
+                if (percent_food_spending>=25){
+                    var result_four = "You’re a total foodie! Did you know that " + percent_food_spending + "% of your income goes to eating out"
+                //SAVE INSIGHT --4 ON FIREBASE
+                    ref.update({
+                            Fourth_Insight: result_four
+                        });
+                }
+            })
         }
     });
 }
