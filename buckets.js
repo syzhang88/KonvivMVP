@@ -193,7 +193,7 @@ exports.moveTransaction = function moveTransaction (oldBucketPath, newBucketPath
                 console.error(error);
             }
         });
-    });
+    }).catch;
     console.log("DONE")
 }
 
@@ -209,8 +209,11 @@ exports.changeBucketsize = function changeBucketsize (from_bucket_path,amount) {
         if (parseInt(snapshot.val()['Total']) + parseInt(amount) >=0) {
             oldBucket['Total'] = parseInt(snapshot.val()['Total']) + parseInt(amount);
         } else {
-            console.log("Not Enough Money in the Bucket")
-            return false;
+            console.log("Not Enough Money in the Bucket");
+            return {
+                error: new Error("Not Enough Money in the Bucket"),
+                message: "Not Enough Money in the Bucket"
+            };
         }
         console.log(oldBucket['Total'])
         console.log("YOOOOOO!!!")
@@ -237,7 +240,7 @@ exports.bucketInfo = function bucketInfo(bucketpath){
         console.log(bucket_transactions)
 
         return bucket_transactions
-       
+
     }).catch(function(error) {
         var errorMessage = error.message;
         console.log('failed to call bucketInfo: ' + errorMessage);

@@ -467,24 +467,59 @@ apiRoutes.post('/bucket_names',function(request,response,next){
 });
 
 apiRoutes.post('/change_bucket_size',function(request,response,next){
-    console.log("RECEIVED")
+    console.log("RECEIVED " + request.body.from_bucket)
+    from_bucket
     var user_id = request.body.userId
     var from_bucket=request.body.from_bucket
     var amount=request.body.amount
+    var bucketType = null;
 
-    // Checks bucketNames for a user-set name
-    admin.database().ref('users/' + request.body.userId + '/bucketNames').once('value', function(snapshot) {
-        for (var true_bucket in snapshot.val()) {
-            var from_bucket_path='users/'+user_id+'/bucketMoney/Spending Buckets/'+from_bucket;
-            return response.json(buckets.changeBucketsize(from_bucket_path,amount));
+    for (var name in buckets.fixedAmounts) {
+        if (name == from_bucket) {
+            bucketType = 'Fixed Buckets';
         }
-        response.json(buckets.changeBucketsize(from_bucket_path,amount));
-    }).catch(function(error) {
-        var errorMessage = error.message;
-        response.json({
-            error: error,
+    }
+    console.log('spendingBuckets');
+
+    for (var name in buckets.spendingAmounts) {
+        console.log(name);
+        if (name == from_bucket) {
+            bucketType = 'Spending Buckets';
+        }
+    }
+
+    if (bucketType) {
+        var from_bucket_path = 'users/' + user_id + '/bucketMoney/' + bucketType + '/' + from_bucket;
+
+        console.log("NOW HERE")
+        //subtract from this bucket
+        admin.database().ref(from_bucket_path).once('value', function(snapshot) {
+            if (parseInt(snapshot.val()['Total']) + parseInt(amount) >=0) {
+                var newTotal = {
+                    'Total':parseInt(snapshot.val()['Total']) + parseInt(amount)
+                };
+                admin.database().ref(from_bucket_path).update(newTotal);
+                response.json({
+                    success: true
+                });
+            } else {
+                response.json({
+                    error: new Error("Not a real number or not enough money!"),
+                    message: "Not a real number or not enough money!"
+                });
+            }
+        }).catch(function(error) {
+            response.json({
+                error: error,
+                message: error.message
+            });
         });
-    });
+    } else {
+        response.json({
+            error: new Error('Cannot find bucket!'),
+            message: 'Cannot find bucket!'
+        })
+    }
 });
 
 apiRoutes.post('/move_transaction',function(request,response,next){
@@ -493,11 +528,10 @@ apiRoutes.post('/move_transaction',function(request,response,next){
     var to_bucket=request.body.to_bucket
     var transaction_id=request.body.transaction_id
     var date=request.body.year_month
-    var from_bucket_path='users/'+user_id+'/bucketTransactions/'+ from_bucket + '/' + date + '/' + transaction_id
-    var to_bucket_path='users/'+user_id+'/bucketTransactions/'+ to_bucket + '/' + date + '/' + transaction_id
-
-    if (to_bucket && from_bucket) {
-        buckets.moveTransaction(from_bucket_path,to_bucket_path)
+    if (to_bucket in buckets.allAmounts && from_bucket in buckets.allAmounts) {
+        var from_bucket_path='users/'+user_id+'/bucketTransactions/'+ from_bucket + '/' + date + '/' + transaction_id;
+        var to_bucket_path='users/'+user_id+'/bucketTransactions/'+ to_bucket + '/' + date + '/' + transaction_id;
+        buckets.moveTransaction(from_bucket_path,to_bucket_path);
     }
 });
 
@@ -703,102 +737,123 @@ function updateTransactions(timePeriod, plaidToken, userId, callbackFunction) {
     var thisMonth = new Date(endDate.substr(0, 4), endDate.substr(5, 2), '01');
     var startMonth = startDate.substr(0,8) + '01';
 
-    plaidClient.getTransactions(plaidToken, startMonth, endDate, {
-      count: 500,
-      offset: 0,
-    }, function(error, transactionsResponse) {
-        if (error != null) {
-            return console.log(error);
-        }
+    console.log('updating txns');
 
-        var bucketSpending = buckets.clone(buckets.spendingAmounts);
-        var bucketFixed = buckets.clone(buckets.fixedAmounts);
-        var bucketIncome = buckets.clone(buckets.incomeAmounts);
-        var bucketSavings = buckets.clone(buckets.savingsAmounts);
-        var bucketTotal = buckets.clone(buckets.allAmounts);
+    // admin.database().ref('users/' + userId + '/lastTransactionUpdate').once('value', function(snapshot) {
+        // if (snapshot.val()) {
+        //     var startMonthComparison = new Date(endDate.substr(0, 4), endDate.substr(5, 2), '01');
+        //     var lastUpdate = snapshot.val()["Date"];
+        //     var lastUpdateComparison = new Date(lastUpdate.substr(0, 4), lastUpdate.substr(5, 2), '01');
+        //
+        //     if (startMonthComparison <= lastUpdateComparison) {
+        //         console.log('dates test');
+        //
+        //         startMonth = snapshot.val()["Date"];
+        //     }
+        // }
+        // admin.database().ref('users/' + userId + '/lastTransactionUpdate').update({
+        //     "Date": endDate
+        // });
 
-        transactionsResponse.transactions.forEach(function(transaction) {
-            var bucketSelect = buckets.selectBucket(transaction);
-            var bucketName = bucketSelect['bucketName'];
-            var bucketClass = bucketSelect['bucketClass'];
-            var postData = {};
-
-            var txnDate = transaction.date;
-            var transactionDate = new Date(txnDate.substr(0, 4), txnDate.substr(5, 2), txnDate.substr(8,2));
-            var transactionOrder = txnDate.substr(8,2);
-            var newPostKey = transactionOrder + transaction.transaction_id;
-
-            transaction.bucket = bucketName;
-            postData[newPostKey] = transaction;
-
-            admin.database().ref('users/' + userId + "/bucketTransactions/" + bucketName  + "/" + transaction.date.substr(0,7)).update(postData);
-
-            if (transactionDate >= thisMonth) {
-                if (bucketClass == "Income") {
-                    bucketIncome[bucketName] += transaction.amount;
-                } else if (bucketClass == "Fixed") {
-                    bucketFixed[bucketName] += transaction.amount;
-                } else if (bucketClass == "Spending") {
-                    bucketSpending[bucketName] += transaction.amount;
-                }
-            } else {
-                bucketTotal[bucketName] += transaction.amount;
-            }
-        });
-
-        admin.database().ref('users/' + userId + '/lastEstimateUpdate').once('value', function(snapshot) {
-            var returnVal = false;
-            if (snapshot.val()) {
-                if (thisMonth <= Date.parse(snapshot.val()["Month"])){
-                    returnVal = true;
-                    admin.database().ref('users/' + userId + '/bucketMoney').once('value', function(snapshot) {
-                        callbackFunction(snapshot.val());
-                    });
-                }
-                if (returnVal) {
-                    return;
-                }
-            }
-            console.log('updated bucket totals for this month');
-
-            var allBucketData = {
-                "Spending Buckets": {},
-                "Fixed Buckets": {},
-                "Income Buckets": {}
-            }
-            for (var bucket in bucketSpending) {
-                if (!isNaN(bucketTotal[bucket])) {
-                   allBucketData["Spending Buckets"][bucket] = {
-                            Spending: bucketSpending[bucket],
-                            Total: bucketTotal[bucket]/timePeriod
-                        };
-                }
-            }
-            for (var bucket in bucketFixed) {
-                if (!isNaN(bucketTotal[bucket])) {
-                    allBucketData["Fixed Buckets"][bucket] = {
-                            Spending: bucketFixed[bucket],
-                            Total: bucketTotal[bucket]/timePeriod
-                        };
-                }
-            }
-            for (var bucket in bucketIncome) {
-                if (!isNaN(bucketTotal[bucket])) {
-                    allBucketData["Income Buckets"][bucket] = {
-                        Spending: bucketIncome[bucket],
-                        Total: bucketTotal[bucket]/timePeriod
-                    };
-                }
+        plaidClient.getTransactions(plaidToken, startMonth, endDate, {
+          count: 500,
+          offset: 0,
+        }, function(error, transactionsResponse) {
+            if (error != null) {
+                return console.log(error);
             }
 
-            admin.database().ref("users/" + userId + "/bucketMoney/").set(allBucketData);
-            admin.database().ref('users/' + userId + "/lastEstimateUpdate/").update({
-                "Month": thisMonth
+            var bucketSpending = buckets.clone(buckets.spendingAmounts);
+            var bucketFixed = buckets.clone(buckets.fixedAmounts);
+            var bucketIncome = buckets.clone(buckets.incomeAmounts);
+            var bucketSavings = buckets.clone(buckets.savingsAmounts);
+            var bucketTotal = buckets.clone(buckets.allAmounts);
+
+            transactionsResponse.transactions.forEach(function(transaction) {
+                var bucketSelect = buckets.selectBucket(transaction);
+                var bucketName = bucketSelect['bucketName'];
+                var bucketClass = bucketSelect['bucketClass'];
+                var postData = {};
+
+                var txnDate = transaction.date;
+                var transactionDate = new Date(txnDate.substr(0, 4), txnDate.substr(5, 2), txnDate.substr(8,2));
+                var transactionOrder = txnDate.substr(8,2);
+                var newPostKey = transactionOrder + transaction.transaction_id;
+
+                transaction.bucket = bucketName;
+                postData[newPostKey] = transaction;
+
+
+                admin.database().ref('users/' + userId + "/bucketTransactions/" + bucketName  + "/" + transaction.date.substr(0,7)).update(postData);
+
+                if (transactionDate >= thisMonth) {
+                    if (bucketClass == "Income") {
+                        bucketIncome[bucketName] += transaction.amount;
+                    } else if (bucketClass == "Fixed") {
+                        bucketFixed[bucketName] += transaction.amount;
+                    } else if (bucketClass == "Spending") {
+                        bucketSpending[bucketName] += transaction.amount;
+                    }
+                } else {
+                    bucketTotal[bucketName] += transaction.amount;
+                    console.log(bucketTotal[bucketName]);
+                }
             });
-            callbackFunction(allBucketData);
+
+            admin.database().ref('users/' + userId + '/lastEstimateUpdate').once('value', function(snapshot) {
+                var returnVal = false;
+                if (snapshot.val()) {
+                    if (thisMonth <= Date.parse(snapshot.val()["Month"])){
+                        returnVal = true;
+                        admin.database().ref('users/' + userId + '/bucketMoney').once('value', function(snapshot) {
+                            callbackFunction(snapshot.val());
+                        });
+                    }
+                    if (returnVal) {
+                        return;
+                    }
+                }
+                console.log('updated bucket totals for this month');
+
+                var allBucketData = {
+                    "Spending Buckets": {},
+                    "Fixed Buckets": {},
+                    "Income Buckets": {}
+                }
+                for (var bucket in bucketSpending) {
+                    if (!isNaN(bucketTotal[bucket])) {
+                       allBucketData["Spending Buckets"][bucket] = {
+                                Spending: bucketSpending[bucket],
+                                Total: bucketTotal[bucket]/timePeriod
+                            };
+                    }
+                }
+                for (var bucket in bucketFixed) {
+                    if (!isNaN(bucketTotal[bucket])) {
+                        allBucketData["Fixed Buckets"][bucket] = {
+                                Spending: bucketFixed[bucket],
+                                Total: bucketTotal[bucket]/timePeriod
+                            };
+                    }
+                }
+                for (var bucket in bucketIncome) {
+                    if (!isNaN(bucketTotal[bucket])) {
+                        allBucketData["Income Buckets"][bucket] = {
+                            Spending: bucketIncome[bucket],
+                            Total: bucketTotal[bucket]/timePeriod
+                        };
+                    }
+                }
+
+                admin.database().ref("users/" + userId + "/bucketMoney/").set(allBucketData);
+                admin.database().ref('users/' + userId + "/lastEstimateUpdate/").update({
+                    "Month": thisMonth
+                });
+                callbackFunction(allBucketData);
+            });
+            console.log('saved ' + transactionsResponse.transactions.length + ' transactions under ' + userId);
         });
-        console.log('saved ' + transactionsResponse.transactions.length + ' transactions under ' + userId);
-    });
+    // });
 }
 
 app.use('/', apiRoutes);

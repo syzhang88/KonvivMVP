@@ -30,10 +30,10 @@
             <br />
 
             <div class="template">
-                <input id="editName" placeholder="New Bucket Name"/>
+                <input id="editName" pattern="[a-zA-Z]{15}" title="A name must be composed of only letters and less than 15 characters." placeholder="New Bucket Name"/>
                 <button id="btnName" class="btn btn-secondary btn-block btn-large">Edit Name</button>
                 <br/>
-                <input id="editSizeAmount" placeholder="Bucket Amount to Add or Subtract" />
+                <input id="editSizeAmount" pattern="[-0-9]" title="Value must be either a negative or positive number!" placeholder="Bucket Amount to Add or Subtract" />
                 <br/>
                 <!-- <input id="editSizeBucket" placeholder="New Bucket for Amount" /> -->
                 <button id="btnSize" class="btn btn-secondary btn-block btn-large">Edit Size</button>
@@ -50,7 +50,7 @@
             <br />
 
 
-            <div class="head">
+            <div class="head" id="transactions" style="cursor:pointer">
                    <h1 style="font-size:18px; font-weight:300;"> Transactions <h1>
            </div>
            <div id="get-button-data"></div>
@@ -74,6 +74,7 @@
             firebase.initializeApp(firebaseConfig);
             checkLoginStatus();
             get_details();
+            getBucketName(sessionStorage.getItem("bucketPage"));
 
             var trans_id
             var full_date
@@ -81,8 +82,7 @@
 
             $("[id='btnName']").on("click", rename_bucket);
             $("[id='btnSize']").on("click", change_size);
-
-            $("[id='pageTitle']").text("Edit "  + getBucketName(sessionStorage.getItem("bucketPage")) + " Bucket").end();
+            $("[id='transactions']").on("click", get_details);
 
             function getBucketName(name) {
                 // console.log(sessionStorage.getItem("bucketPage"));
@@ -100,8 +100,9 @@
                         // Using for loop to pull information for each bucket from data
                     } else {
                         checkTokenStatus(true);
+                        // return data;
                         console.log("check " + data);
-                        $("[id='pageTitle']").text("Edit "  + name + " Bucket").end();
+                        $("[id='pageTitle']").text("Edit "  + data + " Bucket").end();
                     }
                 });
             }
@@ -122,7 +123,7 @@
                 $("[class=move-option]").slideUp();
                 $("[id=" + this.id + "move-option]").slideUp(function() {
                     var html = '';
-                    html += '<input type="name-text" name="bucket-name" class="bucketName" placeholder="Bucket to move the transaction to">';
+                    html += '<input type="name-text" name="bucket-name" pattern="[a-zA-Z]{15}" title="Must be a bucket name!" class="bucketName" placeholder="Bucket to move the transaction to">';
                     html += '<button class="moveTrans btn btn-secondary btn-block btn-large">Move Transaction</button>';
                     $(this).html(html).slideDown();
                 });
@@ -132,14 +133,16 @@
             function moveTransaction(){
                 //console.log(trans_id)
                 console.log("moving call...")
-                // console.log($('input[name="bucket-name"]').val());
-                // $.post('/move_transaction',{
-                //     from_bucket:sessionStorage.getItem("bucketPage"),
-                //     to_bucket:$('input[name="contacto"]').val();,
-                //     transaction_id:trans_id,
-                //     year_month:date,
-                //     firebaseToken: sessionStorage.getItem("firebaseToken")
-                // }, callResult);
+                console.log($('input[name="bucket-name"]').val());
+                if ($('input[name="bucket-name"]').val() != null) {
+                    $.post('/move_transaction',{
+                        from_bucket:sessionStorage.getItem("bucketPage"),
+                        to_bucket:$('input[name="bucket-name"]').val(),
+                        transaction_id:trans_id,
+                        year_month:date,
+                        firebaseToken: sessionStorage.getItem("firebaseToken")
+                    }, callResult);
+                }
             }
 
             function checkLoginStatus() {
@@ -270,6 +273,10 @@
                 //     console.log("Cannot Change Size of Same Bucket!!")
                 // }
                 // else{
+                console.log("changing size...");
+                console.log(sessionStorage.getItem("bucketPage"));
+                console.log("changing size...");
+
                     $.post('/change_bucket_size',{
                         amount:editSizeAmount.value,
                         from_bucket:sessionStorage.getItem("bucketPage"),
@@ -280,6 +287,9 @@
             }
 
             function callResult(data) {
+                console.log('callResult');
+                console.log(data);
+
                 if (data.error != null) {
                     console.log(data.error);
                     if (data.message == 'Failed to authenticate token.' || data.message == 'Failed to find token.') {
@@ -293,10 +303,11 @@
                             $(this).html(errorHtml).slideDown();
                         });
                     });
+                    $('html, body').animate({ scrollTop: 0 }, 'fast');
                     // Using for loop to pull information for each bucket from data
                 } else {
                     checkTokenStatus(true);
-                    var successHtml = '<div class="inner"><p><strong> Edit Success! </strong></p></div>';
+                    var successHtml = '<div class="inner"><p><strong> Edit Success! Refresh to see changes </strong></p></div>';
                     // Render the error
 
                     $('#get-button-data').slideUp(function() {
