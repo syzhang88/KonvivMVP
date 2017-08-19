@@ -5,6 +5,7 @@
         <title>Konviv MVP</title>
         <link rel="stylesheet" type="text/css" href="style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
 
        <!-- <script>
         $(function() {
@@ -15,12 +16,20 @@
         </script> -->
 
         <style>
-        @import url('https://fonts.googleapis.com/css?family=Open+Sans');
+        .parallax { 
+            /* The image used */
+            background-image: url("https://github.com/Konviv/konviv.github.io/blob/master/img/stars.jpg?raw=true");
 
-        body {
-         font-family: 'Open Sans', sans-serif;
-           background-image: url('https://github.com/Konviv/konviv.github.io/blob/master/img/whitebox.jpg?raw=true');
+            /* Set a specific height */
+            height: 500px; 
+
+            /* Create the parallax scrolling effect */
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
         }
+
         #navigation-top {
           position:relative;
           z-index:99;
@@ -28,9 +37,9 @@
           margin-bottom:-15px;
           }
 
-              #sticky {
+          #sticky {
                 width:100%;
-                padding:20px;
+                padding:10px;
                 padding-bottom:4px;
                 background:black;
                 color:white;
@@ -43,12 +52,12 @@
                 text-align:center; /*this will center the containers*/
               }
 
-              #sticky * {
+          #sticky * {
                 margin:0;
                 padding:0;
               }
 
-              #sticky .container {
+           #sticky .container {
                 display:inline-block; /*required for centering containers and allowing wrap*/
                 margin-bottom:16px;
                 width:20%; /*relative unit for responsive design*/
@@ -56,27 +65,28 @@
                 vertical-align:top;
               }
 
+          #myModal {
+              background-color:black;
+              opacity:0.9;
+          }
+          .modal-content {
+            display:block;
+            z-index:999;
+            background-color:white;
+          }
         </style>
     </head>
-    <body>
-        <div id="navigation-top" style="background-color:white;">
+    <body class="parallax">
+        <div id="navigation-top">
             <div id="menu">
-                <div class="box">
-                    <div class="nubox">
-                        <p><a href="index.ejs"><button class="upbutton">Main</button></a></p>
-                        <p><a href="bills.ejs"><button class="upbutton">Bills</button></a></p>
-                        <p><a href="savings.ejs"><button class="upbutton">Savings</button></a></p>
-                    </div>
-                    <div class="nubox">
-                        <div id="left-to-spend">loading</div>
-                        <div id="string" style="font-size:16px; padding-top:5px; color:#61cb43;">Left to Spend</div>
-                    </div>
-                    <div class="nubox">
-                        <p><button class="upbutton" id="logout-btn">Logout</button></p>
-                        <p><a href="newsfeed.ejs"><button class="upbutton">Newsfeed</button></a></p>
-                        <p><a href="#"><button id="myBtn" class="upbutton">Settings</button></a></p>
+                <div>
+                    <div>
+                        <p><a href="bills.ejs"><button class="upbutton">Bills</button></a> <a href="index.ejs"><button class="upbutton">Main</button></a> <a href="savings.ejs"><button class="upbutton">Savings</button></a></p>
                     </div>
                 </div>
+                 <div>
+                        <p><button class="smbutton" div id="myBtn">Notifications</button> <a href="newsfeed.ejs"><button class="smbutton">Newsfeed</button></a> <button class="smbutton" id="logout-btn">Logout</button> </p>
+                    </div>
             </div>
         </div>
 
@@ -86,30 +96,26 @@
             <div id="menu">
                 <div class="box">
                     <button class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br />
-                    <p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Accounts</p></button>
-                    <button class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Transactions</p></button>
-                    <button class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Edit Bank</p></button>
-                    <button class="headerbutton" id="get-insights-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.jpg?raw=true" alt="Insights" desc="Insights" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Insights</p></button>
+                    <p style="margin-top:0px; font-size:12px; color:#222; padding-bottom:10px;">Accounts</p></button>
+                    <button class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:0px; font-size:12px; color:#222; padding-bottom:10px;">Transactions</p></button>
+                    <button class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:0px; font-size:12px; color:#222; padding-bottom:10px;">Edit Bank</p></button>
+                    <button class="headerbutton" id="get-insights-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.jpg?raw=true" alt="Insights" desc="Insights" style="width:85px;"><br /><p style="margin-top:0px; font-size:12px; color:#222; padding-bottom:10px;">Insights</p></button>
                 </div>
             </div>
         </div>
 
-        <div id="get-button-data" style="background-color:#DDD;"></div>
-
        <div class="box">
-           <div class="body" style="border-top:1px solid #EEE; font-size:13px; margin-top:-5px;">
+           <div class="body" style="font-size:8px; margin-top:15px;">
+                     <div>
+                        <div id="left-to-spend">loading</div>
+                        <div id="string" style="font-size:16px; padding-top:5px; color:white;">Left to Spend</div>
+                    </div>
+           <center><hr style="border: 1px solid #EEE; opacity:0.3; width:85%;" /></center>
                <div class = "wrap">
                    <div class = "bucket-heading" id = "total-spending">
                        loading
                    </div>
 
-                   <div class="circle" id="Variable Bills"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
-                       <div class="perc">
-                           <div class="perc-value"></div>
-                       </div>
-                       <span class="top"></span>
-                       <span class="bottom"></span>
-                   </div>
                    <div class="circle" id="Eating Out"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
@@ -145,6 +151,13 @@
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
+                   <div class="circle" id="Variable Bills"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
+                       <div class="perc">
+                           <div class="perc-value"></div>
+                       </div>
+                       <span class="top"></span>
+                       <span class="bottom"></span>
+                   </div>
                    <div class="circle" id="Transportation"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
@@ -174,7 +187,8 @@
           <!-- Modal content -->
           <div class="modal-content">
             <span class="close" style="margin-top:-5px;">&times;</span>
-            <p>Settings...</p><br />
+            <p>Notifications</p><br />
+            <div id="get-button-data" style="background-color:#DDD;"></div>
           </div>
 
         </div>
