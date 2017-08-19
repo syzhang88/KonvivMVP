@@ -229,15 +229,13 @@
                                     // console.log(txnId)
                                     if(data[month].hasOwnProperty(txnId)){
                                         txn = data[month][txnId];
-                                        html += '<div id=' + txnId + ' data-date=' + txn.date+ ' class="click-transaction" style="cursor:pointer" onclick=""><br>';
+                                        // html += '<div id=' + txnId + ' data-date=' + txn.date+ ' class="click-transaction" style="cursor:pointer" onclick=""><br>';
+                                        html += '<div id=' + txnId + ' data-date=' + txn.date+ ' class="click-transaction"><br>';
                                         html += '<strong>' + txn.name + '</strong><br>';
                                         html += '$' + txn.amount + '<br>';
                                         html += '<em>' + txn.date + '</em><br>';
                                         html += '</div>';
-
-                                        // html += '<input type="text" class="bucketName" placeholder="Bucket to move the transaction to" style="display:none">';
-                                        // html += '<button class="moveTrans btn btn-secondary btn-block btn-large" style="display:none">Move Transaction</button>';
-                                        html += '<div id=' + txnId + 'move-option class=move-option></div>';
+                                        // html += '<div id=' + txnId + 'move-option class=move-option></div>';
                                     }
                                 }
                                 html += '</div>';
@@ -245,7 +243,7 @@
                                     $(this).html(html).slideDown();
                                     var allTxns = document.getElementsByClassName("click-transaction")
                                     for (var txn in allTxns) {
-                                        allTxns[txn].onclick = showMoveOption;
+                                        // allTxns[txn].onclick = showMoveOption;
                                         // txn.addEventListener("click", moveBucketPopUp, false);
                                     }
                                 });
