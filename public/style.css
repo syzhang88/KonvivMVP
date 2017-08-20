@@ -151,7 +151,11 @@ h1 + h1 {
       border-radius:0px;
       width:33.3333%;
       color:#555;
+<<<<<<< HEAD
       background-color:#e9ebee;
+=======
+      background-color:#f8f8f8;
+>>>>>>> 607b06ca55889a92a703bb85a224d730aa29156c
       display: inline-block;
       float: left;
       overflow:auto;
