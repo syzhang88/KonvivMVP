@@ -5,96 +5,121 @@
         <title>Konviv MVP</title>
         <link rel="stylesheet" type="text/css" href="style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
-             <!--   <script>
-        window.onload = function () {
-        document.getElementById('button').onclick = function () {
-        document.getElementById('modal').style.display = "none"
-            };
-        };
-        </script> -->
+        <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Archivo:400,500,600,700" rel="stylesheet">
+        
 
         <style>
-        @import url('https://fonts.googleapis.com/css?family=Open+Sans');
+        .parallax { 
+            /* The image used */
+            background-color:white; 
 
-        body {
-         font-family: 'Open Sans', sans-serif;
-           background-image: url('https://github.com/Konviv/konviv.github.io/blob/master/img/whitebox.jpg?raw=true');
+            /* Set a specific height */
+            height: 500px; 
+
+            /* Create the parallax scrolling effect */
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
         }
+
+        p {
+            line-height:20px;
+            font-size:14px;
+            padding:10px 5px 10px 20px;
+            border:1px solid #DDD;
+            border-bottom:0px;
+            border-top:0px;
+            background-color:white;
+            text-align:left;
+        }
+
+        h1 {
+            color:#444;
+            text-align:left;
+            padding-left:20px!important;
+            font-size:14px;
+            padding:10px 5px;
+            border:1px solid #DDD;
+            background-color:white;
+        }
+
         #navigation-top {
           position:relative;
           z-index:99;
           background-color:white;
+          margin-bottom:-15px;
           }
-        #navigation-footer {
-             display:none;
-             }
 
-	p {
-	   font-size:14px;
-	   line-height:16px;
-	}
-	h1 {
-	   font-size:22px;
-	   font-weight:bold;
-	   color:black;
-	}
-	img {
-            border:1px solid #EEE;
-	    padding:10px;
-	}
-        #modal {
-            position: fixed;
-            font-family: Arial, Helvetica, sans-serif;
-            top: 0;
-            left: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 99999;
-            height: 100%;
-            width: 100%;
-        }
-        .modalconent {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #fff;
-            width: 80%;
-            padding: 20px;
-            border-radius:4px;
+          #sticky {
+                width:100%;
+                padding:10px;
+                padding-bottom:4px;
+                background:black;
+                color:white;
+                font-weight:bold;
+                font-size:18px;
+                position:fixed;    /*Here's what sticks it*/
+                bottom:0;          /*to the bottom of the body*/
+                left:0;            /*and to the left of the body.*/
+                z-index:9999;
+                text-align:center; /*this will center the containers*/
+              }
+
+          #sticky * {
+                margin:0;
+                padding:0;
+              }
+
+           #sticky .container {
+                display:inline-block; /*required for centering containers and allowing wrap*/
+                margin-bottom:16px;
+                width:20%; /*relative unit for responsive design*/
+                min-width:150px; /*containers won't get smaller than 200px*/
+                vertical-align:top;
+              }
+
+          #myModal {
+              background-color:black;
+              opacity:0.9;
+          }
+          .modal-content {
+            display:block;
+            z-index:999;
+            background-color:white;
+          }
+          .active {
+            background-color:#316f71!important;
+            color:white;
           }
         </style>
     </head>
+    
     <body>
-
-        <div id="navigation-top" style="background-color:white;">
+        <div id="navigation-top">
             <div id="menu">
-                <div class="box">
-                    <div class="nubox">
-                        <p><a href="index.ejs"><button class="upbutton">Main</button></a></p>
-                        <p><a href="bills.ejs"><button class="upbutton">Bills</button></a></p>
-                        <p><a href="savings.ejs"><button class="upbutton">Savings</button></a></p>
-                    </div>
-                    <div class="nubox">
-			<img src="http://www.konviv.com/img/icon3.jpg" style="width: 118px; margin: -10px 0px 0px -10px; border: none;" alt="Newsfeed icon" />
-                    </div>
-                    <div class="nubox">
-                        <p><a href="/"><button class="upbutton" id="logout-btn">Logout</button></a></p>
-                        <p><a href="newsfeed.ejs"><button class="upbutton">Newsfeed</button></a></p>
-                        <p><a href="#"><button id="myBtn" class="upbutton">Settings</button></a></p>
+                <div>
+                    <div style="background-color:white; width:100%;">
+                        <p><a href="bills.ejs"><button class="upbutton">Bills</button></a> <a href="index.ejs"><button class="upbutton">Main</button></a> <a href="savings.ejs"><button class="upbutton">Savings</button></a></p>
                     </div>
                 </div>
+                 <div style="background-color:#dbdbdb;">
+                        <p><button class="smbutton" div id="myBtn">Notifications</button> <a href="newsfeed.ejs"><button class="active smbutton">Newsfeed</button></a> <button class="smbutton" id="logout-btn">Logout</button> </p>
+                    </div>
             </div>
         </div>
 
-        <div id="navigation-footer" style="background-color:white;">
+        <div id="get-button-data"></div>
+
+       <div id="sticky" style="background-color:white; border-top:1px solid #DDD;">
             <div id="menu">
                 <div class="box">
-                    <button style="opacity:0.5;" class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br />
-                    <p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Accounts</p></button>
-                    <button style="opacity:0.5;" class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Transactions</p></button>
-                    <button style="opacity:0.5;" class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Edit Bank</p></button>
-                    <button class="headerbutton" id="get-insights-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.jpg?raw=true" alt="Insights" desc="Insights" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Insights</p></button>
+                    <button class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:75px;"><br />
+                    <p class="bottombtn"">Accounts</p></button>
+                    <button class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:75px;"><br /><p class="bottombtn"">Transactions</p></button>
+                    <button class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:75px;"><br /><p class="bottombtn"">Edit Bank</p></button>
+                    <button class="headerbutton" id="get-insights-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.jpg?raw=true" alt="Insights" desc="Insights" style="width:75px;"><br /><p class="bottombtn"">Insights</p></button>
                 </div>
             </div>
         </div>
@@ -103,7 +128,9 @@
             <div class="head">
                 <h1>News Feed<h1>
             </div>
-            <div class = "body" style="padding:20px;">
+        </div>
+        
+        <div style="padding:10px; background-color:#e9ebee;">
 		<h1>1. Say no to the Tapas!</h1>
 		<p><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/pic1.png?raw=true" style="width:95%;" /></p>
 		<p>Going out to eat with friends usually ends poorly for our bank accounts. Waking up the next morning and realizing you emptied your bank account on tapas and sangria (damn you tapas!) is a feeling that somehow manages to rival your stomach ache. Try to limit yourself to an amount like $50 for example and keep track as the night goes on. Tools like Konviv will make this easier, and easier to do!</p>
@@ -116,12 +143,7 @@
 		<h1>4. Welcome to mi casa! BYOB, BYOF</h1>
 		<p><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/pic4.png?raw=true" style="width:95%;" /></p>
 		<p>Eating out has also become insanely expensive. Sure you are paying for something you couldn’t necessarily make yourself but there are definitely great alternatives to going out to dinner with your friends. Instead try inviting your besties over and have a potluck, where everyone prepares something that they are good at and you can all get together and have a feast at a fraction of the cost while still having a great time!</p>
-
-            </div>
-            </div>
         </div>
-
-
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
         <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>

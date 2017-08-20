@@ -129,14 +129,9 @@ h1 + h1 {
 }
 
 .upbutton {
-<<<<<<< HEAD
       font-size:12px;
       font-family: 'Archivo', sans-serif;
       font-weight:600;
-=======
-      font-size:14px;
-      font-family: 'Varela Round', sans-serif;
->>>>>>> 115ece1c7a041cbf6eac193ae299a033bf2c54a4
       width:33.33333%;
       color:#3F3F44;
       border:1px solid #DDD;
@@ -150,23 +145,13 @@ h1 + h1 {
 }
 
 .smbutton {
-<<<<<<< HEAD
       font-size:12px;
       font-family: 'Archivo', sans-serif;
       font-weight:600;
       border-radius:0px;
       width:33.3333%;
       color:#555;
-      background-color:#f8f8f8;
-=======
-      font-size:10px;
-      font-family: 'Varela Round', sans-serif;
-      letter-spacing:2px;
-      width:33.3333%;
-      color:white;
-      background-color: transparent;
-      border-radius: 4px;
->>>>>>> 115ece1c7a041cbf6eac193ae299a033bf2c54a4
+      background-color:#e9ebee;
       display: inline-block;
       float: left;
       overflow:auto;
@@ -213,7 +198,7 @@ button:hover {
 
 .savingsbutton {
   border: 1px solid #999;
-  font-size: 28px;
+  font-size: 22px;
   border-radius: 4px;
   padding:6px;
   display: inline-block;
@@ -338,11 +323,13 @@ color: white;
 background: #00b7b8;
 text-align: center;
 padding:5px;
+font-family: 'Varela Round', sans-serif;
 }
 
 h1 {
   line-height: 2;
   color:white;
+  font-family: 'Varela Round', sans-serif;
 }
 
 /*MONTHLY*/
@@ -682,6 +669,11 @@ h1 {
     text-shadow: 0 0 10px rgba(0,0,0,0.3);
     letter-spacing:1px;
 }
+
+.active {
+            background-color:#04b5ca!important;
+            color:white;
+          }
 
 .skip {
     font-size: 18px;

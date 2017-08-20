@@ -5,21 +5,21 @@
         <title>Konviv MVP</title>
         <link rel="stylesheet" type="text/css" href="style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
-        @import url('https://fonts.googleapis.com/css?family=Open+Sans');
+        <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Archivo:400,500,600,700" rel="stylesheet">
 
-        body {
-         font-family: 'Open Sans', sans-serif;
-           background-image: url('https://github.com/Konviv/konviv.github.io/blob/master/img/whitebox.jpg?raw=true');
-        }
+       
+        <style>
         #navigation-top {
           position:relative;
           z-index:99;
           background-color:white;
+          margin-bottom:-15px;
           }
-             #sticky {
+
+          #sticky {
                 width:100%;
-                padding:20px;
+                padding:10px;
                 padding-bottom:4px;
                 background:black;
                 color:white;
@@ -32,21 +32,18 @@
                 text-align:center; /*this will center the containers*/
               }
 
-        .smallcircle {
-                border-radius: 50%;
-                behavior: url(PIE.htc); /* remove if you don't care about IE8 */
+          #sticky * {
+                margin:0;
+                padding:0;
+              }
 
-                width: 15px;
-                height: 15px;
-                padding: 1px;
-
-                background: #fff;
-                border: 1px solid #DDD;
-                color: #666;
-                text-align: center;
-
-                font: 10px Arial, sans-serif;
-            }
+           #sticky .container {
+                display:inline-block; /*required for centering containers and allowing wrap*/
+                margin-bottom:16px;
+                width:20%; /*relative unit for responsive design*/
+                min-width:150px; /*containers won't get smaller than 200px*/
+                vertical-align:top;
+              }
 
       .slider {
       	width: 100%;
@@ -77,6 +74,11 @@
         border-radius:4px;
         border:1px solid #999;
       }
+        
+        .active {
+            background-color:#316f71!important;
+            color:white;
+          }
 
       .slider-wrapper > .slide:first-child {
       	opacity: 1;
@@ -118,30 +120,23 @@
       }
         </style>
     </head>
-    <body>
-
-        <div id="navigation-top" style="background-color:white;">
+ <body class="parallax">
+        <div id="navigation-top">
             <div id="menu">
-                <div class="box">
-                    <div class="nubox">
-                        <p><a href="index.ejs"><button class="upbutton">Main</button></a></p>
-                        <p><a href="bills.ejs"><button class="upbutton">Bills</button></a></p>
-                        <p><a href="savings.ejs"><button class="upbutton">Savings</button></a></p>
-                    </div>
-                    <div class="nubox">
-                        <div id="left-to-spend">loading</div>
-                        <div id="string" style="font-size:16px; padding-top:5px; color:#61cb43;">Left to Spend</div>
-                    </div>
-                    <div class="nubox">
-                        <p><button class="upbutton" id="logout-btn">Logout</button></p>
-                        <p><a href="newsfeed.ejs"><button class="upbutton">Newsfeed</button></a></p>
-                        <p><a href="#"><button id="myBtn" class="upbutton">Settings</button></a></p>
+                <div>
+                    <div style="background-color:white; width:100%;">
+                        <p><a href="bills.ejs"><button class="upbutton">Bills</button></a> <a href="index.ejs"><button class="upbutton">Main</button></a> <a href="savings.ejs"><button class="upbutton">Savings</button></a></p>
                     </div>
                 </div>
+                 <div style="background-color:#dbdbdb;">
+                        <p><button class="smbutton" div id="myBtn">Notifications</button> <a href="newsfeed.ejs"><button class="smbutton">Newsfeed</button></a> <button class="smbutton" id="logout-btn">Logout</button> </p>
+                    </div>
             </div>
         </div>
 
-        <div id="sticky" style="background-color:white;">
+        <!-- <div id="low-bucket-alert"></div> -->
+
+        <div id="sticky" style="background-color:white; border-top:1px solid #DDD;">
             <div id="menu">
                 <div class="box">
                     <button style="opacity:0.5;" class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br />
@@ -169,9 +164,6 @@
               </div>
               <div class="slide">
                 <p><b>Insight </b></p><br /><p><div id="third-slide">Loading data. Refresh to see</div></p>
-              </div>
-              <div class="slide">
-                <p><b>Insight </b></p><br /><p><div id="fourth-slide">Loading data. Refresh to see</div></p>
               </div>
           	</div>
           	<div class="slider-nav">

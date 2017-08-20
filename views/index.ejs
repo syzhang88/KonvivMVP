@@ -7,15 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Archivo:400,500,600,700" rel="stylesheet">
-
-       <!-- <script>
-        $(function() {
-          $('.btn-notify').ready(function() {
-            $('.notify-bubble').show(400);
-            });
-        });
-        </script> -->
-
+        
         <style>
         .parallax { 
             /* The image used */
@@ -75,10 +67,6 @@
             z-index:999;
             background-color:white;
           }
-          .active {
-            background-color:#316f71!important;
-            color:white;
-          }
         </style>
     </head>
     <body class="parallax">
@@ -110,12 +98,12 @@
         </div>
 
        <div class="box">
-           <div class="body" style="margin-top:15px;">
+           <div class="body" style="font-size:8px; margin-top:15px;">
                      <div>
                         <div id="left-to-spend">loading</div>
-                        <div id="string" style="font-size:22px; padding-top:5px; color:#61cb43;">Left to Spend</div>
+                        <div id="string" style="font-size:16px; padding-top:5px; color:#61cb43;">Left to Spend</div>
                     </div>
-           <center><hr style="border: 1px solid #BBB; opacity:0.3; width:95%;" /></center>
+           <center><hr style="border: 1px solid #DDD; width:95%;" id="get-button-data"></center>
                <div class = "wrap">
                    <div class = "bucket-heading" id = "total-spending">
                        loading
@@ -174,7 +162,7 @@
            </div>
        </div>
 
-        <div class ="box" style="margin-top:-40px; background-color:white; padding-bottom:100px;">
+        <div class ="box" style="background-color:white; padding-bottom:100px;">
             <div class="head">
                 <h1> Monthly Income <h1>
             </div>
@@ -193,7 +181,6 @@
           <div class="modal-content">
             <span class="close" style="margin-top:-5px;">&times;</span>
             <p>Notifications</p><br />
-            <div id="get-button-data" style="background-color:#DDD;"></div>
           </div>
 
         </div>
