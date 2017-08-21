@@ -96,6 +96,10 @@
                 font-size: 1em;
                  }
 
+            .mystyle {
+                opacity:1!important;
+}
+
             input {
             	width: 100%;
             	margin-bottom: 10px;
@@ -114,6 +118,14 @@
 
             input:focus { box-shadow: inset 0 -5px 45px rgba(100,100,100,0.4), 0 1px 1px rgba(255,255,255,0.2); }
 
+          #myModal {
+              background-color:black;
+          }
+          .modal-content {
+            display:block;
+            z-index:999;
+            background-color:#e2e2e2;
+          }
         </style>
     </head>
 
@@ -125,27 +137,66 @@
             <img src="https://raw.githubusercontent.com/Konviv/konviv.github.io/master/img/logo1.png" alt="Konviv Logo" style="height:165px;">
 
             <br><br><br>
-        	<input id="txtEmail" type="email" placeholder="Email" required="required" />
+
+                <!-- The Modal -->
+            <div id="myModal" class="modal" style="background-image: url('https://github.com/Konviv/konviv.github.io/blob/master/img/finalbackground.jpg?raw=true'); padding:40px;">
+
+          <!-- Modal content -->
+          <div class="modal-content" style="margin-top:150px; background:transparent; padding:20px;">
+            <span class="close" style="margin-top:0px;">&times;</span>
+            <h2 style="color:white;">Welcome back to Konviv</h2>
+            <input id="txtEmail" type="email" placeholder="Email" required="required" />
             <input id="txtPassword" type="Password" placeholder="Password" required="required" />
             <button id="btnLogin" class="btn btn-action btn-primary btn-block btn-large">L o g i n</button>
+          </div>
 
-           <br />
+            </div>
+ 
+
+            <button id="btnSignup" class="btn btn-secondary btn-block btn-large" style="letter-spacing:1.4px;">Create An Account</button>
+            <button id="myBtn" class="btn btn-secondary btn-block btn-large">Login</button>
+
           <!--   <button id="btnLogout" class="btn btn-action btn-primary btn-block btn-large">Logout</button> -->
 
-             <button id="btnSignup" class="btn btn-secondary btn-block btn-large" style="letter-spacing:1.4px;">Create An Account</button>
              <div id='get-button-data'> </div>
              <br /><br />
-             <div style="margin-top:80px; text-align:center;">
-                <p style="font-size:14px; color:white; font-family:'Archivo';">
+             <div style="margin-top:60px; text-align:center;">
+                <p style="font-size:14px; color:white;">
                     Konviv uses a secure connection and 256-bit encryption just like your bank!
                 </p>
             </div>
 
         </div>
 
+
+
         <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script> -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
         <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+
+        <!-- Modal script -->
+    <script>
+          // Get the modal
+      var modal = document.getElementById('myModal');
+      // Get the button that opens the modal
+      var btn = document.getElementById("myBtn");
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close")[0];
+      // When the user clicks on the button, open the modal
+      btn.onclick = function() {
+          modal.style.display = "block";
+      }
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+          modal.style.display = "none";
+      }
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+          if (event.target == modal) {
+              modal.style.display = "none";
+          }
+      }
+    </script>
 
         <script>
             $(document).ready(function() {
