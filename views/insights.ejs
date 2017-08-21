@@ -121,34 +121,31 @@
         </style>
     </head>
  <body class="parallax">
-        <div id="navigation-top">
-            <div id="menu">
-                <div>
-                    <div style="background-color:white; width:100%;">
-                        <p><a href="bills.ejs"><button class="upbutton">Bills</button></a> <a href="index.ejs"><button class="upbutton">Main</button></a> <a href="savings.ejs"><button class="upbutton">Savings</button></a></p>
-                    </div>
-                </div>
-                 <div style="background-color:#dbdbdb;">
-                        <p><button class="smbutton" div id="myBtn">Notifications</button> <a href="newsfeed.ejs"><button class="smbutton">Newsfeed</button></a> <button class="smbutton" id="logout-btn">Logout</button> </p>
-                    </div>
+       <div id="navigation-top">
+            <div id="top-menu" style="position:fixed;">
+                        <p><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/logopin.png?raw=true" style="height:45px; margin-top:-2px; float:left;"><button class="smbutton" div id="myBtn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/notificationsw.png?raw=true" style="height:28px;"></button> <a href="newsfeed.ejs"><button class="smbutton"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/newsw.png?raw=true" style="height:28px;"></button></a> <button class="smbutton" id="logout-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/logoutw.png?raw=true" style="height:28px;"></button> </p>
             </div>
-        </div>
+             <div style="position:fixed; margin-top:41px; background-color:white; width:100%;">
+                        <p><a href="bills.ejs"><button class="upbutton">Bills</button></a> <a href="index.ejs"><button class="upbutton">Main</button></a> <a href="savings.ejs"><button class="upbutton">Savings</button></a></p>
+             </div>                 
+            </div>
+  
 
         <!-- <div id="low-bucket-alert"></div> -->
 
         <div id="sticky" style="background-color:white; border-top:1px solid #DDD;">
             <div id="menu">
                 <div class="box">
-                    <button style="opacity:0.5;" class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br />
-                    <p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Accounts</p></button>
-                    <button style="opacity:0.5;" class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Transactions</p></button>
-                    <button style="opacity:0.5;" class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Edit Bank</p></button>
-                    <button class="headerbutton" id="get-insights-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.jpg?raw=true" alt="Insights" desc="Insights" style="width:85px;"><br /><p style="margin-top:-5px; font-size:10px; color:#222; padding-bottom:10px;">Insights</p></button>
+                    <button style="opacity:0.4" class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:75px;"><br />
+                    <p class="bottombtn">Accounts</p></button>
+                    <button style="opacity:0.4" class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:75px;"><br /><p class="bottombtn"">Transactions</p></button>
+                    <button style="opacity:0.4" class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:75px;"><br /><p class="bottombtn"">Edit Bank</p></button>
+                    <button class="headerbutton" id="get-insights-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.jpg?raw=true" alt="Insights" desc="Insights" style="width:75px;"><br /><p class="bottombtn"">Insights</p></button>
                 </div>
             </div>
         </div>
 
-        <div class ="box" style="background-color:white; margin-top:-5px;">
+        <div class ="box" style="background-color:white; margin-top:25px;">
             <div class="head">
                 <h1> Smart Insights <h1>
             </div>
@@ -157,19 +154,26 @@
               <div class="slider" id="main-slider"><!-- outermost container element -->
           	<div class="slider-wrapper"><!-- innermost wrapper element -->
           		<div class="slide">
-                <p><b>Insight </b></p><br /><p><div id="first-slide">Loading data. Refresh to see</div></p>
+                <p><b>Insight 1</b></p><br /><p><div id="first-slide">Loading data. Refresh to see</div></p>
               </div>
               <div class="slide">
-                <p><b>Insight </b></p><br /><p><div id="second-slide">Loading data. Refresh to see</div></p>
+                <p><b>Insight 2</b></p><br /><p><div id="second-slide">Loading data. Refresh to see</div></p>
               </div>
               <div class="slide">
-                <p><b>Insight </b></p><br /><p><div id="third-slide">Loading data. Refresh to see</div></p>
+                <p><b>Insight 3</b></p><br /><p><div id="third-slide">Loading data. Refresh to see</div></p>
               </div>
           	</div>
           	<div class="slider-nav">
           		<button class="slider-previous"><h1><</h1></button>
           		<button class="slider-next"><h1>></h1></button>
           	</div>
+          </div>
+
+          <div style="margin-top:-30px; border-top:1px solid #EEE; text-align:center;">
+          <h1 style="color:#DDD;">There were four transactions under $100</h1>
+          <h1 style="color:#DDD;">more</h1>
+          <h1 style="color:#DDD;">more</h1>
+          <h1 style="color:#DDD;">more</h1>
           </div>
 
             </div>
