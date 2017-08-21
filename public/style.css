@@ -134,7 +134,6 @@ h1 + h1 {
       font-weight:600;
       width:33.33333%;
       color:#555;
-      border:1px solid #DDD;
       background-color: white;
       border-radius: 0px;
       display: inline-block;
@@ -143,6 +142,7 @@ h1 + h1 {
       padding: 13px 30px;
       text-align:center;
       border-top:0px;
+      border-bottom:1px solid #EEE;
 }
 
 .smbutton {
@@ -348,6 +348,15 @@ h1 {
   padding:5px 5px 5px 5px;
 }
 
+#top-spend {
+  background-image:url('https://github.com/Konviv/konviv.github.io/blob/master/img/coolback.jpg?raw=true');
+  width:105%;
+  margin-left:-5px;
+  margin-top:-5px;
+  padding:14px 0px;
+  height:130px;
+}
+
 #monthly-income  {
   color:#444;
   text-align: center;
@@ -358,7 +367,7 @@ h1 {
 }
 
 #left-to-spend {
-  color:#61cb43;
+  color:white;
   text-align: center;
   padding-top: 20px;
   padding-bottom:5px;
@@ -682,6 +691,7 @@ h1 {
 .active {
             background-color:#04b5ca!important;
             color:white;
+            border-bottom:1px solid #04b5ca!important;
           }
 
 .skip {
