@@ -60,28 +60,26 @@
 
           #myModal {
               background-color:black;
-              opacity:0.9;
           }
           .modal-content {
+            margin-top:50px;
             display:block;
             z-index:999;
             background-color:white;
           }
+
         </style>
     </head>
     <body class="parallax">
         <div id="navigation-top">
-            <div id="menu">
-                <div>
-                    <div style="background-color:white; width:100%;">
-                        <p><a href="bills.ejs"><button class="upbutton">Bills</button></a> <a href="index.ejs"><button class="upbutton active">Main</button></a> <a href="savings.ejs"><button class="upbutton">Savings</button></a></p>
-                    </div>
-                </div>
-                 <div style="background-color:#dbdbdb;">
-                        <p><button class="smbutton" div id="myBtn">Notifications</button> <a href="newsfeed.ejs"><button class="smbutton">Newsfeed</button></a> <button class="smbutton" id="logout-btn">Logout</button> </p>
-                    </div>
+            <div id="top-menu" style="position:fixed;">
+                        <p><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/logopin.png?raw=true" style="height:45px; margin-top:-2px; float:left;"><button class="smbutton" div id="myBtn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/notificationsw.png?raw=true" style="height:28px;"></button> <a href="newsfeed.ejs"><button class="smbutton"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/newsw.png?raw=true" style="height:28px;"></button></a> <button class="smbutton" id="logout-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/logoutw.png?raw=true" style="height:28px;"></button> </p>
             </div>
-        </div>
+             <div style="position:fixed; margin-top:41px; background-color:white; width:100%;">
+                        <p><a href="bills.ejs"><button class="upbutton">Bills</button></a> <a href="index.ejs"><button class="upbutton active">Main</button></a> <a href="savings.ejs"><button class="upbutton">Savings</button></a></p>
+             </div>                 
+            </div>
+  
 
         <!-- <div id="low-bucket-alert"></div> -->
 
@@ -89,8 +87,8 @@
             <div id="menu">
                 <div class="box">
                     <button class="headerbutton" id="get-accounts-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon1.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:75px;"><br />
-                    <p class="bottombtn"">Accounts</p></button>
-                    <button class="headerbutton" id="get-transactions-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:75px;"><br /><p class="bottombtn"">Transactions</p></button>
+                    <p class="bottombtn">Accounts</p></button>
+                    <button class="headerbutton" id="get-transactions-btn"><img id="myBtn2" src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon2.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:75px;"><br /><p class="bottombtn"">Transactions</p></button>
                     <button class="headerbutton" id="get-link-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon3.jpg?raw=true" alt="Transactions" desc="Transactions" style="width:75px;"><br /><p class="bottombtn"">Edit Bank</p></button>
                     <button class="headerbutton" id="get-insights-btn"><img src="https://github.com/Konviv/konviv.github.io/blob/master/img/icon4.jpg?raw=true" alt="Insights" desc="Insights" style="width:75px;"><br /><p class="bottombtn"">Insights</p></button>
                 </div>
@@ -98,13 +96,15 @@
         </div>
 
        <div class="box">
-           <div class="body" style="font-size:8px; margin-top:15px;">
+           <div class="body" style="font-size:8px; margin-top:90px;">
                      <div>
                         <div id="left-to-spend">loading</div>
-                        <div id="string" style="font-size:16px; padding-top:5px; color:#61cb43;">Left to Spend</div>
+                        <div id="string" style="font-size:22px; padding-top:5px; color:#61cb43;">Left to Spend</div>
                     </div>
-           <center><hr style="border: 1px solid #DDD; width:95%;" id="get-button-data"></center>
+
                <div class = "wrap">
+                                        <div style="text-align:center;" id="get-button-data"></div>
+                                        <hr style="border:1px solid #EEE;" />
                    <div class = "bucket-heading" id = "total-spending">
                        loading
                    </div>
@@ -181,10 +181,11 @@
           <div class="modal-content">
             <span class="close" style="margin-top:-5px;">&times;</span>
             <p>Notifications</p><br />
+            <hr style="border:1px solid #DDD;" />
           </div>
 
         </div>
-
+ 
       <!-- scripts -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
         <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
@@ -195,23 +196,18 @@
     <script>
           // Get the modal
       var modal = document.getElementById('myModal');
-
       // Get the button that opens the modal
       var btn = document.getElementById("myBtn");
-
       // Get the <span> element that closes the modal
       var span = document.getElementsByClassName("close")[0];
-
       // When the user clicks on the button, open the modal
       btn.onclick = function() {
           modal.style.display = "block";
       }
-
       // When the user clicks on <span> (x), close the modal
       span.onclick = function() {
           modal.style.display = "none";
       }
-
       // When the user clicks anywhere outside of the modal, close it
       window.onclick = function(event) {
           if (event.target == modal) {
