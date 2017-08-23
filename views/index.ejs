@@ -11,7 +11,7 @@
         <style>
         .parallax { 
             /* The image used */
-            background-color:white; 
+            background-image:url('https://github.com/Konviv/konviv.github.io/blob/master/img/circleback3.jpg?raw=true'); 
 
             /* Set a specific height */
             height: 500px; 
@@ -59,7 +59,7 @@
               }
 
           #myModal {
-              background-color:black;
+              background-color:rgba(0, 0, 0, 0.9);
           }
           .modal-content {
             margin-top:50px;
@@ -99,15 +99,12 @@
            <div class="body" style="font-size:8px; margin-top:75px;">
                      <div id="top-spend">
                         <div id="left-to-spend">loading</div>
-                        <div id="string" style="font-size:22px; padding-top:5px; color:white;">Left to Spend</div>
+                        <div id="string" style="font-size:22px; padding-top:5px; color:#323232;">Left to Spend</div>
                     </div>
-
+                    <div style="padding-bottom:81px;">.</div>
                <div class = "wrap">
-                                        <div style="text-align:center;" id="get-button-data"></div>
-                                        <hr style="border:1px solid #EEE;" />
-                   <div class = "bucket-heading" id = "total-spending">
-                       loading
-                   </div>
+                       <div style="text-align:center;" id="get-button-data"></div>
+                       <hr style="border:1px solid #EEE;" />
 
                    <div class="circle" id="Eating Out"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
@@ -116,6 +113,7 @@
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
+                   <hr style="border:1px solid #EEE; width:115%;">
                    <div class="circle" id="Entertainment"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
@@ -123,6 +121,7 @@
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
+                   <hr style="border:1px solid #EEE; width:115%;">
                    <div class="circle" id="Groceries"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
@@ -130,6 +129,7 @@
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
+                   <hr style="border:1px solid #EEE; width:115%;">
                    <div class="circle" id="Other Spending"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
@@ -137,6 +137,7 @@
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
+                   <hr style="border:1px solid #EEE; width:115%;">
                    <div class="circle" id="Shopping"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
@@ -144,6 +145,7 @@
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
+                   <hr style="border:1px solid #EEE; width:115%;">
                    <div class="circle" id="Variable Bills"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
@@ -151,6 +153,7 @@
                        <span class="top"></span>
                        <span class="bottom"></span>
                    </div>
+                   <hr style="border:1px solid #EEE; width:115%;">
                    <div class="circle" id="Transportation"><span style="margin:0px 0px 0px 200px; color:#DDD;"></span>
                        <div class="perc">
                            <div class="perc-value"></div>
@@ -160,7 +163,12 @@
                    </div>
                </div>
            </div>
+           <hr style="border:1px solid #EEE; width:115%;">
        </div>
+
+                  <div class = "bucket-heading" id = "total-spending">
+                       loading
+                   </div>
 
         <div class ="box" style="background-color:white; padding-bottom:100px;">
             <div class="head">
@@ -182,6 +190,7 @@
             <span class="close" style="margin-top:-5px;">&times;</span>
             <p>Notifications</p><br />
             <hr style="border:1px solid #DDD;" />
+            <div style="text-align:center;" id="get-button-noto"></div>
           </div>
 
         </div>
@@ -473,7 +482,7 @@
 
                         $("#left-to-spend").text("$" + amountLeft.toFixed(2));
                         $("#total-bills").text("Total Bills: $" + totalActualBills.toFixed(2) + " | Estimated Bills: $" + totalEstimatedBills.toFixed(2));
-                        $("#total-spending").text("Total Spending: $" + totalActualSpending.toFixed(2)  + " | Estimated Spending: $" + totalEstimatedSpending.toFixed(2));
+                        $("#total-spending").text("Total Spending: $" + totalActualSpending.toFixed(2) + "| Estimated Spending: $" + totalEstimatedSpending.toFixed(2));
                         $("#overall-stats").text("+ $" + totalIncome.toFixed(2)  + " income | - $" + totalActual.toFixed(2) + " costs");
 
                         /* NOTIFICATIONS */
@@ -498,7 +507,7 @@
                             htmlNotification += '<p style="color:#f0e308;"><strong>' + notificationText(halfNotif) + ' over half empty </strong></p>';
                         }
 
-                        $('#get-button-data').slideUp(function() {
+                        $('#get-button-noto').slideUp(function() {
                             $(this).slideUp(function() {
                                 $(this).html(htmlNotification).slideDown();
                             });
