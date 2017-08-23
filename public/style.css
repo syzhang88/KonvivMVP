@@ -129,20 +129,20 @@ h1 + h1 {
 }
 
 .upbutton {
-      font-size:12px;
+      font-size:13px;
       font-family: 'Arial', sans-serif;
       font-weight:600;
-      width:33.33333%;
+      width:30%;
+      margin:2px 6px;
       color:#555;
-      background-color: white;
-      border-radius: 0px;
+      background-color: #f6f8f9;
+      border-radius: 25px;
       display: inline-block;
       float: left;
       overflow:auto;
-      padding: 13px 30px;
+      padding: 10px 35px;
       text-align:center;
-      border-top:0px;
-      border-bottom:1px solid #EEE;
+      border:1px solid #EEE;
 }
 
 .smbutton {
@@ -349,7 +349,11 @@ h1 {
 }
 
 #top-spend {
-  background-image:url('https://github.com/Konviv/konviv.github.io/blob/master/img/bluegreen.jpg?raw=true');
+  background-color:white;
+  border:1px solid #EEE;
+  display:block;
+  z-index:999;
+  position:fixed;
   width:105%;
   margin-left:-5px;
   margin-top:-5px;
@@ -367,7 +371,7 @@ h1 {
 }
 
 #left-to-spend {
-  color:white;
+  color:#323232;
   text-align: center;
   padding-top: 20px;
   padding-bottom:5px;
@@ -552,7 +556,7 @@ h1 {
   height: 260px;
   border-radius: 100%;
   border: 1px solid #ccc;
-  margin: 30px 20px 70px 20px;
+  margin: 121px 20px 70px 20px;
   display: inline-block;
   position: relative;
   cursor: pointer;
