@@ -360,7 +360,7 @@ h1 {
   margin-left:-5px;
   margin-top:-5px;
   padding:14px 0px;
-  height:130px;
+  height:105px;
 }
 
 #monthly-income  {
@@ -375,7 +375,7 @@ h1 {
 #left-to-spend {
   color:#323232;
   text-align: center;
-  padding-top: 20px;
+  padding-top: 8px;
   padding-bottom:5px;
   font-size:32px;
   font-weight:bold;
