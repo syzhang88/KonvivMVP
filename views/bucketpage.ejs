@@ -12,8 +12,51 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-    </head>
+        <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Archivo:400,500,600,700" rel="stylesheet">
 
+    </head>
+    <style>
+          #myModal {
+              background-color:rgba(0, 0, 0, 0.4);
+          }
+          .modal-content {
+            margin-top:50px;
+            display:block;
+            z-index:999;
+            background-color:white;
+          }
+          #myTodal {
+              background-color:rgba(0, 0, 0, 0.4);
+          }
+          .todal-content {
+            margin-top:50px;
+            display:block;
+            z-index:999;
+            background-color:white;
+            border-radius: 4px;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+          }
+          .inner {
+            text-align:center;
+          }
+          .click-transaction {
+             border-top:1px solid #DDD;
+             padding:10px 10px 20px 10px;
+          }
+          .btn-block {
+                width:190px;
+                float:left;
+                margin:10px;
+                font-size:16px;
+          }
+          .left {
+            margin-left:55px;
+          }
+    </style>
     <body>
         <div class ="box">
 
@@ -30,13 +73,9 @@
             <br />
 
             <div class="template">
-                <input id="editName" pattern="[a-zA-Z]{15}" title="A name must be composed of only letters and less than 15 characters." placeholder="New Bucket Name"/>
-                <button id="btnName" class="btn btn-secondary btn-block btn-large">Edit Name</button>
-                <br/>
-                <input id="editSizeAmount" pattern="[-0-9]" title="Value must be either a negative or positive number!" placeholder="Bucket Amount to Add or Subtract" />
-                <br/>
+            <button id="myBtn" class="btn btn-secondary btn-block btn-large">Edit Bucket Name</button>
                 <!-- <input id="editSizeBucket" placeholder="New Bucket for Amount" /> -->
-                <button id="btnSize" class="btn btn-secondary btn-block btn-large">Edit Size</button>
+                <button id="myBtn2" class="btn btn-secondary btn-block btn-large">Edit Bucket Size</button>
                 <br/>
                 <!-- <input id="moveTransactionName" placeholder="Transaction to Move" />
                 <br/>
@@ -48,7 +87,35 @@
             <br />
             <br />
             <br />
+            <!-- The Modal -->
+            <div id="myModal" class="modal">
 
+          <!-- Modal content -->
+          <div class="modal-content">
+            <span class="close" style="margin-top:-5px;">&times;</span>
+            <p>What is the new bucket called?</p><br />
+            <hr style="border:1px solid #DDD;" />
+              <input id="editName" pattern="[a-zA-Z]{15}" title="A name must be composed of only letters and less than 15 characters." placeholder="New Bucket Name"/>
+                <button id="btnName" class="btn btn-secondary btn-block btn-large left">Submit New Name</button>
+          </div>
+
+            </div>
+          <!-- End Modal -->
+
+          <!-- The Modal2 -->
+            <div id="myTodal" class="modal">
+
+          <!-- Modal content -->
+          <div class="todal-content">
+            <span class="close2" style="margin-top:-5px;">&times;</span>
+            <p>How much should I add or subtract?</p><br />
+            <hr style="border:1px solid #DDD;" />
+              <input id="editSizeAmount" pattern="[-0-9]" title="Value must be either a negative or positive number!" placeholder="Bucket Amount to Add or Subtract" />
+              <button id="btnSize" class="btn btn-secondary btn-block btn-large left">Submit</button>
+          </div>
+
+            </div>
+          <!-- End Modal -->
 
             <div class="head" id="transactions" style="cursor:pointer">
                    <h1 style="font-size:18px; font-weight:300;"> Transactions <h1>
@@ -58,6 +125,54 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.1.4/firebase.js"></script>
+
+    <!-- Modal script -->
+    <script>
+          // Get the modal
+      var modal = document.getElementById('myModal');
+      // Get the button that opens the modal
+      var btn = document.getElementById("myBtn");
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close")[0];
+      // When the user clicks on the button, open the modal
+      btn.onclick = function() {
+          modal.style.display = "block";
+      }
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+          modal.style.display = "none";
+      }
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+          if (event.target == modal) {
+              modal.style.display = "none";
+          }
+      }
+    </script>
+
+      <!-- Modal script -->
+    <script>
+          // Get the modal
+      var todal = document.getElementById('myTodal');
+      // Get the button that opens the modal
+      var btn = document.getElementById("myBtn2");
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close2")[0];
+      // When the user clicks on the button, open the modal
+      btn.onclick = function() {
+          todal.style.display = "block";
+      }
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function() {
+          todal.style.display = "none";
+      }
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+          if (event.target == todal) {
+              todal.style.display = "none";
+          }
+      }
+    </script>
 
     <script>
         $(document).ready(function() {
