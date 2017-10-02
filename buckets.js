@@ -126,7 +126,6 @@ exports.selectBucket = function selectBucket (transaction) {
     for (i = 0; i < transaction.category.length; i++) {
         var category = transaction.category[i] ;
         if (fixedBuckets[category]) {
-            console.log("fixed bucket " + fixedBuckets[category]);
             bucket = {
                 bucketName: fixedBuckets[category],
                 bucketClass: 'Fixed'
@@ -182,8 +181,6 @@ exports.estimateSize = function estimateSize (transactions, estimationPeriod, to
 exports.moveTransaction = function moveTransaction (oldBucketPath, newBucketPath) {
     oldPath=admin.database().ref(oldBucketPath)
     newPath=admin.database().ref(newBucketPath)
-    console.log("HERE")
-
     oldPath.once('value', function(snap)  {
         newPath.update(snap.val(), function(error) {
             if( !error ) {
@@ -194,16 +191,14 @@ exports.moveTransaction = function moveTransaction (oldBucketPath, newBucketPath
             }
         });
     }).catch;
-    console.log("DONE")
 }
 
 // CHANGE SIZE OF THE BUCKET. ADD/SUBTRACT SOME AMOUNT OF MONEY FROM ONE BUCKET AND SUBTRACT/ADD THAT AMOUNT TO ANOTHER BUCKET
-exports.changeBucketsize = function changeBucketsize (from_bucket_path,amount) {
+exports.changeBucketsize = function changeBucketsize (fromBucketPath, amount) {
     var oldBucket = {}
     var newBucket = {}
-    console.log("NOW HERE")
     //subtract from this bucket
-    admin.database().ref(from_bucket_path).once('value').then(function(snapshot) {
+    admin.database().ref(fromBucketPath).once('value').then(function(snapshot) {
         console.log(amount)
         console.log(snapshot.val()['Total'])
         if (parseInt(snapshot.val()['Total']) + parseInt(amount) >=0) {
@@ -215,9 +210,7 @@ exports.changeBucketsize = function changeBucketsize (from_bucket_path,amount) {
                 message: "Not Enough Money in the Bucket"
             };
         }
-        console.log(oldBucket['Total'])
-        console.log("YOOOOOO!!!")
-        admin.database().ref(from_bucket_path).update(oldBucket);
+        admin.database().ref(fromBucketPath).update(oldBucket);
   });
     return true;
 }
@@ -225,22 +218,20 @@ exports.changeBucketsize = function changeBucketsize (from_bucket_path,amount) {
 // Each bucket has a key named 'Name' in its hashtable (dictionary) underneath
 // the branch /bucketMoney on Firebase. You can change this name here
 exports.renameBucket = function renameBucket (path, newName) {
-     var db=admin.database()
-     var ref=db.ref(path)
+     var db = admin.database()
+     var ref = db.ref(path)
      ref.update({
         "Name":newName
     })
 }
 
 // GET ALL THE TRANSACTIONS FOR THAT BUCKET
-exports.bucketInfo = function bucketInfo(bucketpath){
-    admin.database().ref(bucketpath).once('value').then(function(snapshot) {
+exports.bucketInfo = function bucketInfo(bucketPath){
+    admin.database().ref(bucketPath).once('value').then(function(snapshot) {
         console.log("Bucket Info called")
-        var bucket_transactions = snapshot.val();
-        console.log(bucket_transactions)
-
-        return bucket_transactions
-
+        var bucketTransactions = snapshot.val();
+        console.log(bucketTransactions)
+        return bucketTransactions
     }).catch(function(error) {
         var errorMessage = error.message;
         console.log('failed to call bucketInfo: ' + errorMessage);
