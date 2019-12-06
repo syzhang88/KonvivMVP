@@ -1,1 +1,3 @@
-Web app for Konviv MVP
+Web application for simple money management application. 
+
+
